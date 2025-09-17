@@ -7,7 +7,7 @@ from pathlib import Path
 import pandas as pd
 import altair as alt
 
-# Optional: Lottie. If not installed, the code falls back gracefully.
+# Optional: Lottie. If not installed, the code falls back gracefully.  
 try:
     from streamlit_lottie import st_lottie
     LOTTIE_AVAILABLE = True
@@ -233,9 +233,6 @@ def show_dashboard():
 
     st.markdown("---")
 
-
-    
-
 def show_profile():
     st.markdown("<div class='app-container'>", unsafe_allow_html=True)
     st.title("Profile")
@@ -291,8 +288,7 @@ def main():
         cols = st.columns([1, 4, 2])
         with cols[0]:
             st.markdown("<h3 style='margin:25px 0; color:#0b56ff;'>Global Balance</h3>", unsafe_allow_html=True)
-        with cols[1]:
-            pass  # no empty block here
+        # removed the st.markdown("") that created the white bar
         with cols[2]:
             if st.session_state.logged_in:
                 st.markdown(f"<div style='text-align:right'><small>Signed in as <strong>{st.session_state.user_email}</strong></small></div>", unsafe_allow_html=True)
@@ -313,18 +309,7 @@ def main():
         }
         st.sidebar.title("Navigation")
         choice = st.sidebar.radio("Go to", list(pages.keys()))
-        # small animated Lottie in sidebar if available
         pages[choice]()
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
-
-
-
