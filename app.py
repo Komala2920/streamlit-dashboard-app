@@ -7,7 +7,7 @@ from pathlib import Path
 import pandas as pd
 import altair as alt
 
-# Optional: Lottie. If not installed, the code falls back gracefully.
+# Optional: Lottie. If not installed, the code falls back gracefully.  
 try:
     from streamlit_lottie import st_lottie
     LOTTIE_AVAILABLE = True
@@ -15,43 +15,6 @@ except Exception:
     LOTTIE_AVAILABLE = False
 
 DB_PATH = "app_data.db"
-
-# -------------------------
-# Background video configuration
-# -------------------------
-VIDEO_MAP = {
-    # keys used by the app pages (lowercase)
-    "login": {
-        "url": "https://videos.pexels.com/videos/854331/pexels-video-854331.mp4",
-        "gradient": "linear-gradient(120deg, rgba(19,118,255,0.28), rgba(30,161,255,0.18))",
-        "brightness": 0.66,
-        "poster": ""
-    },
-    "home": {
-        "url": "https://videos.pexels.com/videos/853681/pexels-video-853681.mp4",
-        "gradient": "linear-gradient(120deg, rgba(8,200,150,0.20), rgba(60,150,255,0.18))",
-        "brightness": 0.6,
-        "poster": ""
-    },
-    "dashboard": {
-        "url": "https://videos.pexels.com/videos/856205/pexels-video-856205.mp4",
-        "gradient": "linear-gradient(120deg, rgba(120,60,200,0.20), rgba(255,60,140,0.14))",
-        "brightness": 0.62,
-        "poster": ""
-    },
-    "profile": {
-        "url": "https://videos.pexels.com/videos/857195/pexels-video-857195.mp4",
-        "gradient": "linear-gradient(120deg, rgba(255,180,60,0.20), rgba(255,120,40,0.14))",
-        "brightness": 0.66,
-        "poster": ""
-    },
-    "feedback": {
-        "url": "https://videos.pexels.com/videos/854199/pexels-video-854199.mp4",
-        "gradient": "linear-gradient(120deg, rgba(80,120,255,0.20), rgba(10,200,255,0.12))",
-        "brightness": 0.64,
-        "poster": ""
-    }
-}
 
 # -------------------------
 # Database helpers
@@ -124,13 +87,13 @@ def get_feedbacks(limit=100):
     return rows
 
 # -------------------------
-# UI helpers: base CSS & helpers
+# UI helpers: CSS & Lottie
 # -------------------------
-def base_css():
-    """Base CSS for UI (buttons, inputs, layout). Called once in main()."""
+def local_css():
     st.markdown(
         """
         <style>
+
         /* Page fade-in */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(6px); }
@@ -172,106 +135,15 @@ def base_css():
             padding: 10px;
             background: rgba(0,90,200,0.04);
         }
-
-        /* Make background of blocks transparent so the video shows through */
-        .stApp {
-            background: transparent !important;
-        }
-        /* main content container */
-        .stApp .main .block-container {
-            background: transparent !important;
-            animation: fadeIn .28s ease both;
-        }
-        /* sidebar */
-        .stApp .sidebar .sidebar-content {
-            background: rgba(255,255,255,0.05) !important;
-            backdrop-filter: blur(6px);
-        }
-
-        /* respect reduced motion preference */
-        @media (prefers-reduced-motion: reduce) {
-            * { animation: none !important; transition: none !important; }
-        }
         </style>
-        """,
-        unsafe_allow_html=True
+        """, unsafe_allow_html=True
     )
-
-def set_page_background(page_key: str):
-    """
-    Injects a full-page background video + colored overlay for the given page key.
-    page_key should be one of VIDEO_MAP's keys (lowercase).
-    This function injects a single video + overlay element (so the last injected shows up).
-    """
-    key = page_key.lower()
-    cfg = VIDEO_MAP.get(key)
-    if not cfg:
-        # fallback: use home config
-        cfg = VIDEO_MAP["home"]
-
-    video_url = cfg["url"]
-    gradient = cfg["gradient"]
-    brightness = cfg.get("brightness", 0.66)
-    poster = cfg.get("poster", "")
-
-    # HTML + CSS for the video background and overlay.
-    # We keep z-index negative so the app UI floats above it.
-    # pointer-events: none ensures clicks pass through to UI.
-    html = f"""
-    <style>
-    /* Background video (fixed, covers full viewport) */
-    .video-bg-full {{
-        position: fixed;
-        right: 0;
-        bottom: 0;
-        min-width: 100%;
-        min-height: 100%;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        z-index: -9999;
-        filter: brightness({brightness});
-        pointer-events: none;
-    }}
-
-    /* Overlay tint above the video but behind UI */
-    .bg-overlay {{
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -9998;
-        pointer-events: none;
-        background: {gradient};
-        mix-blend-mode: overlay;
-    }}
-
-    /* Hide video on small screens for performance */
-    @media (max-width: 700px) {{
-        .video-bg-full {{ display: none !important; }}
-        .bg-overlay {{ display: block !important; filter: brightness(0.85); }}
-    }}
-
-    /* Respect reduced motion preference */
-    @media (prefers-reduced-motion: reduce) {{
-        .video-bg-full {{ display: none !important; }}
-    }}
-    </style>
-
-    <video class="video-bg-full" autoplay muted loop playsinline {"poster='" + poster + "'" if poster else ""}>
-        <source src="{video_url}" type="video/mp4">
-        <!-- fallback gradient if video not supported -->
-    </video>
-    <div class="bg-overlay"></div>
-    """
-    st.markdown(html, unsafe_allow_html=True)
 
 # load lottie from URL helper
 def load_lottie_url(url: str):
     import requests
     try:
-        r = requests.get(url, timeout=6)
+        r = requests.get(url)
         if r.status_code == 200:
             return r.json()
     except Exception:
@@ -281,7 +153,6 @@ def load_lottie_url(url: str):
 # App pages
 # -------------------------
 def show_login():
-    set_page_background("login")
     st.markdown("<div class='app-container'>", unsafe_allow_html=True)
     st.subheader("Login")
     cols = st.columns([1, 1])
@@ -294,17 +165,16 @@ def show_login():
                 st.success("Welcome back, " + (name or email))
                 st.session_state.logged_in = True
                 st.session_state.user_email = email
-                st.experimental_rerun()
             else:
                 st.error("Invalid credentials")
     with cols[1]:
         # Lottie animation or fallback image
         if LOTTIE_AVAILABLE:
-            lottie = load_lottie_url("https://assets4.lottiefiles.com/packages/lf20_jcikwtux.json")
+            lottie = load_lottie_url("https://assets4.lottiefiles.com/packages/lf20_jcikwtux.json")  # sample
             if lottie:
-                st_lottie(lottie, height=420)
+                st_lottie(lottie, height=500)
         else:
-            st.info("Lottie not available. Install `streamlit-lottie` to show animations.")
+            st.info("Lottie not available. Install streamlit-lottie to show animations.")
     st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("---")
@@ -321,7 +191,6 @@ def show_login():
                 st.error(msg)
 
 def show_home():
-    set_page_background("home")
     st.markdown("<div class='app-container'>", unsafe_allow_html=True)
     st.title("Home")
     st.write("Welcome to your dashboard — clean, minimal, blue/white theme.")
@@ -339,7 +208,6 @@ def show_home():
     st.markdown("</div>", unsafe_allow_html=True)
 
 def show_dashboard():
-    set_page_background("dashboard")
     st.markdown("<div class='app-container'>", unsafe_allow_html=True)
     st.title("Dashboard")
     st.write("Charts and analytics inspired by the illustration.")
@@ -356,10 +224,8 @@ def show_dashboard():
     """, unsafe_allow_html=True)
 
     st.markdown("---")
-    st.markdown("</div>", unsafe_allow_html=True)
 
 def show_profile():
-    set_page_background("profile")
     st.markdown("<div class='app-container'>", unsafe_allow_html=True)
     st.title("Profile")
     email = st.session_state.get("user_email", "")
@@ -376,7 +242,6 @@ def show_profile():
     st.markdown("</div>", unsafe_allow_html=True)
 
 def show_feedback():
-    set_page_background("feedback")
     st.markdown("<div class='app-container'>", unsafe_allow_html=True)
     st.title("Feedback")
     email = st.session_state.get("user_email", "")
@@ -392,7 +257,7 @@ def show_feedback():
     st.markdown("### Recent feedback")
     rows = get_feedbacks(10)
     for r in rows:
-        st.write(f"**{r[0]}** — {r[2]}")
+        st.write(f"{r[0]}** — {r[2]}")
         st.write(r[1])
         st.markdown("---")
     st.markdown("</div>", unsafe_allow_html=True)
@@ -404,7 +269,7 @@ def main():
     init_db()
     st.set_page_config(page_title="Global Balance", page_icon="💠", layout="wide")
 
-    base_css()
+    local_css()
 
     if "logged_in" not in st.session_state:
         st.session_state.logged_in = False
@@ -415,7 +280,7 @@ def main():
         cols = st.columns([1, 4, 2])
         with cols[0]:
             st.markdown("<h2 style='margin:25px 0; color:#0b56ff;'>Global Balance</h2>", unsafe_allow_html=True)
-
+        
         with cols[2]:
             if st.session_state.logged_in:
                 st.markdown(f"<div style='text-align:right'><small>Signed in as <strong>{st.session_state.user_email}</strong></small></div>", unsafe_allow_html=True)
@@ -438,5 +303,5 @@ def main():
         choice = st.sidebar.radio("Go to", list(pages.keys()))
         pages[choice]()
 
-if __name__ == "__main__":
+if _name_ == "_main_":
     main()
