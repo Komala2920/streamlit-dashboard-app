@@ -291,6 +291,8 @@ def main():
         cols = st.columns([1, 4, 2])
         with cols[0]:
             st.markdown("<h3 style='margin:25px 0; color:#0b56ff;'>Global Balance</h3>", unsafe_allow_html=True)
+        with cols[1]:
+            pass  # no empty block here
         with cols[2]:
             if st.session_state.logged_in:
                 st.markdown(f"<div style='text-align:right'><small>Signed in as <strong>{st.session_state.user_email}</strong></small></div>", unsafe_allow_html=True)
@@ -316,6 +318,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
