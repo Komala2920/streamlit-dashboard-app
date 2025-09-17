@@ -303,8 +303,9 @@ def main():
         choice = st.sidebar.radio("Go to", list(pages.keys()))
         pages[choice]()
 
-if_name_ == "_main_";
+if __name__ == "__main__";
 main()
+
 
 
 
