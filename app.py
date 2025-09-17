@@ -172,7 +172,7 @@ def show_login():
         if LOTTIE_AVAILABLE:
             lottie = load_lottie_url("https://assets4.lottiefiles.com/packages/lf20_jcikwtux.json")  # sample
             if lottie:
-                st_lottie(lottie, height=520)
+                st_lottie(lottie, height=500)
         else:
             st.info("Lottie not available. Install `streamlit-lottie` to show animations.")
     st.markdown("</div>", unsafe_allow_html=True)
@@ -305,6 +305,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
