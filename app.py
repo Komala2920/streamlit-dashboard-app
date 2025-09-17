@@ -242,6 +242,11 @@ def show_dashboard():
     st.altair_chart(pie, use_container_width=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
+    # Replace with your Power BI embedded link
+    powerbi_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"
+
+    components.iframe(powerbi_url, width=900, height=600)
+
 def show_profile():
     st.markdown("<div class='app-container'>", unsafe_allow_html=True)
     st.title("Profile")
@@ -328,4 +333,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
