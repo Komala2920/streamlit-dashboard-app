@@ -279,7 +279,7 @@ def main():
     with st.container():
         cols = st.columns([1, 4, 2])
         with cols[0]:
-            st.markdown("<center><h1 style='margin:25px 0; color:#0b56ff;'>GlobalBalance</h1></center>", unsafe_allow_html=True)
+            st.markdown("<h1 style='margin:25px 0; color:#0b56ff;'>Global Balance</h1>", unsafe_allow_html=True)
         
         with cols[2]:
             if st.session_state.logged_in:
@@ -305,6 +305,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
