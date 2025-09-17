@@ -304,7 +304,8 @@ def main():
         pages[choice]()
 
 if __name__ == "__main__":
-main()
+    main()
+
 
 
 
