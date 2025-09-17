@@ -76,7 +76,7 @@ def home():
 def dashboard():
     st.markdown("<div class='main-title'>📊 Dashboard</div>", unsafe_allow_html=True)
     st.write("Here is your embedded Power BI dashboard:")
-    powerbi_url = "https://app.powerbi.com/groups/me/reports/4d41c1bc-17bb-491e-8da8-861aaede731f/24434bd2ed4071702132?redirectedFromSignup=1&experience=power-bi"  # Replace with your public link
+    powerbi_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"  # Replace with your public link
     st.components.v1.iframe(powerbi_url, width=1200, height=700, scrolling=True)
 
 def profile():
@@ -138,3 +138,4 @@ else:
         st.session_state.logged_in = False
         st.session_state.username = ""
         st.success("✅ Logged out successfully")
+
