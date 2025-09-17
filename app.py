@@ -317,11 +317,12 @@ def main():
         if LOTTIE_AVAILABLE:
             lottie = load_lottie_url("https://assets1.lottiefiles.com/packages/lf20_touohxv0.json")
             if lottie:
-                st_lottie(lottie, height=120)
+                st_lottie(lottie, height=150)
         pages[choice]()
 
 if __name__ == "__main__":
     main()
+
 
 
 
