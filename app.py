@@ -277,7 +277,7 @@ def main():
 
     # top navigation
     with st.container():
-        cols = st.columns([1, 2, 2])
+        cols = st.columns([1, 4, 2])
         with cols[0]:
             st.markdown("<h1 style='margin:25px 0; color:#0b56ff;'>Global Balance</h1>", unsafe_allow_html=True)
         
@@ -305,6 +305,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
