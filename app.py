@@ -285,17 +285,17 @@ def main():
 
     # top navigation
     with st.container():
-        cols = st.columns([1, 6, 2])
+        cols = st.columns([1, 4, 2])
         with cols[0]:
-            st.markdown("<h3 style='margin:100px 0; color:#0b56ff;'>Global Balance</h3>", unsafe_allow_html=True)
-        # removed the st.markdown("") that created the white bar
+            st.markdown("<h1 style='margin:25px 0; color:#0b56ff;'>Global Balance</h1>", unsafe_allow_html=True)
+       """ # removed the st.markdown("") that created the white bar
         with cols[2]:
             if st.session_state.logged_in:
                 st.markdown(f"<div style='text-align:right'><small>Signed in as <strong>{st.session_state.user_email}</strong></small></div>", unsafe_allow_html=True)
                 if st.button("Logout"):
                     st.session_state.logged_in = False
                     st.session_state.user_email = ""
-                    st.experimental_rerun()
+                    st.experimental_rerun()"""
 
     # select page
     if not st.session_state.logged_in:
@@ -313,5 +313,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
