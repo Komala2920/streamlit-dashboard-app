@@ -94,13 +94,13 @@ def local_css():
         """
         <style>
         /* Container */
-        .app-container {
+        """.app-container {
             border-radius: 16px;
             padding: 28px;
             background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(245,250,255,0.9));
             box-shadow: 0 6px 18px rgba(8,40,80,0.06);
             animation: fadeIn 1.9s ease;
-        }
+        }"""
 
         /* Page fade-in */
         @keyframes fadeIn {
@@ -313,6 +313,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
