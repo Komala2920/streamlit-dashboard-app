@@ -193,7 +193,7 @@ def show_login():
 def show_home():
     st.markdown("<div class='app-container'>", unsafe_allow_html=True)
     st.title("Home")
-    st.write("Welcome to your dashboard — clean, minimal, blue/white theme.")
+    st.write("👋 Welcome to Global Balance!")
     # small quick statistics demo
     sample = pd.DataFrame({
         "category": ["A", "B", "C", "D"],
@@ -305,6 +305,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
