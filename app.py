@@ -243,9 +243,8 @@ def show_dashboard():
     st.markdown("</div>", unsafe_allow_html=True)
 
     # Replace with your Power BI embedded link
-    powerbi_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"
+    <iframe width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9" frameborder="0" allowFullScreen="true"></iframe>
 
-    components.iframe(powerbi_url, width=900, height=600)
 
 def show_profile():
     st.markdown("<div class='app-container'>", unsafe_allow_html=True)
@@ -333,5 +332,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
