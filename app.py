@@ -99,7 +99,7 @@ def local_css():
             padding: 28px;
             background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(245,250,255,0.9));
             box-shadow: 0 6px 18px rgba(8,40,80,0.06);
-            animation: fadeIn 0.6s ease;
+            animation: fadeIn 1.9s ease;
         }
 
         /* Page fade-in */
@@ -180,7 +180,7 @@ def show_login():
         if LOTTIE_AVAILABLE:
             lottie = load_lottie_url("https://assets4.lottiefiles.com/packages/lf20_jcikwtux.json")  # sample
             if lottie:
-                st_lottie(lottie, height=220)
+                st_lottie(lottie, height=520)
         else:
             st.info("Lottie not available. Install `streamlit-lottie` to show animations.")
     st.markdown("</div>", unsafe_allow_html=True)
@@ -290,7 +290,7 @@ def main():
     with st.container():
         cols = st.columns([1, 4, 2])
         with cols[0]:
-            st.markdown("<h3 style='margin:6px 0; color:#0b66ff;'>Global Balance</h3>", unsafe_allow_html=True)
+            st.markdown("<h3 style='margin:25px 0; color:#0b56ff;'>Global Balance</h3>", unsafe_allow_html=True)
         with cols[1]:
             st.markdown("")  # spacer
         with cols[2]:
@@ -318,6 +318,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
