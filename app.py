@@ -1,141 +1,330 @@
+# app.py
 import streamlit as st
 import sqlite3
+import hashlib
+import json
+from pathlib import Path
+import pandas as pd
+import altair as alt
 
-# ---------------------- DATABASE ---------------------- #
+# Optional: Lottie. If not installed, the code falls back gracefully.
+try:
+    from streamlit_lottie import st_lottie
+    LOTTIE_AVAILABLE = True
+except Exception:
+    LOTTIE_AVAILABLE = False
+
+DB_PATH = "app_data.db"
+
+# -------------------------
+# Database helpers
+# -------------------------
 def init_db():
-    conn = sqlite3.connect("users.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, password TEXT)")
-    c.execute("CREATE TABLE IF NOT EXISTS feedback (username TEXT, message TEXT)")
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE,
+            name TEXT,
+            password_hash TEXT
+        )
+    """)
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS feedback (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_email TEXT,
+            message TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
     conn.commit()
     conn.close()
 
-def add_user(username, password):
-    conn = sqlite3.connect("users.db")
+def get_db_conn():
+    return sqlite3.connect(DB_PATH, check_same_thread=False)
+
+def hash_password(password: str) -> str:
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def create_user(email, name, password):
+    conn = get_db_conn()
     c = conn.cursor()
-    c.execute("INSERT INTO users VALUES (?, ?)", (username, password))
+    try:
+        c.execute("INSERT INTO users (email, name, password_hash) VALUES (?, ?, ?)",
+                  (email, name, hash_password(password)))
+        conn.commit()
+        return True, "User created"
+    except sqlite3.IntegrityError:
+        return False, "Email already registered"
+    finally:
+        conn.close()
+
+def verify_user(email, password):
+    conn = get_db_conn()
+    c = conn.cursor()
+    c.execute("SELECT password_hash, name FROM users WHERE email = ?", (email,))
+    row = c.fetchone()
+    conn.close()
+    if row:
+        stored_hash, name = row
+        return stored_hash == hash_password(password), name
+    return False, None
+
+def store_feedback(user_email, message):
+    conn = get_db_conn()
+    c = conn.cursor()
+    c.execute("INSERT INTO feedback (user_email, message) VALUES (?, ?)", (user_email, message))
     conn.commit()
     conn.close()
 
-def check_user(username, password):
-    conn = sqlite3.connect("users.db")
+def get_feedbacks(limit=100):
+    conn = get_db_conn()
     c = conn.cursor()
-    c.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
-    data = c.fetchone()
+    c.execute("SELECT user_email, message, created_at FROM feedback ORDER BY created_at DESC LIMIT ?", (limit,))
+    rows = c.fetchall()
     conn.close()
-    return data
+    return rows
 
-def add_feedback(username, message):
-    conn = sqlite3.connect("users.db")
-    c = conn.cursor()
-    c.execute("INSERT INTO feedback VALUES (?, ?)", (username, message))
-    conn.commit()
-    conn.close()
+# -------------------------
+# UI helpers: CSS & Lottie
+# -------------------------
+def local_css():
+    st.markdown(
+        """
+        <style>
+        /* Container */
+        .app-container {
+            border-radius: 16px;
+            padding: 28px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(245,250,255,0.9));
+            box-shadow: 0 6px 18px rgba(8,40,80,0.06);
+            animation: fadeIn 0.6s ease;
+        }
 
-# Initialize database
-init_db()
+        /* Page fade-in */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-# ---------------------- CUSTOM CSS ---------------------- #
-st.markdown("""
-    <style>
-    body {
-        background-color: #f4f6f9;
-        font-family: "Segoe UI", sans-serif;
-    }
-    .main-title {
-        color: #2c3e50;
-        text-align: center;
-        font-size: 32px;
-        margin-bottom: 20px;
-    }
-    .sidebar .sidebar-content {
-        background-color: #ecf0f1;
-    }
-    .stButton>button {
-        background-color: #3498db;
-        color: white;
-        border-radius: 10px;
-        padding: 8px 20px;
-    }
-    .stButton>button:hover {
-        background-color: #2980b9;
-    }
-    </style>
-""", unsafe_allow_html=True)
+        /* Buttons */
+        .stButton>button {
+            border-radius: 10px;
+            padding: 10px 16px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            background: linear-gradient(90deg,#1376ff,#1ea1ff);
+            color: white;
+            border: none;
+            box-shadow: 0 6px 14px rgba(20,80,200,0.12);
+        }
+        .stButton>button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 26px rgba(20,80,200,0.14);
+        }
 
-# ---------------------- SESSION ---------------------- #
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
-    st.session_state.username = ""
+        /* Inputs */
+        input, textarea {
+            border-radius: 8px !important;
+        }
 
-# ---------------------- PAGES ---------------------- #
-def home():
-    st.markdown("<div class='main-title'>🏠 Home</div>", unsafe_allow_html=True)
-    st.write("Welcome to the **Streamlit Web App** with Power BI integration.")
+        /* Layout tweaks for top nav */
+        .top-nav {
+            display:flex;
+            gap:12px;
+            align-items:center;
+            justify-content:flex-end;
+            margin-bottom: 8px;
+        }
 
-def dashboard():
-    st.markdown("<div class='main-title'>📊 Dashboard</div>", unsafe_allow_html=True)
-    st.write("Here is your embedded Power BI dashboard:")
-    powerbi_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"  # Replace with your public link
-    st.components.v1.iframe(powerbi_url, width=1200, height=700, scrolling=True)
+        /* small profile area */
+        .profile-box {
+            border-radius: 12px;
+            padding: 10px;
+            background: rgba(0,90,200,0.04);
+        }
+        </style>
+        """, unsafe_allow_html=True
+    )
 
-def profile():
-    st.markdown("<div class='main-title'>👤 Profile</div>", unsafe_allow_html=True)
-    st.write(f"Username: **{st.session_state.username}**")
+# load lottie from URL helper
+def load_lottie_url(url: str):
+    import requests
+    try:
+        r = requests.get(url)
+        if r.status_code == 200:
+            return r.json()
+    except Exception:
+        return None
 
-def feedback():
-    st.markdown("<div class='main-title'>💬 Feedback</div>", unsafe_allow_html=True)
-    msg = st.text_area("Enter your feedback:")
-    if st.button("Submit Feedback"):
-        if msg.strip() != "":
-            add_feedback(st.session_state.username, msg)
-            st.success("✅ Feedback submitted successfully!")
+# -------------------------
+# App pages
+# -------------------------
+def show_login():
+    st.markdown("<div class='app-container'>", unsafe_allow_html=True)
+    st.subheader("Login")
+    cols = st.columns([1, 1])
+    with cols[0]:
+        email = st.text_input("Email")
+        password = st.text_input("Password", type="password")
+        if st.button("Login"):
+            ok, name = verify_user(email, password)
+            if ok:
+                st.success("Welcome back, " + (name or email))
+                st.session_state.logged_in = True
+                st.session_state.user_email = email
+            else:
+                st.error("Invalid credentials")
+    with cols[1]:
+        # Lottie animation or fallback image
+        if LOTTIE_AVAILABLE:
+            lottie = load_lottie_url("https://assets4.lottiefiles.com/packages/lf20_jcikwtux.json")  # sample
+            if lottie:
+                st_lottie(lottie, height=220)
         else:
-            st.error("Feedback cannot be empty!")
+            st.info("Lottie not available. Install `streamlit-lottie` to show animations.")
+    st.markdown("</div>", unsafe_allow_html=True)
 
-def login():
-    st.markdown("<div class='main-title'>🔑 Login</div>", unsafe_allow_html=True)
-    user = st.text_input("Username")
-    pw = st.text_input("Password", type="password")
-    if st.button("Login"):
-        if check_user(user, pw):
-            st.session_state.logged_in = True
-            st.session_state.username = user
-            st.success("Login successful ✅")
-        else:
-            st.error("Invalid username or password")
+    st.markdown("---")
+    st.info("Don't have an account? Sign up below.")
+    with st.expander("Sign up"):
+        name = st.text_input("Full name", key="signup_name")
+        email_s = st.text_input("Email", key="signup_email")
+        password_s = st.text_input("Password", type="password", key="signup_password")
+        if st.button("Create account"):
+            ok, msg = create_user(email_s, name, password_s)
+            if ok:
+                st.success("Account created — you can login now.")
+            else:
+                st.error(msg)
 
-def signup():
-    st.markdown("<div class='main-title'>📝 Sign Up</div>", unsafe_allow_html=True)
-    user = st.text_input("Choose a Username")
-    pw = st.text_input("Choose a Password", type="password")
-    if st.button("Sign Up"):
-        try:
-            add_user(user, pw)
-            st.success("✅ Account created! Please login now.")
-        except:
-            st.error("⚠️ User already exists, try another username.")
+def show_home():
+    st.markdown("<div class='app-container'>", unsafe_allow_html=True)
+    st.title("Home")
+    st.write("Welcome to your dashboard — clean, minimal, blue/white theme.")
+    # small quick statistics demo
+    sample = pd.DataFrame({
+        "category": ["A", "B", "C", "D"],
+        "value": [45, 28, 90, 55]
+    })
+    st.subheader("Quick Overview")
+    bar = alt.Chart(sample).mark_bar().encode(
+        x="category",
+        y="value"
+    ).properties(height=240)
+    st.altair_chart(bar, use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
-# ---------------------- NAVIGATION ---------------------- #
-if not st.session_state.logged_in:
-    menu = st.sidebar.radio("Navigation", ["Login", "Sign Up"])
-    if menu == "Login":
-        login()
+def show_dashboard():
+    st.markdown("<div class='app-container'>", unsafe_allow_html=True)
+    st.title("Dashboard")
+    st.write("Charts and analytics inspired by the illustration.")
+    # generate a time series sample
+    dates = pd.date_range(end=pd.Timestamp.today(), periods=30)
+    df = pd.DataFrame({
+        "date": dates,
+        "sales": (pd.Series(range(30)) * 100 + pd.Series(pd.np.random.randint(-50, 80, size=30))).cumsum()
+    })
+    line = alt.Chart(df).mark_line(point=True).encode(
+        x="date:T",
+        y="sales:Q",
+        tooltip=["date:T", "sales:Q"]
+    ).properties(height=300)
+    st.altair_chart(line, use_container_width=True)
+
+    # Pie (donut) using Altair (approx)
+    st.subheader("Category share")
+    cat_df = pd.DataFrame({"category": ["X", "Y", "Z"], "pct": [40, 35, 25]})
+    pie = alt.Chart(cat_df).mark_arc(innerRadius=50).encode(
+        theta=alt.Theta(field="pct", type="quantitative"),
+        color=alt.Color(field="category", type="nominal")
+    ).properties(height=260)
+    st.altair_chart(pie, use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+def show_profile():
+    st.markdown("<div class='app-container'>", unsafe_allow_html=True)
+    st.title("Profile")
+    email = st.session_state.get("user_email", "")
+    conn = get_db_conn()
+    c = conn.cursor()
+    c.execute("SELECT name, email FROM users WHERE email = ?", (email,))
+    row = c.fetchone()
+    conn.close()
+    if row:
+        name, email = row
+        st.markdown(f"<div class='profile-box'><strong>{name}</strong><br><small>{email}</small></div>", unsafe_allow_html=True)
     else:
-        signup()
-else:
-    menu = st.sidebar.radio("Navigation", ["Home", "Dashboard", "Profile", "Feedback", "Logout"])
+        st.write("No profile info found.")
+    st.markdown("</div>", unsafe_allow_html=True)
 
-    if menu == "Home":
-        home()
-    elif menu == "Dashboard":
-        dashboard()
-    elif menu == "Profile":
-        profile()
-    elif menu == "Feedback":
-        feedback()
-    elif menu == "Logout":
+def show_feedback():
+    st.markdown("<div class='app-container'>", unsafe_allow_html=True)
+    st.title("Feedback")
+    email = st.session_state.get("user_email", "")
+    message = st.text_area("Your feedback", height=140)
+    if st.button("Send feedback"):
+        if not email:
+            st.error("Please login to send feedback")
+        elif not message.strip():
+            st.error("Please enter a message")
+        else:
+            store_feedback(email, message)
+            st.success("Thanks! Your feedback was recorded.")
+    st.markdown("### Recent feedback")
+    rows = get_feedbacks(10)
+    for r in rows:
+        st.write(f"**{r[0]}** — {r[2]}")
+        st.write(r[1])
+        st.markdown("---")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# -------------------------
+# Top-level layout & nav
+# -------------------------
+def main():
+    init_db()
+    st.set_page_config(page_title="BlueDash", page_icon="💠", layout="wide")
+
+    local_css()
+
+    if "logged_in" not in st.session_state:
         st.session_state.logged_in = False
-        st.session_state.username = ""
-        st.success("✅ Logged out successfully")
+        st.session_state.user_email = ""
 
+    # top navigation
+    with st.container():
+        cols = st.columns([1, 4, 2])
+        with cols[0]:
+            st.markdown("<h3 style='margin:6px 0; color:#0b66ff;'>BlueDash</h3>", unsafe_allow_html=True)
+        with cols[1]:
+            st.markdown("")  # spacer
+        with cols[2]:
+            if st.session_state.logged_in:
+                st.markdown(f"<div style='text-align:right'><small>Signed in as <strong>{st.session_state.user_email}</strong></small></div>", unsafe_allow_html=True)
+                if st.button("Logout"):
+                    st.session_state.logged_in = False
+                    st.session_state.user_email = ""
+                    st.experimental_rerun()
+
+    # select page
+    if not st.session_state.logged_in:
+        show_login()
+    else:
+        pages = {
+            "Home": show_home,
+            "Dashboard": show_dashboard,
+            "Profile": show_profile,
+            "Feedback": show_feedback
+        }
+        st.sidebar.title("Navigation")
+        choice = st.sidebar.radio("Go to", list(pages.keys()))
+        # small animated Lottie in sidebar if available
+        if LOTTIE_AVAILABLE:
+            lottie = load_lottie_url("https://assets1.lottiefiles.com/packages/lf20_touohxv0.json")
+            if lottie:
+                st_lottie(lottie, height=120)
+        pages[choice]()
+
+if __name__ == "__main__":
+    main()
