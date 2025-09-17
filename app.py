@@ -284,7 +284,7 @@ def show_feedback():
 # -------------------------
 def main():
     init_db()
-    st.set_page_config(page_title="BlueDash", page_icon="💠", layout="wide")
+    st.set_page_config(page_title="Global Balance", page_icon="💠", layout="wide")
 
     local_css()
 
@@ -296,7 +296,7 @@ def main():
     with st.container():
         cols = st.columns([1, 4, 2])
         with cols[0]:
-            st.markdown("<h3 style='margin:6px 0; color:#0b66ff;'>BlueDash</h3>", unsafe_allow_html=True)
+            st.markdown("<h3 style='margin:6px 0; color:#0b66ff;'>Global Balance</h3>", unsafe_allow_html=True)
         with cols[1]:
             st.markdown("")  # spacer
         with cols[2]:
@@ -328,3 +328,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
