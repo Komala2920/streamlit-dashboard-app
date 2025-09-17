@@ -219,32 +219,22 @@ def show_dashboard():
     st.markdown("<div class='app-container'>", unsafe_allow_html=True)
     st.title("Dashboard")
     st.write("Charts and analytics inspired by the illustration.")
-    # generate a time series sample
-    dates = pd.date_range(end=pd.Timestamp.today(), periods=30)
-    df = pd.DataFrame({
-        "date": dates,
-        "sales": (pd.Series(range(30)) * 100 + pd.Series(pd.np.random.randint(-50, 80, size=30))).cumsum()
-    })
-    line = alt.Chart(df).mark_line(point=True).encode(
-        x="date:T",
-        y="sales:Q",
-        tooltip=["date:T", "sales:Q"]
-    ).properties(height=300)
-    st.altair_chart(line, use_container_width=True)
 
-    # Pie (donut) using Altair (approx)
-    st.subheader("Category share")
-    cat_df = pd.DataFrame({"category": ["X", "Y", "Z"], "pct": [40, 35, 25]})
-    pie = alt.Chart(cat_df).mark_arc(innerRadius=50).encode(
-        theta=alt.Theta(field="pct", type="quantitative"),
-        color=alt.Color(field="category", type="nominal")
-    ).properties(height=260)
-    st.altair_chart(pie, use_container_width=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+    # --- Power BI Embed ---
+    st.subheader("📊 Power BI Dashboard")
+    powerbi_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"  # Replace with your published link
 
-    # Replace with your Power BI embedded link
-    <iframe width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9" frameborder="0" allowFullScreen="true"></iframe>
+    st.markdown(f"""
+        <iframe title="PowerBI Dashboard"
+            width="100%" height="600"
+            src="{powerbi_url}"
+            frameborder="0" allowFullScreen="true"></iframe>
+    """, unsafe_allow_html=True)
 
+    st.markdown("---")
+
+
+    
 
 def show_profile():
     st.markdown("<div class='app-container'>", unsafe_allow_html=True)
@@ -332,6 +322,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
