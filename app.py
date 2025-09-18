@@ -1,7 +1,7 @@
 import streamlit as st
 import sqlite3
 import base64
-import streamlit.components.v1 as components   # 👈 For Power BI
+import streamlit.components.v1 as components   # For Power BI
 
 # ========= Background Setup =========
 def get_base64(bin_file):
@@ -89,16 +89,17 @@ choice = st.session_state["page"]
 # ========= Authentication =========
 if choice == "Sign Up":
     st.subheader("🔐 Create an Account")
-    new_name = st.text_input("Full Name", key="signup_name")   # 👈 Added Full Name
+    new_name = st.text_input("Full Name", key="signup_name")   
     new_user = st.text_input("Username", key="signup_user")
     new_email = st.text_input("Email", key="signup_email")
     new_pass = st.text_input("Password", type="password", key="signup_pass")
+
     if st.button("Sign Up", key="signup_btn"):
         try:
             c.execute("INSERT INTO users (username, password, email, fullname) VALUES (?,?,?,?)",
                       (new_user, new_pass, new_email, new_name))
             conn.commit()
-            st.success("✅ Account created successfully! Go to Login.")
+            st.success("✅ Account created successfully! Please go to Login.")
         except:
             st.warning("⚠ Username already exists.")
 
@@ -106,14 +107,16 @@ elif choice == "Login":
     st.subheader("🔑 Login to Global Balance")
     user = st.text_input("Username", key="login_user")
     passwd = st.text_input("Password", type="password", key="login_pass")
+
     if st.button("Login", key="login_btn"):
         c.execute("SELECT * FROM users WHERE username=? AND password=?", (user, passwd))
         data = c.fetchone()
         if data:
             st.success(f"🎉 Welcome {user}!")
-            st.session_state["user"] = user
-            st.session_state["email"] = data[2] if len(data) >= 3 else "Not Provided"
-            st.session_state["fullname"] = data[3] if len(data) >= 4 else "Not Provided"
+            st.session_state["user"] = data[0]        # username
+            st.session_state["password"] = data[1]    # password (optional, can remove)
+            st.session_state["email"] = data[2] if data[2] else "Not Provided"
+            st.session_state["fullname"] = data[3] if data[3] else "Not Provided"
             st.session_state["page"] = "Home"
         else:
             st.error("❌ Invalid credentials.")
@@ -151,7 +154,7 @@ elif choice == "Profile":
     if "user" in st.session_state:
         col1, col2 = st.columns([1, 3])
         with col1:
-            st.image("profile.png", width=150)  # 👉 Replace with your own profile picture file
+            st.image("profile.png", width=150)  
         with col2:
             st.markdown(f"""
             **Full Name:** {st.session_state.get('fullname', 'Not Provided')}  
