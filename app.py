@@ -1,6 +1,8 @@
 import streamlit as st
 import sqlite3
 import base64
+import pandas as pd
+import numpy as np
 
 # ========= Background Setup =========
 def get_base64(bin_file):
@@ -28,17 +30,27 @@ def set_background(png_file):
         border-radius: 15px;
         color: white;
     }}
-    button, .stButton button {{
+    .nav-container {{
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 25px;
+    }}
+    .nav-button {{
         background: linear-gradient(90deg, #00c6ff, #0072ff);
         color: white;
-        border-radius: 12px;
-        padding: 10px 20px;
+        border-radius: 8px;
+        padding: 10px 18px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s ease;
         border: none;
-        font-size: 16px;
     }}
-    button:hover {{
+    .nav-button:hover {{
         background: linear-gradient(90deg, #0072ff, #00c6ff);
-        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0px 4px 12px rgba(0,0,0,0.4);
     }}
     </style>
     """
@@ -57,9 +69,20 @@ set_background("background.jpg")
 # ========= App Title =========
 st.markdown("<h1 style='text-align: center; color: cyan;'>🌍 Global Balance</h1>", unsafe_allow_html=True)
 
-# ========= Sidebar Navigation =========
-menu = ["Login", "Sign Up", "Home", "Dashboard", "Profile", "Feedback", "Logout"]
-choice = st.sidebar.radio("Navigation", menu)
+# ========= Navigation Buttons =========
+if "page" not in st.session_state:
+    st.session_state["page"] = "Login"
+
+nav_items = ["Login", "Sign Up", "Home", "Dashboard", "Profile", "Feedback", "Logout"]
+
+st.markdown("<div class='nav-container'>", unsafe_allow_html=True)
+cols = st.columns(len(nav_items))
+for i, item in enumerate(nav_items):
+    if cols[i].button(item):
+        st.session_state["page"] = item
+st.markdown("</div>", unsafe_allow_html=True)
+
+choice = st.session_state["page"]
 
 # ========= Authentication =========
 if choice == "Sign Up":
@@ -95,10 +118,6 @@ elif choice == "Home":
 elif choice == "Dashboard":
     st.subheader("📊 Dashboard")
     st.write("Interactive data visualization will go here.")
-    # Example chart
-    import pandas as pd
-    import numpy as np
-    import matplotlib.pyplot as plt
     df = pd.DataFrame(np.random.randn(10, 2), columns=["Balance A", "Balance B"])
     st.line_chart(df)
 
