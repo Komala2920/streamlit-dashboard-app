@@ -78,7 +78,7 @@ nav_items = ["Login", "Sign Up", "Home", "Dashboard", "Profile", "Feedback", "Lo
 st.markdown("<div class='nav-container'>", unsafe_allow_html=True)
 cols = st.columns(len(nav_items))
 for i, item in enumerate(nav_items):
-    if cols[i].button(item):
+    if cols[i].button(item, key=f"nav_{item}"):   # 👈 Unique key added
         st.session_state["page"] = item
 st.markdown("</div>", unsafe_allow_html=True)
 
@@ -87,9 +87,9 @@ choice = st.session_state["page"]
 # ========= Authentication =========
 if choice == "Sign Up":
     st.subheader("🔐 Create an Account")
-    new_user = st.text_input("Username")
-    new_pass = st.text_input("Password", type="password")
-    if st.button("Sign Up"):
+    new_user = st.text_input("Username", key="signup_user")
+    new_pass = st.text_input("Password", type="password", key="signup_pass")
+    if st.button("Sign Up", key="signup_btn"):   # 👈 Unique key
         try:
             c.execute("INSERT INTO users (username, password) VALUES (?,?)", (new_user, new_pass))
             conn.commit()
@@ -99,9 +99,9 @@ if choice == "Sign Up":
 
 elif choice == "Login":
     st.subheader("🔑 Login to Global Balance")
-    user = st.text_input("Username")
-    passwd = st.text_input("Password", type="password")
-    if st.button("Login"):
+    user = st.text_input("Username", key="login_user")
+    passwd = st.text_input("Password", type="password", key="login_pass")
+    if st.button("Login", key="login_btn"):   # 👈 Unique key
         c.execute("SELECT * FROM users WHERE username=? AND password=?", (user, passwd))
         data = c.fetchone()
         if data:
@@ -130,8 +130,8 @@ elif choice == "Profile":
 
 elif choice == "Feedback":
     st.subheader("💬 Feedback")
-    feedback = st.text_area("Share your feedback:")
-    if st.button("Submit Feedback"):
+    feedback = st.text_area("Share your feedback:", key="feedback_text")
+    if st.button("Submit Feedback", key="feedback_btn"):   # 👈 Unique key
         st.success("🙌 Thank you for your feedback!")
 
 elif choice == "Logout":
