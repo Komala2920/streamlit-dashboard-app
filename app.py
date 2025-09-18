@@ -45,7 +45,7 @@ def check_hashes(password, hashed_text):
 # Background setup (CSS)
 # ---------------------------
 def add_bg_from_local(image_file):
-    with open(image_file, "rb") as f:
+    with open(image_file, "C:\Users\91995\Downloads\cbcb74d7c06b56b3249ef31f5aa9e6a2.jpg") as f:
         data = f.read()
     import base64
     b64 = base64.b64encode(data).decode()
@@ -126,7 +126,7 @@ def feedback():
 def main():
     st.set_page_config(page_title="Global Balance", layout="wide")
 
-    add_bg_from_local("cbcb74d7c06b56b3249ef31f5aa9e6a2.jpg")  # background image
+    add_bg_from_local("C:\Users\91995\Downloads\cbcb74d7c06b56b3249ef31f5aa9e6a2.jpg")  # background image
 
     create_usertable()
 
@@ -179,3 +179,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
