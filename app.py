@@ -2,6 +2,8 @@ import streamlit as st
 import sqlite3
 import base64
 import streamlit.components.v1 as components   # For Power BI
+import requests
+from streamlit_lottie import st_lottie   # ✅ New Import
 
 # ========= Background Setup =========
 def get_base64(bin_file):
@@ -50,6 +52,13 @@ def set_page_theme(color1, color2):
     </style>
     """
     st.markdown(theme_css, unsafe_allow_html=True)
+
+# ========= Lottie Loader =========
+def load_lottieurl(url: str):
+    r = requests.get(url)
+    if r.status_code != 200:
+        return None
+    return r.json()
 
 # ========= Database Setup =========
 conn = sqlite3.connect('users.db')
@@ -152,24 +161,35 @@ if choice == "Sign Up":
 
 elif choice == "Login":
     st.subheader("🔑 Login to Global Balance")
-    user = st.text_input("Username", key="login_user")
-    passwd = st.text_input("Password", type="password", key="login_pass")
 
-    if st.button("Login", key="login_btn"):
-        c.execute("SELECT * FROM users WHERE username=? AND password=?", (user, passwd))
-        data = c.fetchone()
-        if data:
-            st.success(f"🎉 Welcome {user}!")
-            st.session_state["user"] = data[0]
-            st.session_state["password"] = data[1]
-            st.session_state["email"] = data[2] if len(data) > 2 and data[2] else "Not Provided"
-            st.session_state["fullname"] = data[3] if len(data) > 3 and data[3] else "Not Provided"
-            st.session_state["page"] = "Home"
+    # --- Add Lottie animation about global income inequality ---
+    lottie_url = "https://assets2.lottiefiles.com/packages/lf20_totrpclr.json"
+    lottie_json = load_lottieurl(lottie_url)
+
+    col1, col2 = st.columns([2, 3])
+    with col1:
+        if lottie_json:
+            st_lottie(lottie_json, height=280, key="income_inequality")
         else:
-            st.error("❌ Invalid credentials.")
+            st.write("🌍")
 
-# ========= Pages =========
-# ========= Pages =========
+    with col2:
+        user = st.text_input("Username", key="login_user")
+        passwd = st.text_input("Password", type="password", key="login_pass")
+
+        if st.button("Login", key="login_btn"):
+            c.execute("SELECT * FROM users WHERE username=? AND password=?", (user, passwd))
+            data = c.fetchone()
+            if data:
+                st.success(f"🎉 Welcome {user}!")
+                st.session_state["user"] = data[0]
+                st.session_state["password"] = data[1]
+                st.session_state["email"] = data[2] if len(data) > 2 and data[2] else "Not Provided"
+                st.session_state["fullname"] = data[3] if len(data) > 3 and data[3] else "Not Provided"
+                st.session_state["page"] = "Home"
+            else:
+                st.error("❌ Invalid credentials.")
+
 # ========= Pages =========
 elif choice == "Home":
     set_page_theme("#FFFFFF", "#E8F5E9")  # White + Mint Green
@@ -218,7 +238,6 @@ elif choice == "Feedback":
     feedback = st.text_area("Share your feedback:", key="feedback_text")
     if st.button("Submit Feedback", key="feedback_btn"):
         st.success("🙌 Thank you for your feedback!")
-
 
 elif choice == "Logout":
     if "user" in st.session_state:
