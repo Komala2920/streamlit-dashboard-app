@@ -13,7 +13,7 @@ def set_background(png_file):
     page_bg_img = f"""
     <style>
     [data-testid="stAppViewContainer"] {{
-        background-image: url("C:\Users\prasa\Downloads\WhatsApp Image 2025-09-18 at 15.12.31_f0b40bae.jpg");
+        background-image: url("data:image/jpg;base64,{bin_str}");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
