@@ -3,6 +3,7 @@ import sqlite3
 import hashlib
 import pandas as pd
 import altair as alt
+import base64
 from pathlib import Path
 
 # ---------------------------
@@ -45,9 +46,8 @@ def check_hashes(password, hashed_text):
 # Background setup (CSS)
 # ---------------------------
 def add_bg_from_local(image_file):
-    with open(image_file, r"C:\Users\91995\Downloads\cbcb74d7c06b56b3249ef31f5aa9e6a2.jpg") as f:
+    with open(image_file, "rb") as f:
         data = f.read()
-    import base64
     b64 = base64.b64encode(data).decode()
     page_bg_img = f"""
     <style>
@@ -75,7 +75,7 @@ def show_dashboard():
 
     # --- Power BI Embed ---
     st.subheader("Power BI Dashboard")
-    powerbi_url = "https://app.powerbi.com/view?r=YOUR_EMBED_URL"  # Replace with your link
+    powerbi_url = "https://app.powerbi.com/groups/me/reports/4d41c1bc-17bb-491e-8da8-861aaede731f/24434bd2ed4071702132?redirectedFromSignup=1&experience=power-bi"  # Replace with your link
 
     st.markdown(f"""
         <iframe title="PowerBI Dashboard"
@@ -91,7 +91,7 @@ def show_dashboard():
     df = pd.DataFrame({
         "date": dates,
         "sales": (pd.Series(range(30)) * 100 +
-                  pd.Series(pd.array(pd.Series(range(30)).sample(frac=1).reset_index(drop=True)))).cumsum()
+                  pd.Series(pd.Series(range(30)).sample(frac=1).reset_index(drop=True))).cumsum()
     })
 
     line = alt.Chart(df).mark_line(point=True).encode(
@@ -126,7 +126,7 @@ def feedback():
 def main():
     st.set_page_config(page_title="Global Balance", layout="wide")
 
-    add_bg_from_local(r"C:\Users\91995\Downloads\cbcb74d7c06b56b3249ef31f5aa9e6a2.jpg")  # background image
+    add_bg_from_local("cbcb74d7c06b56b3249ef31f5aa9e6a2.jpg")  # background image
 
     create_usertable()
 
@@ -179,6 +179,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
