@@ -121,8 +121,9 @@ elif choice == "Login":
 # ========= Pages =========
 # ========= Pages =========
 # ========= Pages =========
+# ========= Pages =========
 elif choice == "Home":
-    set_page_theme("#fbc2eb", "#fbc2eb")  # Baby pink
+    set_page_theme("#FFB6C1", "#FFE4E1")  # Light pink gradient
     st.subheader("🏠 Home")
     st.markdown("""
     Welcome to **Global Balance** 🌍  
@@ -137,7 +138,7 @@ elif choice == "Home":
     """)
 
 elif choice == "Dashboard":
-    set_page_theme("#f5f5dc", "#f5f5dc")  # Beige
+    set_page_theme("#D2B48C", "#E6D3B3")  # Light taupe gradient
     st.subheader("📊 Dashboard")
     if "user" in st.session_state:
         st.write("Here is your embedded Power BI dashboard:")
@@ -147,7 +148,7 @@ elif choice == "Dashboard":
         st.warning("⚠ Please log in to view the dashboard.")
 
 elif choice == "Profile":
-    set_page_theme("#add8e6", "#add8e6")  # Light blue
+    set_page_theme("#F0F8FF", "#E6F2FA")  # Alice blue gradient
     st.subheader("👤 Profile")
     if "user" in st.session_state:
         col1, col2 = st.columns([1, 3])
@@ -163,12 +164,11 @@ elif choice == "Profile":
         st.warning("⚠ Please log in to view your profile.")
 
 elif choice == "Feedback":
-    set_page_theme("#90ee90", "#90ee90")  # Light green
+    set_page_theme("#98FF98", "#CCFFCC")  # Mint green gradient
     st.subheader("💬 Feedback")
     feedback = st.text_area("Share your feedback:", key="feedback_text")
     if st.button("Submit Feedback", key="feedback_btn"):
         st.success("🙌 Thank you for your feedback!")
-
 
 elif choice == "Logout":
     if "user" in st.session_state:
