@@ -154,9 +154,9 @@ elif choice == "Profile":
             st.image("profile.png", width=150)  # 👉 Replace with your own profile picture file
         with col2:
             st.markdown(f"""
-            **Full Name:** {st.session_state.get('Full Name')}  
-            **Username:** {st.session_state['User']}  
-            **Email:** {st.session_state.get('Email')}  
+            **Full Name:** {st.session_state.get('fullname', 'Not Provided')}  
+            **Username:** {st.session_state['user']}  
+            **Email:** {st.session_state.get('email', 'Not Provided')}  
             """)
     else:
         st.warning("⚠ Please log in to view your profile.")
