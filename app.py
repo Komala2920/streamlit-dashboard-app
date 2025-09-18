@@ -29,31 +29,27 @@ def set_background(png_file):
         border-radius: 15px;
         color: white;
     }}
-    .nav-container {{
-        display: flex;
-        justify-content: center;
-        gap: 12px;
-        margin-bottom: 25px;
-    }}
-    .nav-button {{
-        background: linear-gradient(90deg, #00c6ff, #0072ff);
-        color: white;
-        border-radius: 8px;
-        padding: 10px 18px;
-        font-size: 15px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: 0.3s ease;
-        border: none;
-    }}
-    .nav-button:hover {{
-        background: linear-gradient(90deg, #0072ff, #00c6ff);
-        transform: translateY(-2px);
-        box-shadow: 0px 4px 12px rgba(0,0,0,0.4);
-    }}
     </style>
     """
     st.markdown(page_bg_img, unsafe_allow_html=True)
+
+# ========= Page Color Themes =========
+def set_page_theme(color1, color2):
+    theme_css = f"""
+    <style>
+    [data-testid="stAppViewContainer"] {{
+        background: linear-gradient(135deg, {color1}, {color2});
+        background-attachment: fixed;
+    }}
+    [data-testid="stHeader"], [data-testid="stToolbar"] {{
+        background: rgba(0,0,0,0);
+    }}
+    .main {{
+        color: black;
+    }}
+    </style>
+    """
+    st.markdown(theme_css, unsafe_allow_html=True)
 
 # ========= Database Setup =========
 conn = sqlite3.connect('users.db')
@@ -114,8 +110,8 @@ elif choice == "Login":
         data = c.fetchone()
         if data:
             st.success(f"🎉 Welcome {user}!")
-            st.session_state["user"] = data[0]   # username
-            st.session_state["password"] = data[1]  
+            st.session_state["user"] = data[0]
+            st.session_state["password"] = data[1]
             st.session_state["email"] = data[2] if len(data) > 2 and data[2] else "Not Provided"
             st.session_state["fullname"] = data[3] if len(data) > 3 and data[3] else "Not Provided"
             st.session_state["page"] = "Home"
@@ -124,6 +120,7 @@ elif choice == "Login":
 
 # ========= Pages =========
 elif choice == "Home":
+    set_page_theme("#fdfbfb", "#ebedee")  # Soft gray/white gradient
     st.subheader("🏠 Home")
     st.markdown("""
     Welcome to **Global Balance** 🌍  
@@ -135,11 +132,10 @@ elif choice == "Home":
     - 🌐 Global insights  
     - 📈 Interactive reports  
     - 💡 Data-driven decision making  
-
-    👉 Navigate to the **Dashboard** tab to view the live reports.
     """)
 
 elif choice == "Dashboard":
+    set_page_theme("#e0f7fa", "#e0f2f1")  # Light aqua/teal
     st.subheader("📊 Dashboard")
     if "user" in st.session_state:
         st.write("Here is your embedded Power BI dashboard:")
@@ -149,6 +145,7 @@ elif choice == "Dashboard":
         st.warning("⚠ Please log in to view the dashboard.")
 
 elif choice == "Profile":
+    set_page_theme("#fceabb", "#f8b500")  # Light yellow/orange
     st.subheader("👤 Profile")
     if "user" in st.session_state:
         col1, col2 = st.columns([1, 3])
@@ -164,6 +161,7 @@ elif choice == "Profile":
         st.warning("⚠ Please log in to view your profile.")
 
 elif choice == "Feedback":
+    set_page_theme("#e0c3fc", "#8ec5fc")  # Soft purple/blue gradient
     st.subheader("💬 Feedback")
     feedback = st.text_area("Share your feedback:", key="feedback_text")
     if st.button("Submit Feedback", key="feedback_btn"):
