@@ -1,8 +1,6 @@
 import streamlit as st
 import sqlite3
 import base64
-import pandas as pd
-import numpy as np
 import streamlit.components.v1 as components   # 👈 For Power BI
 
 # ========= Background Setup =========
@@ -61,7 +59,7 @@ def set_background(png_file):
 conn = sqlite3.connect('users.db')
 c = conn.cursor()
 c.execute('''CREATE TABLE IF NOT EXISTS users
-             (username TEXT UNIQUE, password TEXT, email TEXT)''')
+             (username TEXT UNIQUE, password TEXT, email TEXT, fullname TEXT)''')
 conn.commit()
 
 # ========= Apply Background =========
@@ -91,12 +89,14 @@ choice = st.session_state["page"]
 # ========= Authentication =========
 if choice == "Sign Up":
     st.subheader("🔐 Create an Account")
+    new_name = st.text_input("Full Name", key="signup_name")   # 👈 Added Full Name
     new_user = st.text_input("Username", key="signup_user")
     new_email = st.text_input("Email", key="signup_email")
     new_pass = st.text_input("Password", type="password", key="signup_pass")
     if st.button("Sign Up", key="signup_btn"):
         try:
-            c.execute("INSERT INTO users (username, password, email) VALUES (?,?,?)", (new_user, new_pass, new_email))
+            c.execute("INSERT INTO users (username, password, email, fullname) VALUES (?,?,?,?)",
+                      (new_user, new_pass, new_email, new_name))
             conn.commit()
             st.success("✅ Account created successfully! Go to Login.")
         except:
@@ -112,11 +112,8 @@ elif choice == "Login":
         if data:
             st.success(f"🎉 Welcome {user}!")
             st.session_state["user"] = user
-            # ✅ Check length before accessing email
-            if len(data) >= 3:
-                st.session_state["email"] = data[2]
-            else:
-                st.session_state["email"] = "Not Provided"
+            st.session_state["email"] = data[2] if len(data) >= 3 else "Not Provided"
+            st.session_state["fullname"] = data[3] if len(data) >= 4 else "Not Provided"
             st.session_state["page"] = "Home"
         else:
             st.error("❌ Invalid credentials.")
@@ -154,6 +151,7 @@ elif choice == "Profile":
     if "user" in st.session_state:
         st.image("profile.png", width=150)  # 👉 Replace with your own profile picture file
         st.markdown(f"""
+        **Full Name:** {st.session_state.get('fullname', 'Not Provided')}  
         **Username:** {st.session_state['user']}  
         **Email:** {st.session_state.get('email', 'Not Provided')}  
         """)
