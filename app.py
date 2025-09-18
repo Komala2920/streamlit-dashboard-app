@@ -113,13 +113,17 @@ elif choice == "Login":
         data = c.fetchone()
         if data:
             st.success(f"🎉 Welcome {user}!")
-            st.session_state["user"] = data[0]        # username
-            st.session_state["password"] = data[1]    # password (optional, can remove)
-            st.session_state["email"] = data[2] if data[2] else "Not Provided"
-            st.session_state["fullname"] = data[3] if data[3] else "Not Provided"
+            st.session_state["user"] = data[0]   # username
+            st.session_state["password"] = data[1]  
+
+            # Safe access with length checks
+            st.session_state["email"] = data[2] if len(data) > 2 and data[2] else "Not Provided"
+            st.session_state["fullname"] = data[3] if len(data) > 3 and data[3] else "Not Provided"
+
             st.session_state["page"] = "Home"
         else:
             st.error("❌ Invalid credentials.")
+
 
 # ========= Pages =========
 elif choice == "Home":
