@@ -131,7 +131,7 @@ elif choice == "Dashboard":
         powerbi_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"
 
         # Embed Power BI Dashboard
-        components.iframe(powerbi_url, width=1000, height=600, scrolling=True)
+        components.iframe(powerbi_url, width=2000, height=900, scrolling=True)
     else:
         st.warning("⚠ Please log in to view the dashboard.")
 
