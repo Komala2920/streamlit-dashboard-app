@@ -52,7 +52,7 @@ c.execute('''CREATE TABLE IF NOT EXISTS users
 conn.commit()
 
 # ========= Apply Background =========
-set_background(r"C:\Users\prasa\Downloads\WhatsApp Image 2025-09-18 at 15.12.31_f0b40bae.jpg")
+set_background("background.jpg")
 
 # ========= App Title =========
 st.markdown("<h1 style='text-align: center; color: cyan;'>🌍 Global Balance</h1>", unsafe_allow_html=True)
