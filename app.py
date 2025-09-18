@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import pandas as pd
 import altair as alt
+import base64
 
 # Optional: Lottie. If not installed, the code falls back gracefully.  
 try:
@@ -15,6 +16,13 @@ except Exception:
     LOTTIE_AVAILABLE = False
 
 DB_PATH = "app_data.db"
+
+
+def get_base64_of_bin_file(bin_file):
+    with open(bin_file, "rb") as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
 
 # -------------------------
 # Database helpers
@@ -91,17 +99,41 @@ def get_feedbacks(limit=100):
 # -------------------------
 def local_css():
     st.markdown(
-        """
+        f"""
         <style>
+        /* Full-page background with overlay */
+        .stApp {{
+            background: url("data:image/jpg;base64,{get_base64_of_bin_file("ddda75d157d9d66729aa60f9517ee201.jpg")}") no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+        }}
+
+        /* Dark overlay on top of background */
+        .stApp::before {{
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.55);  /* 55% dark overlay */
+            z-index: 0;
+        }}
+
+        /* Ensure all content stays above overlay */
+        .stApp > div {{
+            position: relative;
+            z-index: 1;
+        }}
 
         /* Page fade-in */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn {{
+            from {{ opacity: 0; transform: translateY(6px); }}
+            to {{ opacity: 1; transform: translateY(0); }}
+        }}
 
         /* Buttons */
-        .stButton>button {
+        .stButton>button {{
             border-radius: 10px;
             padding: 10px 16px;
             transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -109,37 +141,32 @@ def local_css():
             color: white;
             border: none;
             box-shadow: 0 6px 14px rgba(20,80,200,0.12);
-        }
-        .stButton>button:hover {
+        }}
+        .stButton>button:hover {{
             transform: translateY(-3px);
             box-shadow: 0 12px 26px rgba(20,80,200,0.14);
-        }
+        }}
 
         /* Inputs */
-        input, textarea {
+        input, textarea {{
             border-radius: 8px !important;
-        }
-
-        /* Layout tweaks for top nav */
-        .top-nav {
-            display:flex;
-            gap:12px;
-            align-items:center;
-            justify-content:flex-end;
-            margin-bottom: 8px;
-        }
+            background: rgba(255,255,255,0.9) !important;
+        }}
 
         /* small profile area */
-        .profile-box {
+        .profile-box {{
             border-radius: 12px;
             padding: 10px;
-            background: rgba(0,90,200,0.04);
-        }
+            background: rgba(0,90,200,0.7); 
+            color: white;
+        }}
         </style>
-        """, unsafe_allow_html=True
+        """,
+        unsafe_allow_html=True
     )
 
-# load lottie from URL helper
+
+"""# load lottie from URL helper
 def load_lottie_url(url: str):
     import requests
     try:
@@ -147,7 +174,7 @@ def load_lottie_url(url: str):
         if r.status_code == 200:
             return r.json()
     except Exception:
-        return None
+        return None"""
 
 # -------------------------
 # App pages
@@ -305,6 +332,7 @@ def main():
 
 if __name__ == "__main__": 
     main()                                                                                 
+
 
 
 
