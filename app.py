@@ -2,12 +2,11 @@
 import streamlit as st
 import sqlite3
 import hashlib
-import json
-from pathlib import Path
 import pandas as pd
 import altair as alt
+from pathlib import Path
 
-# Optional: Lottie. If not installed, the code falls back gracefully.  
+# Optional: Lottie
 try:
     from streamlit_lottie import st_lottie
     LOTTIE_AVAILABLE = True
@@ -87,20 +86,24 @@ def get_feedbacks(limit=100):
     return rows
 
 # -------------------------
-# UI helpers: CSS & Lottie
+# UI CSS Styling
 # -------------------------
 def local_css():
     st.markdown(
         """
         <style>
-
-        /* Page fade-in */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
+        body {
+            background: linear-gradient(135deg, #e6f0ff, #ffffff);
         }
 
-        /* Buttons */
+        .login-box {
+            background: #fff;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            animation: fadeIn 0.8s ease;
+        }
+
         .stButton>button {
             border-radius: 10px;
             padding: 10px 16px;
@@ -112,34 +115,16 @@ def local_css():
         }
         .stButton>button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 26px rgba(20,80,200,0.14);
+            box-shadow: 0 12px 26px rgba(20,80,200,0.18);
         }
 
-        /* Inputs */
         input, textarea {
             border-radius: 8px !important;
-        }
-
-        /* Layout tweaks for top nav */
-        .top-nav {
-            display:flex;
-            gap:12px;
-            align-items:center;
-            justify-content:flex-end;
-            margin-bottom: 8px;
-        }
-
-        /* small profile area */
-        .profile-box {
-            border-radius: 12px;
-            padding: 10px;
-            background: rgba(0,90,200,0.04);
         }
         </style>
         """, unsafe_allow_html=True
     )
 
-# load lottie from URL helper
 def load_lottie_url(url: str):
     import requests
     try:
@@ -150,13 +135,15 @@ def load_lottie_url(url: str):
         return None
 
 # -------------------------
-# App pages
+# Pages
 # -------------------------
 def show_login():
     st.markdown("<div class='app-container'>", unsafe_allow_html=True)
-    st.subheader("Login")
+    st.markdown("## Login")
+
     cols = st.columns([1, 1])
     with cols[0]:
+        st.markdown("<div class='login-box'>", unsafe_allow_html=True)
         email = st.text_input("Email")
         password = st.text_input("Password", type="password")
         if st.button("Login"):
@@ -167,15 +154,15 @@ def show_login():
                 st.session_state.user_email = email
             else:
                 st.error("Invalid credentials")
+        st.markdown("</div>", unsafe_allow_html=True)
+
     with cols[1]:
-        # Lottie animation or fallback image
         if LOTTIE_AVAILABLE:
-            lottie = load_lottie_url("https://assets4.lottiefiles.com/packages/lf20_jcikwtux.json")  # sample
+            lottie = load_lottie_url("https://assets4.lottiefiles.com/packages/lf20_jcikwtux.json")
             if lottie:
-                st_lottie(lottie, height=500)
+                st_lottie(lottie, height=400)
         else:
-            st.info("Lottie not available. Install streamlit-lottie to show animations.")
-    st.markdown("</div>", unsafe_allow_html=True)
+            st.image("https://cdn-icons-png.flaticon.com/512/552/552220.png", width=300)
 
     st.markdown("---")
     st.info("Don't have an account? Sign up below.")
@@ -191,10 +178,8 @@ def show_login():
                 st.error(msg)
 
 def show_home():
-    st.markdown("<div class='app-container'>", unsafe_allow_html=True)
     st.title("Home")
     st.write("👋 Welcome to Global Balance!")
-    # small quick statistics demo
     sample = pd.DataFrame({
         "category": ["A", "B", "C", "D"],
         "value": [45, 28, 90, 55]
@@ -205,17 +190,11 @@ def show_home():
         y="value"
     ).properties(height=240)
     st.altair_chart(bar, use_container_width=True)
-    st.markdown("</div>", unsafe_allow_html=True)
 
 def show_dashboard():
-    st.markdown("<div class='app-container'>", unsafe_allow_html=True)
     st.title("Dashboard")
     st.write("Charts and analytics inspired by the illustration.")
-
-    # --- Power BI Embed ---
-    st.subheader("📊 Power BI Dashboard")
-    powerbi_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"  # Replace with your published link
-
+    powerbi_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"
     st.markdown(f"""
         <iframe title="PowerBI Dashboard"
             width="100%" height="600"
@@ -223,10 +202,7 @@ def show_dashboard():
             frameborder="0" allowFullScreen="true"></iframe>
     """, unsafe_allow_html=True)
 
-    st.markdown("---")
-
 def show_profile():
-    st.markdown("<div class='app-container'>", unsafe_allow_html=True)
     st.title("Profile")
     email = st.session_state.get("user_email", "")
     conn = get_db_conn()
@@ -236,13 +212,11 @@ def show_profile():
     conn.close()
     if row:
         name, email = row
-        st.markdown(f"<div class='profile-box'><strong>{name}</strong><br><small>{email}</small></div>", unsafe_allow_html=True)
+        st.success(f"**{name}**\n\n{email}")
     else:
         st.write("No profile info found.")
-    st.markdown("</div>", unsafe_allow_html=True)
 
 def show_feedback():
-    st.markdown("<div class='app-container'>", unsafe_allow_html=True)
     st.title("Feedback")
     email = st.session_state.get("user_email", "")
     message = st.text_area("Your feedback", height=140)
@@ -257,39 +231,22 @@ def show_feedback():
     st.markdown("### Recent feedback")
     rows = get_feedbacks(10)
     for r in rows:
-        st.write(f"{r[0]}** — {r[2]}")
+        st.write(f"📧 {r[0]} — {r[2]}")
         st.write(r[1])
         st.markdown("---")
-    st.markdown("</div>", unsafe_allow_html=True)
 
 # -------------------------
-# Top-level layout & nav
+# Main
 # -------------------------
 def main():
     init_db()
     st.set_page_config(page_title="Global Balance", page_icon="💠", layout="wide")
-
     local_css()
 
     if "logged_in" not in st.session_state:
         st.session_state.logged_in = False
         st.session_state.user_email = ""
 
-    # top navigation
-    with st.container():
-        cols = st.columns([1, 4, 2])
-        with cols[0]:
-            st.markdown("<h2 style='margin:25px 0; color:#0b56ff;'>Global Balance</h2>", unsafe_allow_html=True)
-        
-        with cols[2]:
-            if st.session_state.logged_in:
-                st.markdown(f"<div style='text-align:right'><small>Signed in as <strong>{st.session_state.user_email}</strong></small></div>", unsafe_allow_html=True)
-                if st.button("Logout"):
-                    st.session_state.logged_in = False
-                    st.session_state.user_email = ""
-                    st.experimental_rerun()
-
-    # select page
     if not st.session_state.logged_in:
         show_login()
     else:
@@ -305,13 +262,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
-
-
-
