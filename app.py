@@ -3,6 +3,7 @@ import sqlite3
 import base64
 import pandas as pd
 import numpy as np
+import streamlit.components.v1 as components   # 👈 Added for embedding Power BI
 
 # ========= Background Setup =========
 def get_base64(bin_file):
@@ -123,9 +124,16 @@ elif choice == "Home":
 
 elif choice == "Dashboard":
     st.subheader("📊 Dashboard")
-    st.write("Interactive data visualization will go here.")
-    df = pd.DataFrame(np.random.randn(10, 2), columns=["Balance A", "Balance B"])
-    st.line_chart(df)
+    if "user" in st.session_state:
+        st.write("Here is your embedded Power BI dashboard:")
+
+        # 👉 Replace with your actual Power BI embed link
+        powerbi_url = "https://app.powerbi.com/groups/me/reports/4d41c1bc-17bb-491e-8da8-861aaede731f/24434bd2ed4071702132?redirectedFromSignup=1&experience=power-bi"
+
+        # Embed Power BI Dashboard
+        components.iframe(powerbi_url, width=1000, height=600, scrolling=True)
+    else:
+        st.warning("⚠ Please log in to view the dashboard.")
 
 elif choice == "Profile":
     st.subheader("👤 Profile")
