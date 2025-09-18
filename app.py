@@ -69,16 +69,21 @@ set_background("background.jpg")
 # ========= App Title =========
 st.markdown("<h1 style='text-align: center; color: cyan;'>🌍 Global Balance</h1>", unsafe_allow_html=True)
 
-# ========= Navigation Buttons =========
+# ========= Navigation Setup =========
 if "page" not in st.session_state:
     st.session_state["page"] = "Login"
 
-nav_items = ["Login", "Sign Up", "Home", "Dashboard", "Profile", "Feedback", "Logout"]
+if "user" not in st.session_state:  
+    # Before login → only Login & Sign Up
+    nav_items = ["Login", "Sign Up"]
+else:  
+    # After login → full menu
+    nav_items = ["Home", "Dashboard", "Profile", "Feedback", "Logout"]
 
 st.markdown("<div class='nav-container'>", unsafe_allow_html=True)
 cols = st.columns(len(nav_items))
 for i, item in enumerate(nav_items):
-    if cols[i].button(item, key=f"nav_{item}"):   # 👈 Unique key added
+    if cols[i].button(item, key=f"nav_{item}"):
         st.session_state["page"] = item
 st.markdown("</div>", unsafe_allow_html=True)
 
@@ -89,7 +94,7 @@ if choice == "Sign Up":
     st.subheader("🔐 Create an Account")
     new_user = st.text_input("Username", key="signup_user")
     new_pass = st.text_input("Password", type="password", key="signup_pass")
-    if st.button("Sign Up", key="signup_btn"):   # 👈 Unique key
+    if st.button("Sign Up", key="signup_btn"):
         try:
             c.execute("INSERT INTO users (username, password) VALUES (?,?)", (new_user, new_pass))
             conn.commit()
@@ -101,12 +106,13 @@ elif choice == "Login":
     st.subheader("🔑 Login to Global Balance")
     user = st.text_input("Username", key="login_user")
     passwd = st.text_input("Password", type="password", key="login_pass")
-    if st.button("Login", key="login_btn"):   # 👈 Unique key
+    if st.button("Login", key="login_btn"):
         c.execute("SELECT * FROM users WHERE username=? AND password=?", (user, passwd))
         data = c.fetchone()
         if data:
             st.success(f"🎉 Welcome {user}!")
             st.session_state["user"] = user
+            st.session_state["page"] = "Home"   # redirect to Home after login
         else:
             st.error("❌ Invalid credentials.")
 
@@ -131,12 +137,13 @@ elif choice == "Profile":
 elif choice == "Feedback":
     st.subheader("💬 Feedback")
     feedback = st.text_area("Share your feedback:", key="feedback_text")
-    if st.button("Submit Feedback", key="feedback_btn"):   # 👈 Unique key
+    if st.button("Submit Feedback", key="feedback_btn"):
         st.success("🙌 Thank you for your feedback!")
 
 elif choice == "Logout":
     if "user" in st.session_state:
         st.session_state.clear()
         st.success("✅ You have logged out successfully.")
+        st.session_state["page"] = "Login"
     else:
         st.warning("⚠ You are not logged in.")
