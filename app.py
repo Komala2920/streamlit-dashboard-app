@@ -112,7 +112,11 @@ elif choice == "Login":
         if data:
             st.success(f"🎉 Welcome {user}!")
             st.session_state["user"] = user
-            st.session_state["email"] = data[2]  # Save email
+            # ✅ Check length before accessing email
+            if len(data) >= 3:
+                st.session_state["email"] = data[2]
+            else:
+                st.session_state["email"] = "Not Provided"
             st.session_state["page"] = "Home"
         else:
             st.error("❌ Invalid credentials.")
