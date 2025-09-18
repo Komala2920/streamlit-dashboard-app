@@ -5,7 +5,232 @@ import streamlit.components.v1 as components   # For Power BI
 import requests
 from streamlit_lottie import st_lottie   # ✅ New Import
 
-# ========= Background Setup =========
+# ========= Background Setup =========<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B-Techno | Sign In</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: url("https://picsum.photos/1200/800") no-repeat center center/cover;
+      height: 100vh;
+    }
+
+    /* Container */
+    .container {
+      display: flex;
+      width: 900px;
+      height: 600px;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0px 8px 25px rgba(0,0,0,0.2);
+    }
+
+    /* Left Panel (Sign In) */
+    .signin-container {
+      width: 40%;
+      background: #1e3c72; /* Blue gradient */
+      background: linear-gradient(135deg, #2a5298, #1e3c72);
+      color: #fff;
+      padding: 40px 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    form input {
+      margin: 10px 0;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    .forgot {
+      color: #cce0ff;
+      font-size: 12px;
+      margin: 5px 0 15px;
+      text-align: right;
+    }
+
+    .btn {
+      padding: 12px;
+      border: none;
+      background: #46c7c7;
+      border-radius: 8px;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: #37a3a3;
+    }
+
+    .divider {
+      text-align: center;
+      margin: 20px 0;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .social-login {
+      text-align: center;
+    }
+
+    .social-login a {
+      display: inline-block;
+      margin: 0 10px;
+      font-size: 18px;
+      color: #fff;
+      background: rgba(255,255,255,0.2);
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      line-height: 35px;
+      transition: 0.3s;
+    }
+
+    .social-login a:hover {
+      background: #fff;
+      color: #1e3c72;
+    }
+
+    .signup-text {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .signup-text a {
+      color: #fff;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    /* Right Panel (Illustration) */
+    .illustration-container {
+      width: 60%;
+      padding: 50px;
+      text-align: center;
+    }
+
+    .illustration-container img {
+      width: 80%;
+      margin-bottom: 20px;
+    }
+
+    .illustration-container h3 {
+      margin-bottom: 15px;
+      color: #2a2a2a;
+    }
+
+    .illustration-container p {
+      color: #555;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      background: #ccc;
+      border-radius: 50%;
+    }
+
+    .dot.active {
+      background: #1e3c72;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Left Sign In Panel -->
+    <div class="signin-container">
+      <div class="logo">B-TECHNO</div>
+      <h2>Sign In</h2>
+      <form>
+        <input type="text" placeholder="Username" required>
+        <input type="password" placeholder="Password" required>
+        <a href="#" class="forgot">Forgot Password?</a>
+        <button type="submit" class="btn">Sign In</button>
+      </form>
+      <div class="divider">OR</div>
+      <div class="social-login">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-google"></i></a>
+      </div>
+      <p class="signup-text">Don’t have an account? <a href="#">Sign Up</a></p>
+    </div>
+
+    <!-- Right Illustration Panel -->
+    <div class="illustration-container">
+      <img src="https://i.ibb.co/6tL9pQz/software-illustration.png" alt="Illustration">
+      <h3>Technical Analysis of Software Requirements</h3>
+      <p>
+        Curabitur sed lectus in dui consectetur rhoncus sit amet nec sapien.
+        Donec vel felis non tellus tristique condimentum.
+      </p>
+      <div class="dots">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Example: Add active state to dots
+    const dots = document.querySelectorAll(".dot");
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener("click", () => {
+        dots.forEach(d => d.classList.remove("active"));
+        dot.classList.add("active");
+      });
+    });
+  </script>
+</body>
+</html>
+
 def get_base64(bin_file):
     with open(bin_file, "rb") as f:
         data = f.read()
