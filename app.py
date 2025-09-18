@@ -3,7 +3,7 @@ import sqlite3
 import base64
 import pandas as pd
 import numpy as np
-import streamlit.components.v1 as components   # 👈 Added for embedding Power BI
+import streamlit.components.v1 as components   # 👈 For Power BI
 
 # ========= Background Setup =========
 def get_base64(bin_file):
@@ -61,7 +61,7 @@ def set_background(png_file):
 conn = sqlite3.connect('users.db')
 c = conn.cursor()
 c.execute('''CREATE TABLE IF NOT EXISTS users
-             (username TEXT UNIQUE, password TEXT)''')
+             (username TEXT UNIQUE, password TEXT, email TEXT)''')
 conn.commit()
 
 # ========= Apply Background =========
@@ -75,10 +75,8 @@ if "page" not in st.session_state:
     st.session_state["page"] = "Login"
 
 if "user" not in st.session_state:  
-    # Before login → only Login & Sign Up
     nav_items = ["Login", "Sign Up"]
 else:  
-    # After login → full menu
     nav_items = ["Home", "Dashboard", "Profile", "Feedback", "Logout"]
 
 st.markdown("<div class='nav-container'>", unsafe_allow_html=True)
@@ -94,10 +92,11 @@ choice = st.session_state["page"]
 if choice == "Sign Up":
     st.subheader("🔐 Create an Account")
     new_user = st.text_input("Username", key="signup_user")
+    new_email = st.text_input("Email", key="signup_email")
     new_pass = st.text_input("Password", type="password", key="signup_pass")
     if st.button("Sign Up", key="signup_btn"):
         try:
-            c.execute("INSERT INTO users (username, password) VALUES (?,?)", (new_user, new_pass))
+            c.execute("INSERT INTO users (username, password, email) VALUES (?,?,?)", (new_user, new_pass, new_email))
             conn.commit()
             st.success("✅ Account created successfully! Go to Login.")
         except:
@@ -113,24 +112,35 @@ elif choice == "Login":
         if data:
             st.success(f"🎉 Welcome {user}!")
             st.session_state["user"] = user
-            st.session_state["page"] = "Home"   # redirect to Home after login
+            st.session_state["email"] = data[2]  # Save email
+            st.session_state["page"] = "Home"
         else:
             st.error("❌ Invalid credentials.")
 
 # ========= Pages =========
 elif choice == "Home":
     st.subheader("🏠 Home")
-    st.write("Welcome to *Global Balance*! Explore the dashboard for insights.")
+    st.markdown("""
+    Welcome to **Global Balance** 🌍  
+    This platform provides an **interactive dashboard** built using Power BI, 
+    where you can monitor, analyze, and visualize global balance data effectively.  
+
+    ### 🔹 Features:
+    - 📊 Real-time analytics  
+    - 🌐 Global insights  
+    - 📈 Interactive reports  
+    - 💡 Data-driven decision making  
+
+    👉 Navigate to the **Dashboard** tab to view the live reports.
+    """)
 
 elif choice == "Dashboard":
     st.subheader("📊 Dashboard")
     if "user" in st.session_state:
         st.write("Here is your embedded Power BI dashboard:")
 
-        # 👉 Replace with your actual Power BI embed link
         powerbi_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"
 
-        # Embed Power BI Dashboard
         components.iframe(powerbi_url, width=1000, height=600, scrolling=True)
     else:
         st.warning("⚠ Please log in to view the dashboard.")
@@ -138,7 +148,11 @@ elif choice == "Dashboard":
 elif choice == "Profile":
     st.subheader("👤 Profile")
     if "user" in st.session_state:
-        st.write(f"Logged in as: *{st.session_state['user']}*")
+        st.image("profile.png", width=150)  # 👉 Replace with your own profile picture file
+        st.markdown(f"""
+        **Username:** {st.session_state['user']}  
+        **Email:** {st.session_state.get('email', 'Not Provided')}  
+        """)
     else:
         st.warning("⚠ Please log in to view your profile.")
 
