@@ -1,22 +1,44 @@
-from flask import Flask, render_template, request, redirect, url_for
+import streamlit as st
 
-app = Flask(__name__)
+# Page config
+st.set_page_config(page_title="B-TECHNO Login", layout="wide")
 
-# Dummy user (for demo)
-USER = {"username": "admin", "password": "12345"}
+# --- LEFT COLUMN: LOGIN FORM ---
+with st.container():
+    left, right = st.columns([1, 2])  # left (login) smaller, right (illustration) larger
 
-@app.route("/", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
+    with left:
+        st.markdown("## 🔑 Sign In")
+        with st.form("login_form"):
+            username = st.text_input("Username")
+            password = st.text_input("Password", type="password")
+            submit = st.form_submit_button("Sign In")
 
-        if username == USER["username"] and password == USER["password"]:
-            return "<h2>✅ Login Successful! Welcome {}</h2>".format(username)
-        else:
-            return "<h2>❌ Invalid Credentials</h2><a href='/'>Try Again</a>"
+        if submit:
+            if username == "admin" and password == "12345":
+                st.success(f"✅ Welcome, {username}!")
+            else:
+                st.error("❌ Invalid Credentials")
 
-    return render_template("login.html")
+        st.markdown("[Forgot Password?](#)")
+        st.write("---")
+        st.markdown("Or sign in with:")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.button("Facebook")
+        with col2:
+            st.button("Twitter")
+        with col3:
+            st.button("Google")
 
-if __name__ == "__main__":
-    app.run(debug=True)
+        st.write("---")
+        st.markdown("Don’t have an account? [Sign Up](#)")
+
+    # --- RIGHT COLUMN: ILLUSTRATION ---
+    with right:
+        st.image("assets/illustration.png", width=400)  # replace with your animation/image
+        st.markdown("### Technical Analysis of Software Requirements")
+        st.caption(
+            "Curabitur sed lectus in dui consectetur rhoncus sit amet nec sapien. "
+            "Donec vel felis non tellus tristique condimentum."
+        )
