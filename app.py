@@ -54,8 +54,29 @@ def main():
     # Inject CSS
     st.markdown("""
         <style>
-        body { background-color: #f0f2f6; font-family: 'Segoe UI', sans-serif; }
-        .stButton>button { background-color: #6200EE; color: white; border-radius: 5px; }
+        body {
+            background: linear-gradient(to right, #e0f7fa, #fce4ec);
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .stButton>button {
+            background-color: #6200EE;
+            color: white;
+            border-radius: 8px;
+            padding: 0.5em 1em;
+            transition: background-color 0.3s ease;
+        }
+        .stButton>button:hover {
+            background-color: #3700B3;
+        }
+        .stTextInput>div>div>input {
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 0.5em;
+        }
+        .sidebar .sidebar-content {
+            background-color: #f3e5f5;
+        }
         </style>
     """, unsafe_allow_html=True)
 
