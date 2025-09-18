@@ -1,6 +1,8 @@
 import streamlit as st
 import sqlite3
 import hashlib
+import pandas as pd
+import altair as alt
 from pathlib import Path
 
 # ---------------------------
@@ -45,11 +47,12 @@ def check_hashes(password, hashed_text):
 def add_bg_from_local(image_file):
     with open(image_file, "rb") as f:
         data = f.read()
-    b64 = f"data:image/jpg;base64,{data.hex()}"
+    import base64
+    b64 = base64.b64encode(data).decode()
     page_bg_img = f"""
     <style>
     .stApp {{
-        background-image: url("data:image/jpg;base64,{data.hex()}");
+        background-image: url("data:image/jpg;base64,{b64}");
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
@@ -65,9 +68,47 @@ def home():
     st.title("🌍 Home - Global Balance")
     st.write("Welcome to the interactive dashboard application!")
 
-def dashboard():
+def show_dashboard():
+    st.markdown("<div class='app-container'>", unsafe_allow_html=True)
     st.title("📊 Dashboard - Global Balance")
-    st.write("Here is where you can visualize your data.")
+    st.write("Charts and analytics inspired by the illustration.")
+
+    # --- Power BI Embed ---
+    st.subheader("Power BI Dashboard")
+    powerbi_url = "https://app.powerbi.com/view?r=YOUR_EMBED_URL"  # Replace with your link
+
+    st.markdown(f"""
+        <iframe title="PowerBI Dashboard"
+            width="100%" height="600"
+            src="{powerbi_url}"
+            frameborder="0" allowFullScreen="true"></iframe>
+    """, unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # --- Local sample visualizations ---
+    dates = pd.date_range(end=pd.Timestamp.today(), periods=30)
+    df = pd.DataFrame({
+        "date": dates,
+        "sales": (pd.Series(range(30)) * 100 +
+                  pd.Series(pd.array(pd.Series(range(30)).sample(frac=1).reset_index(drop=True)))).cumsum()
+    })
+
+    line = alt.Chart(df).mark_line(point=True).encode(
+        x="date:T",
+        y="sales:Q",
+        tooltip=["date:T", "sales:Q"]
+    ).properties(height=300)
+    st.altair_chart(line, use_container_width=True)
+
+    st.subheader("Category Share")
+    cat_df = pd.DataFrame({"category": ["X", "Y", "Z"], "pct": [40, 35, 25]})
+    pie = alt.Chart(cat_df).mark_arc(innerRadius=50).encode(
+        theta=alt.Theta(field="pct", type="quantitative"),
+        color=alt.Color(field="category", type="nominal")
+    ).properties(height=260)
+    st.altair_chart(pie, use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
 def profile(username):
     st.title("👤 Profile")
@@ -114,7 +155,7 @@ def main():
                 if nav == "Home":
                     home()
                 elif nav == "Dashboard":
-                    dashboard()
+                    show_dashboard()
                 elif nav == "Profile":
                     profile(username)
                 elif nav == "Feedback":
