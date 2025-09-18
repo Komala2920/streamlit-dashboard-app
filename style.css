@@ -1,0 +1,13 @@
+body {
+    background-image: url('background.jpg');
+    background-size: cover;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.stButton>button {
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 16px;
+}
