@@ -149,12 +149,15 @@ elif choice == "Dashboard":
 elif choice == "Profile":
     st.subheader("👤 Profile")
     if "user" in st.session_state:
-        st.image("profile.png", width=150)  # 👉 Replace with your own profile picture file
-        st.markdown(f"""
-        **Full Name:** {st.session_state.get('fullname', 'Not Provided')}  
-        **Username:** {st.session_state['user']}  
-        **Email:** {st.session_state.get('email', 'Not Provided')}  
-        """)
+        col1, col2 = st.columns([1, 3])
+        with col1:
+            st.image("profile.png", width=150)  # 👉 Replace with your own profile picture file
+        with col2:
+            st.markdown(f"""
+            **Full Name:** {st.session_state.get('fullname')}  
+            **Username:** {st.session_state['user']}  
+            **Email:** {st.session_state.get('email')}  
+            """)
     else:
         st.warning("⚠ Please log in to view your profile.")
 
