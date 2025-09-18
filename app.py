@@ -1,5 +1,4 @@
-// app.js
-// All-in-one: serves front-end + provides backend auth with SQLite
+// app.js - enhanced version with smooth transitions and modern UI
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const Database = require('better-sqlite3');
@@ -22,90 +21,164 @@ db.prepare(`
 
 app.use(express.json());
 
-// ---------- Frontend (single-page HTML) ----------
+// Frontend HTML
 app.get('/', (req, res) => {
   res.send(`<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Two-Panel Auth</title>
-  <style>
-    :root{
-      --g1: linear-gradient(135deg,#0f172a 0%,#0b3b63 40%,#2c6b5f 100%);
-      --accent1: #7b61ff;
-      --accent2: #00d4ff;
-      --muted: rgba(255,255,255,0.7);
-      font-family: Arial, sans-serif;
-    }
-    body{margin:0;background:var(--g1);color:#fff;min-height:100vh;display:grid;place-items:center}
-    .wrap{display:grid;grid-template-columns:1fr 1fr;gap:40px;padding:40px;width:100%;max-width:1100px}
-    .panel{background:rgba(255,255,255,0.05);border-radius:16px;padding:36px;box-shadow:0 8px 30px rgba(0,0,0,0.6)}
-    .tab{display:inline-block;padding:8px 14px;border-radius:10px;cursor:pointer;color:var(--muted)}
-    .tab.active{background:rgba(255,255,255,0.1);color:#fff}
-    input{width:100%;padding:12px;border-radius:10px;border:none;margin-top:6px;background:rgba(255,255,255,0.1);color:#fff}
-    .btn{margin-top:10px;padding:12px;width:100%;border:none;border-radius:10px;background:linear-gradient(90deg,var(--accent1),var(--accent2));cursor:pointer;color:#fff;font-weight:bold}
-    .btn:hover{opacity:0.9}
-    .app{display:none;padding:20px}
-    .nav a{margin-right:10px;color:#fff;text-decoration:none}
-    .cube{width:90px;height:90px;position:relative;transform-style:preserve-3d;animation:spin 9s linear infinite}
-    .cube-face{position:absolute;width:90px;height:90px;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#fff}
-    .f1{background:#7b61ff;transform:translateZ(45px)}
-    .f2{background:#0ea5a4;transform:rotateY(90deg) translateZ(45px)}
-    .f3{background:#ef4444;transform:rotateY(180deg) translateZ(45px)}
-    .f4{background:#7c3aed;transform:rotateY(-90deg) translateZ(45px)}
-    @keyframes spin{0%{transform:rotateX(10deg) rotateY(0)}100%{transform:rotateX(10deg) rotateY(360deg)}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Two-Panel Auth</title>
+<style>
+:root{
+  --g1: linear-gradient(135deg,#0f172a 0%,#0b3b63 40%,#2c6b5f 100%);
+  --accent1: #7b61ff;
+  --accent2: #00d4ff;
+  --muted: rgba(255,255,255,0.7);
+  font-family: Arial, sans-serif;
+}
+body{
+  margin:0;
+  background:var(--g1);
+  color:#fff;
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  transition: background 0.3s ease;
+}
+.wrap{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+  padding:40px;
+  width:100%;
+  max-width:1100px;
+}
+.panel{
+  background:rgba(255,255,255,0.05);
+  border-radius:16px;
+  padding:36px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.6);
+  transition: all 0.3s ease;
+}
+.tab{
+  display:inline-block;
+  padding:8px 14px;
+  border-radius:10px;
+  cursor:pointer;
+  color:var(--muted);
+  transition: background 0.3s ease,color 0.3s ease;
+}
+.tab.active{
+  background:rgba(255,255,255,0.1);
+  color:#fff;
+}
+input{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  margin-top:6px;
+  background:rgba(255,255,255,0.1);
+  color:#fff;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+  transition: all 0.2s ease;
+}
+input:focus{
+  outline:none;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.5), 0 0 8px var(--accent1);
+}
+.btn{
+  margin-top:10px;
+  padding:12px;
+  width:100%;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(90deg,var(--accent1),var(--accent2));
+  cursor:pointer;
+  color:#fff;
+  font-weight:bold;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.btn:hover{
+  opacity:0.9;
+  transform: scale(1.03);
+}
+.app{display:none;padding:28px}
+.nav a{margin-right:15px;color:#fff;text-decoration:none;font-weight:bold;transition: color 0.2s;}
+.nav a:hover{color:var(--accent2);}
+.cube{
+  width:90px;height:90px;
+  position:relative;
+  transform-style:preserve-3d;
+  animation:spin 9s linear infinite;
+}
+.cube-face{
+  position:absolute;width:90px;height:90px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:bold;color:#fff;border-radius:10px;
+}
+.f1{background:#7b61ff;transform:translateZ(45px)}
+.f2{background:#0ea5a4;transform:rotateY(90deg) translateZ(45px)}
+.f3{background:#ef4444;transform:rotateY(180deg) translateZ(45px)}
+.f4{background:#7c3aed;transform:rotateY(-90deg) translateZ(45px)}
+@keyframes spin{0%{transform:rotateX(10deg) rotateY(0)}100%{transform:rotateX(10deg) rotateY(360deg)}}
+.fade{transition: opacity 0.4s ease;}
+.hidden{opacity:0;display:none;}
+</style>
 </head>
 <body>
-  <main class="wrap">
-    <section class="panel">
-      <div>
-        <span id="tab-login" class="tab active">Sign In</span>
-        <span id="tab-signup" class="tab">Sign Up</span>
-      </div>
-      <div id="forms">
-        <form id="login-form">
-          <h2>Login</h2>
-          <input id="login-username" placeholder="Username" required>
-          <input id="login-password" type="password" placeholder="Password" required>
-          <button type="button" class="btn" id="btn-signin">Sign In</button>
-        </form>
-        <form id="signup-form" style="display:none">
-          <h2>Create Account</h2>
-          <input id="signup-name" placeholder="Full Name" required>
-          <input id="signup-email" type="email" placeholder="Email" required>
-          <input id="signup-username" placeholder="Username" required>
-          <input id="signup-password" type="password" placeholder="Password" required>
-          <button type="button" class="btn" id="btn-signup">Sign Up</button>
-          <button type="button" class="btn" id="btn-cancel">Cancel</button>
-        </form>
-      </div>
-    </section>
-    <section class="panel" style="display:flex;align-items:center;justify-content:center;flex-direction:column">
-      <div class="cube">
-        <div class="cube-face f1">Req</div>
-        <div class="cube-face f2">UI</div>
-        <div class="cube-face f3">API</div>
-        <div class="cube-face f4">DB</div>
-      </div>
-      <p style="margin-top:20px;text-align:center">Technical Analysis of Software Requirements</p>
-    </section>
-  </main>
+<main class="wrap">
+  <section class="panel">
+    <div>
+      <span id="tab-login" class="tab active">Sign In</span>
+      <span id="tab-signup" class="tab">Sign Up</span>
+    </div>
+    <div id="forms">
+      <form id="login-form" class="fade">
+        <h2>Login</h2>
+        <input id="login-username" placeholder="Username" required>
+        <input id="login-password" type="password" placeholder="Password" required>
+        <button type="button" class="btn" id="btn-signin">Sign In</button>
+      </form>
+      <form id="signup-form" class="fade hidden">
+        <h2>Create Account</h2>
+        <input id="signup-name" placeholder="Full Name" required>
+        <input id="signup-email" type="email" placeholder="Email" required>
+        <input id="signup-username" placeholder="Username" required>
+        <input id="signup-password" type="password" placeholder="Password" required>
+        <button type="button" class="btn" id="btn-signup">Sign Up</button>
+        <button type="button" class="btn" id="btn-cancel">Cancel</button>
+      </form>
+    </div>
+  </section>
+  <section class="panel" style="display:flex;align-items:center;justify-content:center;flex-direction:column">
+    <div class="cube">
+      <div class="cube-face f1">Req</div>
+      <div class="cube-face f2">UI</div>
+      <div class="cube-face f3">API</div>
+      <div class="cube-face f4">DB</div>
+    </div>
+    <p style="margin-top:20px;text-align:center">Technical Analysis of Software Requirements</p>
+  </section>
+</main>
 
-  <div class="app" id="app-root">
-    <div class="nav" id="topnav"></div>
-    <div id="app-main"></div>
-  </div>
+<div class="app" id="app-root">
+  <div class="nav" id="topnav"></div>
+  <div id="app-main"></div>
+</div>
 
 <script>
 const byId=id=>document.getElementById(id);
 const tabLogin=byId('tab-login'), tabSignup=byId('tab-signup');
 const loginForm=byId('login-form'), signupForm=byId('signup-form');
 
-tabLogin.onclick=()=>{tabLogin.classList.add('active');tabSignup.classList.remove('active');signupForm.style.display='none';loginForm.style.display='block'};
-tabSignup.onclick=()=>{tabSignup.classList.add('active');tabLogin.classList.remove('active');loginForm.style.display='none';signupForm.style.display='block'};
-byId('btn-cancel').onclick=()=>tabLogin.onclick();
+function showLogin(){signupForm.classList.add('hidden');loginForm.classList.remove('hidden');tabLogin.classList.add('active');tabSignup.classList.remove('active');}
+function showSignup(){loginForm.classList.add('hidden');signupForm.classList.remove('hidden');tabSignup.classList.add('active');tabLogin.classList.remove('active');}
+
+tabLogin.onclick=showLogin;
+tabSignup.onclick=showSignup;
+byId('btn-cancel').onclick=showLogin;
 
 async function postJSON(url,data){
   const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
@@ -113,10 +186,15 @@ async function postJSON(url,data){
 }
 
 byId('btn-signup').onclick=async()=>{
-  const data={name:byId('signup-name').value,email:byId('signup-email').value,username:byId('signup-username').value,password:byId('signup-password').value};
+  const data={
+    name:byId('signup-name').value,
+    email:byId('signup-email').value,
+    username:byId('signup-username').value,
+    password:byId('signup-password').value
+  };
   const r=await postJSON('/signup',data);
   alert(r.ok?'Account created':'Signup failed: '+r.message);
-  if(r.ok) tabLogin.onclick();
+  if(r.ok) showLogin();
 };
 
 byId('btn-signin').onclick=async()=>{
@@ -135,9 +213,10 @@ function startApp(user){
   });
   route('Home',user);
 }
+
 function route(page,user){
   const main=byId('app-main');
-  if(page==='Logout'){location.reload();return}
+  if(page==='Logout'){location.reload();return;}
   if(page==='Home') main.innerHTML='<h2>Welcome '+user.name+'</h2><p>This is Home.</p>';
   if(page==='Dashboard') main.innerHTML='<h2>Dashboard</h2><p>Charts here.</p>';
   if(page==='Profile') main.innerHTML='<h2>Profile</h2><p>'+user.username+' ('+user.email+')</p>';
