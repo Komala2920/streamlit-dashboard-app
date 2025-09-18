@@ -77,6 +77,32 @@ for i, item in enumerate(nav_items):
         st.session_state["page"] = item
 st.markdown("</div>", unsafe_allow_html=True)
 
+# ========= Global Styling =========
+st.markdown("""
+    <style>
+    /* Make all text black */
+    body, [data-testid="stMarkdownContainer"], .main, .stText, .stTextInput, 
+    .stSubheader, .stHeader, h1, h2, h3, h4, h5, h6, p, label {
+        color: black !important;
+    }
+
+    /* Style all buttons in brown */
+    div.stButton > button {
+        background-color: #8B4513 !important; /* SaddleBrown */
+        color: white !important;
+        border-radius: 8px !important;
+        border: none !important;
+        padding: 8px 20px !important;
+        font-weight: bold !important;
+        transition: 0.3s;
+    }
+    div.stButton > button:hover {
+        background-color: #A0522D !important; /* Sienna */
+        color: #fff !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 choice = st.session_state["page"]
 
 # ========= Background only for Login & Sign Up =========
@@ -118,9 +144,6 @@ elif choice == "Login":
         else:
             st.error("❌ Invalid credentials.")
 
-# ========= Pages =========
-# ========= Pages =========
-# ========= Pages =========
 # ========= Pages =========
 elif choice == "Home":
     set_page_theme("#FFB6C1", "#FFE4E1")  # Light pink gradient
