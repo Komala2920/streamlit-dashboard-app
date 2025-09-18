@@ -1,158 +1,140 @@
-# app.py
 import streamlit as st
 import sqlite3
 import hashlib
-import pandas as pd
-import altair as alt
+from pathlib import Path
 
-DB_PATH = "app_data.db"
+# ---------------------------
+# Database setup
+# ---------------------------
+DB_PATH = "users.db"
 
-# -------------------------
-# Database helpers
-# -------------------------
-def init_db():
+def create_usertable():
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT UNIQUE,
-            name TEXT,
-            password_hash TEXT
-        )
-    """)
+    c.execute('CREATE TABLE IF NOT EXISTS users(username TEXT, password TEXT)')
     conn.commit()
     conn.close()
 
-def get_db_conn():
-    return sqlite3.connect(DB_PATH, check_same_thread=False)
-
-def hash_password(password: str) -> str:
-    return hashlib.sha256(password.encode()).hexdigest()
-
-def create_user(email, name, password):
-    conn = get_db_conn()
+def add_userdata(username, password):
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
-    try:
-        c.execute("INSERT INTO users (email, name, password_hash) VALUES (?, ?, ?)",
-                  (email, name, hash_password(password)))
-        conn.commit()
-        return True, "User created"
-    except sqlite3.IntegrityError:
-        return False, "Email already registered"
-    finally:
-        conn.close()
-
-def verify_user(email, password):
-    conn = get_db_conn()
-    c = conn.cursor()
-    c.execute("SELECT password_hash, name FROM users WHERE email = ?", (email,))
-    row = c.fetchone()
+    c.execute('INSERT INTO users(username, password) VALUES (?, ?)', (username, password))
+    conn.commit()
     conn.close()
-    if row:
-        stored_hash, name = row
-        return stored_hash == hash_password(password), name
-    return False, None
 
-# -------------------------
-# Custom CSS for Dark Theme
-# -------------------------
-def load_dark_theme():
-    st.markdown(
-        """
-        <style>
-        body {
-            background-color: #0e0c2a;
-            background-image: radial-gradient(circle at 20% 30%, #1d1b3a 25%, transparent 40%),
-                              radial-gradient(circle at 80% 70%, #1d1b3a 25%, transparent 40%);
-            color: white;
-        }
-        .block-container {
-            padding-top: 4rem;
-        }
-        .login-box {
-            background-color: #1c1a3a;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0px 8px 24px rgba(0,0,0,0.4);
-            width: 400px;
-            margin: auto;
-            text-align: center;
-        }
-        .login-box h1 {
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: white;
-        }
-        .stTextInput > div > div > input {
-            background-color: #2a274d;
-            color: white;
-            border-radius: 8px;
-        }
-        .stButton>button {
-            background: #007bff;
-            color: white;
-            border-radius: 8px;
-            width: 100%;
-            padding: 10px;
-            border: none;
-            font-size: 16px;
-        }
-        .stButton>button:hover {
-            background: #0056d6;
-        }
-        .forgot {
-            margin-top: 10px;
-            font-size: 13px;
-        }
-        .forgot a {
-            color: #8aa8ff;
-            text-decoration: none;
-        }
-        </style>
-        """, unsafe_allow_html=True
-    )
+def login_user(username, password):
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute('SELECT * FROM users WHERE username =? AND password = ?', (username, password))
+    data = c.fetchall()
+    conn.close()
+    return data
 
-# -------------------------
-# Pages
-# -------------------------
-def show_login():
-    load_dark_theme()
-    st.markdown("<div class='login-box'>", unsafe_allow_html=True)
-    st.markdown("<h1>gratafy</h1>", unsafe_allow_html=True)
+# ---------------------------
+# Utility: password hashing
+# ---------------------------
+def make_hashes(password):
+    return hashlib.sha256(str.encode(password)).hexdigest()
 
-    email = st.text_input("Email address")
-    password = st.text_input("Password", type="password")
+def check_hashes(password, hashed_text):
+    return make_hashes(password) == hashed_text
 
-    if st.button("Log in"):
-        ok, name = verify_user(email, password)
-        if ok:
-            st.session_state.logged_in = True
-            st.session_state.user_email = email
-            st.success(f"Welcome, {name or email}")
-        else:
-            st.error("Invalid email or password")
+# ---------------------------
+# Background setup (CSS)
+# ---------------------------
+def add_bg_from_local(image_file):
+    with open(image_file, "rb") as f:
+        data = f.read()
+    b64 = f"data:image/jpg;base64,{data.hex()}"
+    page_bg_img = f"""
+    <style>
+    .stApp {{
+        background-image: url("data:image/jpg;base64,{data.hex()}");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }}
+    </style>
+    """
+    st.markdown(page_bg_img, unsafe_allow_html=True)
 
-    st.markdown("<div class='forgot'><a href='#'>Forgot your password?</a></div>", unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+# ---------------------------
+# App Pages
+# ---------------------------
+def home():
+    st.title("🌍 Home - Global Balance")
+    st.write("Welcome to the interactive dashboard application!")
 
-# -------------------------
-# Main
-# -------------------------
+def dashboard():
+    st.title("📊 Dashboard - Global Balance")
+    st.write("Here is where you can visualize your data.")
+
+def profile(username):
+    st.title("👤 Profile")
+    st.write(f"Hello, {username}! This is your profile page.")
+
+def feedback():
+    st.title("📝 Feedback")
+    feedback_text = st.text_area("Enter your feedback:")
+    if st.button("Submit Feedback"):
+        st.success("Thank you for your feedback!")
+
+# ---------------------------
+# Main app
+# ---------------------------
 def main():
-    init_db()
-    st.set_page_config(page_title="Gratafy", page_icon="🔑", layout="centered")
+    st.set_page_config(page_title="Global Balance", layout="wide")
 
-    if "logged_in" not in st.session_state:
-        st.session_state.logged_in = False
-        st.session_state.user_email = ""
+    add_bg_from_local("cbcb74d7c06b56b3249ef31f5aa9e6a2.jpg")  # background image
 
-    if not st.session_state.logged_in:
-        show_login()
-    else:
-        st.title("Welcome to the App 🎉")
-        st.write("You are now logged in.")
+    create_usertable()
 
-if __name__ == "__main__":
+    menu = ["Login", "Sign Up"]
+    choice = st.sidebar.selectbox("Menu", menu)
+
+    if "username" not in st.session_state:
+        st.session_state.username = None
+
+    if choice == "Login":
+        st.subheader("Login Section")
+
+        username = st.text_input("Username")
+        password = st.text_input("Password", type='password')
+
+        if st.button("Login"):
+            hashed_pswd = make_hashes(password)
+            result = login_user(username, hashed_pswd)
+
+            if result:
+                st.session_state.username = username
+                st.success(f"Logged In as {username}")
+
+                nav = st.sidebar.radio("Navigation", ["Home", "Dashboard", "Profile", "Feedback", "Logout"])
+
+                if nav == "Home":
+                    home()
+                elif nav == "Dashboard":
+                    dashboard()
+                elif nav == "Profile":
+                    profile(username)
+                elif nav == "Feedback":
+                    feedback()
+                elif nav == "Logout":
+                    st.session_state.username = None
+                    st.info("Logged out successfully.")
+
+            else:
+                st.error("Incorrect Username/Password")
+
+    elif choice == "Sign Up":
+        st.subheader("Create New Account")
+        new_user = st.text_input("Username")
+        new_password = st.text_input("Password", type='password')
+
+        if st.button("Sign Up"):
+            add_userdata(new_user, make_hashes(new_password))
+            st.success("You have successfully created a valid Account")
+            st.info("Go to Login Menu to login")
+
+if __name__ == '__main__':
     main()
