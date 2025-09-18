@@ -1,9 +1,45 @@
-import streamlit as st
+def show_dashboard():
+    st.markdown("<div class='app-container'>", unsafe_allow_html=True)
+    st.title("Dashboard")
+    st.write("Charts and analytics inspired by the illustration.")
+
+    # --- Power BI Embed ---
+    st.subheader("📊 Power BI Dashboard")
+    powerbi_url = "https://app.powerbi.com/view?r=YOUR_EMBED_URL"  # Replace with your published link
+
+    st.markdown(f"""
+        <iframe title="PowerBI Dashboard"
+            width="100%" height="600"
+            src="{powerbi_url}"
+            frameborder="0" allowFullScreen="true"></iframe>
+    """, unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # --- Local sample visualizations (optional, you can remove if you want only Power BI) ---
+    dates = pd.date_range(end=pd.Timestamp.today(), periods=30)
+    df = pd.DataFrame({
+        "date": dates,
+        "sales": (pd.Series(range(30)) * 100 + 
+                  pd.Series(pd.np.random.randint(-50, 80, size=30))).cumsum()
+    })
+    line = alt.Chart(df).mark_line(point=True).encode(
+        x="date:T",
+        y="sales:Q",
+        tooltip=["date:T", "sales:Q"]
+    ).properties(height=300)
+    st.altair_chart(line, use_container_width=True)
+
+    st.subheader("Category share")
+    cat_df = pd.DataFrame({"category": ["X", "Y", "Z"], "pct": [40, 35, 25]})
+    pie = alt.Chart(cat_df).mark_arc(innerRadius=50).encode(
+        theta=alt.Theta(field="pct", type="quantitative"),
+        color=alt.Color(field="category", type="nominal")
+    ).properties(height=260)
+    st.altair_chart(pie, use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)  import streamlit as st
 import sqlite3
 import hashlib
-import pandas as pd
-import altair as alt
-import base64
 from pathlib import Path
 
 # ---------------------------
@@ -46,13 +82,13 @@ def check_hashes(password, hashed_text):
 # Background setup (CSS)
 # ---------------------------
 def add_bg_from_local(image_file):
-    with open(image_file, r"C:\Users\91995\Downloads\cbcb74d7c06b56b3249ef31f5aa9e6a2.jpg") as f:
+    with open(image_file, "rb") as f:
         data = f.read()
-    b64 = base64.b64encode(data).decode()
+    b64 = f"data:image/jpg;base64,{data.hex()}"
     page_bg_img = f"""
     <style>
     .stApp {{
-        background-image: url("data:image/jpg;base64,{b64}");
+        background-image: url("data:image/jpg;base64,{data.hex()}");
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
@@ -68,47 +104,9 @@ def home():
     st.title("🌍 Home - Global Balance")
     st.write("Welcome to the interactive dashboard application!")
 
-def show_dashboard():
-    st.markdown("<div class='app-container'>", unsafe_allow_html=True)
+def dashboard():
     st.title("📊 Dashboard - Global Balance")
-    st.write("Charts and analytics inspired by the illustration.")
-
-    # --- Power BI Embed ---
-    st.subheader("Power BI Dashboard")
-    powerbi_url = "https://app.powerbi.com/groups/me/reports/4d41c1bc-17bb-491e-8da8-861aaede731f/24434bd2ed4071702132?redirectedFromSignup=1&experience=power-bi"  # Replace with your link
-
-    st.markdown(f"""
-        <iframe title="PowerBI Dashboard"
-            width="100%" height="600"
-            src="{powerbi_url}"
-            frameborder="0" allowFullScreen="true"></iframe>
-    """, unsafe_allow_html=True)
-
-    st.markdown("---")
-
-    # --- Local sample visualizations ---
-    dates = pd.date_range(end=pd.Timestamp.today(), periods=30)
-    df = pd.DataFrame({
-        "date": dates,
-        "sales": (pd.Series(range(30)) * 100 +
-                  pd.Series(pd.Series(range(30)).sample(frac=1).reset_index(drop=True))).cumsum()
-    })
-
-    line = alt.Chart(df).mark_line(point=True).encode(
-        x="date:T",
-        y="sales:Q",
-        tooltip=["date:T", "sales:Q"]
-    ).properties(height=300)
-    st.altair_chart(line, use_container_width=True)
-
-    st.subheader("Category Share")
-    cat_df = pd.DataFrame({"category": ["X", "Y", "Z"], "pct": [40, 35, 25]})
-    pie = alt.Chart(cat_df).mark_arc(innerRadius=50).encode(
-        theta=alt.Theta(field="pct", type="quantitative"),
-        color=alt.Color(field="category", type="nominal")
-    ).properties(height=260)
-    st.altair_chart(pie, use_container_width=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.write("Here is where you can visualize your data.")
 
 def profile(username):
     st.title("👤 Profile")
@@ -126,7 +124,7 @@ def feedback():
 def main():
     st.set_page_config(page_title="Global Balance", layout="wide")
 
-    add_bg_from_local(r"C:\Users\91995\Downloads\cbcb74d7c06b56b3249ef31f5aa9e6a2.jpg")  # background image
+    add_bg_from_local("cbcb74d7c06b56b3249ef31f5aa9e6a2.jpg")  # background image
 
     create_usertable()
 
@@ -155,7 +153,7 @@ def main():
                 if nav == "Home":
                     home()
                 elif nav == "Dashboard":
-                    show_dashboard()
+                    dashboard()
                 elif nav == "Profile":
                     profile(username)
                 elif nav == "Feedback":
@@ -178,5 +176,4 @@ def main():
             st.info("Go to Login Menu to login")
 
 if __name__ == '__main__':
-    main()
-
+    main()  
