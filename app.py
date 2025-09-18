@@ -1,130 +1,334 @@
+# app.py
 import streamlit as st
 import sqlite3
+import hashlib
+import json
+from pathlib import Path
+import pandas as pd
+import altair as alt
+import base64
 
-# ---------- DATABASE SETUP ----------
+# Optional: Lottie. If not installed, the code falls back gracefully.  
+try:
+    from streamlit_lottie import st_lottie
+    LOTTIE_AVAILABLE = True
+except Exception:
+    LOTTIE_AVAILABLE = False
+
+DB_PATH = "app_data.db"
+
+
+def get_base64_of_bin_file(bin_file):
+    with open(bin_file, "rb") as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+
+# -------------------------
+# Database helpers
+# -------------------------
 def init_db():
-    conn = sqlite3.connect('users.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS users (
-        username TEXT PRIMARY KEY,
-        password TEXT
-    )''')
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE,
+            name TEXT,
+            password_hash TEXT
+        )
+    """)
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS feedback (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_email TEXT,
+            message TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
     conn.commit()
     conn.close()
 
-def add_user(username, password):
-    conn = sqlite3.connect('users.db')
+def get_db_conn():
+    return sqlite3.connect(DB_PATH, check_same_thread=False)
+
+def hash_password(password: str) -> str:
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def create_user(email, name, password):
+    conn = get_db_conn()
     c = conn.cursor()
-    c.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, password))
+    try:
+        c.execute("INSERT INTO users (email, name, password_hash) VALUES (?, ?, ?)",
+                  (email, name, hash_password(password)))
+        conn.commit()
+        return True, "User created"
+    except sqlite3.IntegrityError:
+        return False, "Email already registered"
+    finally:
+        conn.close()
+
+def verify_user(email, password):
+    conn = get_db_conn()
+    c = conn.cursor()
+    c.execute("SELECT password_hash, name FROM users WHERE email = ?", (email,))
+    row = c.fetchone()
+    conn.close()
+    if row:
+        stored_hash, name = row
+        return stored_hash == hash_password(password), name
+    return False, None
+
+def store_feedback(user_email, message):
+    conn = get_db_conn()
+    c = conn.cursor()
+    c.execute("INSERT INTO feedback (user_email, message) VALUES (?, ?)", (user_email, message))
     conn.commit()
     conn.close()
 
-def login_user(username, password):
-    conn = sqlite3.connect('users.db')
+def get_feedbacks(limit=100):
+    conn = get_db_conn()
     c = conn.cursor()
-    c.execute('SELECT * FROM users WHERE username = ? AND password = ?', (username, password))
-    data = c.fetchone()
+    c.execute("SELECT user_email, message, created_at FROM feedback ORDER BY created_at DESC LIMIT ?", (limit,))
+    rows = c.fetchall()
     conn.close()
-    return data
+    return rows
 
-# ---------- PAGE SETUP ----------
-def home_page():
-    st.markdown("<h2 style='color:#4CAF50;'>🏠 Home</h2>", unsafe_allow_html=True)
-    st.write("Welcome to the Home Page!")
-
-def dashboard_page():
-    st.markdown("<h2 style='color:#2196F3;'>📊 Dashboard</h2>", unsafe_allow_html=True)
-    st.write("Your analytics and data go here.")
-
-def profile_page(username):
-    st.markdown("<h2 style='color:#FF9800;'>👤 Profile</h2>", unsafe_allow_html=True)
-    st.write(f"Logged in as: **{username}**")
-
-def feedback_page():
-    st.markdown("<h2 style='color:#9C27B0;'>📝 Feedback</h2>", unsafe_allow_html=True)
-    feedback = st.text_area("Leave your feedback here")
-    if st.button("Submit Feedback"):
-        st.success("Thanks for your feedback!")
-
-# ---------- MAIN APP ----------
-def main():
-    st.set_page_config(page_title="Streamlit Dashboard", layout="wide")
-    init_db()
-
-    # Inject CSS
-    st.markdown("""
+# -------------------------
+# UI helpers: CSS & Lottie
+# -------------------------
+def local_css():
+    st.markdown(
+        f"""
         <style>
-        body {
-            background: linear-gradient(to right, #e0f7fa, #fce4ec);
-            font-family: 'Segoe UI', sans-serif;
-        }
-        .stButton>button {
-            background-color: #6200EE;
+        /* Full-page background with overlay */
+        .stApp {{
+            background: url("data:image/jpg;base64,{get_base64_of_bin_file("ddda75d157d9d66729aa60f9517ee201.jpg")}") no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+        }}
+
+        /* Dark overlay on top of background */
+        .stApp::before {{
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.55);  /* 55% dark overlay */
+            z-index: 0;
+        }}
+
+        /* Ensure all content stays above overlay */
+        .stApp > div {{
+            position: relative;
+            z-index: 1;
+        }}
+
+        /* Page fade-in */
+        @keyframes fadeIn {{
+            from {{ opacity: 0; transform: translateY(6px); }}
+            to {{ opacity: 1; transform: translateY(0); }}
+        }}
+
+        /* Buttons */
+        .stButton>button {{
+            border-radius: 10px;
+            padding: 10px 16px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            background: linear-gradient(90deg,#1376ff,#1ea1ff);
             color: white;
-            border-radius: 8px;
-            padding: 0.5em 1em;
-            transition: background-color 0.3s ease;
-        }
-        .stButton>button:hover {
-            background-color: #3700B3;
-        }
-        .stTextInput>div>div>input {
-            background-color: #ffffff;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 0.5em;
-        }
-        .sidebar .sidebar-content {
-            background-color: #f3e5f5;
-        }
+            border: none;
+            box-shadow: 0 6px 14px rgba(20,80,200,0.12);
+        }}
+        .stButton>button:hover {{
+            transform: translateY(-3px);
+            box-shadow: 0 12px 26px rgba(20,80,200,0.14);
+        }}
+
+        /* Inputs */
+        input, textarea {{
+            border-radius: 8px !important;
+            background: rgba(255,255,255,0.9) !important;
+        }}
+
+        /* small profile area */
+        .profile-box {{
+            border-radius: 12px;
+            padding: 10px;
+            background: rgba(0,90,200,0.7); 
+            color: white;
+        }}
         </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+# load lottie from URL helper
+def load_lottie_url(url: str):
+    import requests
+    try:
+        r = requests.get(url)
+        if r.status_code == 200:
+            return r.json()
+    except Exception:
+        return None
+
+# -------------------------
+# App pages
+# -------------------------
+def show_login():
+    st.markdown("<div class='app-container'>", unsafe_allow_html=True)
+    st.subheader("Login")
+    cols = st.columns([1, 1])
+    with cols[0]:
+        email = st.text_input("Email")
+        password = st.text_input("Password", type="password")
+        if st.button("Login"):
+            ok, name = verify_user(email, password)
+            if ok:
+                st.success("Welcome back, " + (name or email))
+                st.session_state.logged_in = True
+                st.session_state.user_email = email
+            else:
+                st.error("Invalid credentials")
+    with cols[1]:
+        # Lottie animation or fallback image
+        if LOTTIE_AVAILABLE:
+            lottie = load_lottie_url("https://assets4.lottiefiles.com/packages/lf20_jcikwtux.json")  # sample
+            if lottie:
+                st_lottie(lottie, height=500)
+        else:
+            st.info("Lottie not available. Install streamlit-lottie to show animations.")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("---")
+    st.info("Don't have an account? Sign up below.")
+    with st.expander("Sign up"):
+        name = st.text_input("Full name", key="signup_name")
+        email_s = st.text_input("Email", key="signup_email")
+        password_s = st.text_input("Password", type="password", key="signup_password")
+        if st.button("Create account"):
+            ok, msg = create_user(email_s, name, password_s)
+            if ok:
+                st.success("Account created — you can login now.")
+            else:
+                st.error(msg)
+
+def show_home():
+    st.markdown("<div class='app-container'>", unsafe_allow_html=True)
+    st.title("Home")
+    st.write("👋 Welcome to Global Balance!")
+    # small quick statistics demo
+    sample = pd.DataFrame({
+        "category": ["A", "B", "C", "D"],
+        "value": [45, 28, 90, 55]
+    })
+    st.subheader("Quick Overview")
+    bar = alt.Chart(sample).mark_bar().encode(
+        x="category",
+        y="value"
+    ).properties(height=240)
+    st.altair_chart(bar, use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+def show_dashboard():
+    st.markdown("<div class='app-container'>", unsafe_allow_html=True)
+    st.title("Dashboard")
+    st.write("Charts and analytics inspired by the illustration.")
+
+    # --- Power BI Embed ---
+    st.subheader("📊 Power BI Dashboard")
+    powerbi_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"  # Replace with your published link
+
+    st.markdown(f"""
+        <iframe title="PowerBI Dashboard"
+            width="100%" height="600"
+            src="{powerbi_url}"
+            frameborder="0" allowFullScreen="true"></iframe>
     """, unsafe_allow_html=True)
+
+    st.markdown("---")
+
+def show_profile():
+    st.markdown("<div class='app-container'>", unsafe_allow_html=True)
+    st.title("Profile")
+    email = st.session_state.get("user_email", "")
+    conn = get_db_conn()
+    c = conn.cursor()
+    c.execute("SELECT name, email FROM users WHERE email = ?", (email,))
+    row = c.fetchone()
+    conn.close()
+    if row:
+        name, email = row
+        st.markdown(f"<div class='profile-box'><strong>{name}</strong><br><small>{email}</small></div>", unsafe_allow_html=True)
+    else:
+        st.write("No profile info found.")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+def show_feedback():
+    st.markdown("<div class='app-container'>", unsafe_allow_html=True)
+    st.title("Feedback")
+    email = st.session_state.get("user_email", "")
+    message = st.text_area("Your feedback", height=140)
+    if st.button("Send feedback"):
+        if not email:
+            st.error("Please login to send feedback")
+        elif not message.strip():
+            st.error("Please enter a message")
+        else:
+            store_feedback(email, message)
+            st.success("Thanks! Your feedback was recorded.")
+    st.markdown("### Recent feedback")
+    rows = get_feedbacks(10)
+    for r in rows:
+        st.write(f"{r[0]}** — {r[2]}")
+        st.write(r[1])
+        st.markdown("---")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# -------------------------
+# Top-level layout & nav
+# -------------------------
+def main():
+    init_db()
+    st.set_page_config(page_title="Global Balance", page_icon="💠", layout="wide")
+
+    local_css()
 
     if "logged_in" not in st.session_state:
         st.session_state.logged_in = False
-        st.session_state.username = ""
+        st.session_state.user_email = ""
 
+    # top navigation
+    with st.container():
+        cols = st.columns([1, 4, 2])
+        with cols[0]:
+            st.markdown("<h2 style='margin:25px 0; color:#0b56ff;'>Global Balance</h2>", unsafe_allow_html=True)
+        
+        with cols[2]:
+            if st.session_state.logged_in:
+                st.markdown(f"<div style='text-align:right'><small>Signed in as <strong>{st.session_state.user_email}</strong></small></div>", unsafe_allow_html=True)
+                if st.button("Logout"):
+                    st.session_state.logged_in = False
+                    st.session_state.user_email = ""
+                    st.experimental_rerun()
+
+    # select page
     if not st.session_state.logged_in:
-        menu = ["Login", "Sign Up"]
-        choice = st.sidebar.selectbox("Menu", menu)
-
-        if choice == "Login":
-            st.subheader("🔐 Login")
-            username = st.text_input("Username")
-            password = st.text_input("Password", type='password')
-            if st.button("Login"):
-                user = login_user(username, password)
-                if user:
-                    st.session_state.logged_in = True
-                    st.session_state.username = username
-                    st.success(f"Welcome {username}!")
-                else:
-                    st.error("Invalid credentials")
-
-        elif choice == "Sign Up":
-            st.subheader("🆕 Create Account")
-            new_user = st.text_input("New Username")
-            new_pass = st.text_input("New Password", type='password')
-            if st.button("Sign Up"):
-                add_user(new_user, new_pass)
-                st.success("Account created successfully. You can now log in.")
+        show_login()
     else:
-        nav = st.sidebar.radio("Navigate", ["Home", "Dashboard", "Profile", "Feedback", "Logout"])
-        st.sidebar.markdown("---")
-        st.sidebar.write(f"👤 Logged in as: **{st.session_state.username}**")
+        pages = {
+            "Home": show_home,
+            "Dashboard": show_dashboard,
+            "Profile": show_profile,
+            "Feedback": show_feedback
+        }
+        st.sidebar.title("Navigation")
+        choice = st.sidebar.radio("Go to", list(pages.keys()))
+        pages[choice]()
 
-        if nav == "Home":
-            home_page()
-        elif nav == "Dashboard":
-            dashboard_page()
-        elif nav == "Profile":
-            profile_page(st.session_state.username)
-        elif nav == "Feedback":
-            feedback_page()
-        elif nav == "Logout":
-            st.session_state.logged_in = False
-            st.session_state.username = ""
-            st.success("You have been logged out.")
-
-if __name__ == '__main__':
+if _name_ == "_main_": 
     main()
