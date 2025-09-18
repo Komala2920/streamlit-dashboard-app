@@ -166,7 +166,7 @@ def local_css():
     )
 
 
-"""# load lottie from URL helper
+# load lottie from URL helper
 def load_lottie_url(url: str):
     import requests
     try:
@@ -174,7 +174,7 @@ def load_lottie_url(url: str):
         if r.status_code == 200:
             return r.json()
     except Exception:
-        return None"""
+        return None
 
 # -------------------------
 # App pages
@@ -332,6 +332,7 @@ def main():
 
 if __name__ == "__main__": 
     main()                                                                                 
+
 
 
 
