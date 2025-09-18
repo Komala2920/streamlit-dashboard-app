@@ -77,37 +77,61 @@ for i, item in enumerate(nav_items):
         st.session_state["page"] = item
 st.markdown("</div>", unsafe_allow_html=True)
 
-# ========= Global Styling =========
-st.markdown("""
-    <style>
-    /* Make all text black */
-    body, [data-testid="stMarkdownContainer"], .main, .stText, .stTextInput, 
-    .stSubheader, .stHeader, h1, h2, h3, h4, h5, h6, p, label {
-        color: black !important;
-    }
-
-    /* Style all buttons in brown */
-    div.stButton > button {
-        background-color: #8B4513 !important; /* SaddleBrown */
-        color: white !important;
-        border-radius: 8px !important;
-        border: none !important;
-        padding: 8px 20px !important;
-        font-weight: bold !important;
-        transition: 0.3s;
-    }
-    div.stButton > button:hover {
-        background-color: #A0522D !important; /* Sienna */
-        color: #fff !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
 choice = st.session_state["page"]
 
 # ========= Background only for Login & Sign Up =========
 if choice in ["Login", "Sign Up"]:
     set_background("background.jpg")
+
+    # --- White text & light brown buttons for login/signup ---
+    st.markdown("""
+        <style>
+        body, [data-testid="stMarkdownContainer"], .main, .stText, .stTextInput, 
+        .stSubheader, .stHeader, h1, h2, h3, h4, h5, h6, p, label {
+            color: white !important;
+        }
+        div.stButton > button {
+            background-color: #D2B48C !important; /* Light Brown (Tan) */
+            color: black !important;
+            border-radius: 8px !important;
+            border: none !important;
+            padding: 8px 20px !important;
+            font-weight: bold !important;
+            transition: 0.3s;
+        }
+        div.stButton > button:hover {
+            background-color: #C19A6B !important; /* Lighter Brown Shade */
+            color: black !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+else:
+    # ========= Global Styling for other pages =========
+    st.markdown("""
+        <style>
+        /* Make all text black */
+        body, [data-testid="stMarkdownContainer"], .main, .stText, .stTextInput, 
+        .stSubheader, .stHeader, h1, h2, h3, h4, h5, h6, p, label {
+            color: black !important;
+        }
+
+        /* Style all buttons in dark brown */
+        div.stButton > button {
+            background-color: #8B4513 !important; /* SaddleBrown */
+            color: white !important;
+            border-radius: 8px !important;
+            border: none !important;
+            padding: 8px 20px !important;
+            font-weight: bold !important;
+            transition: 0.3s;
+        }
+        div.stButton > button:hover {
+            background-color: #A0522D !important; /* Sienna */
+            color: #fff !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
 # ========= Authentication =========
 if choice == "Sign Up":
