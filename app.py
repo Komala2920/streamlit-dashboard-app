@@ -128,7 +128,7 @@ elif choice == "Dashboard":
         st.write("Here is your embedded Power BI dashboard:")
 
         # 👉 Replace with your actual Power BI embed link
-        powerbi_url = "<iframe title="global income inequality dashboard2" width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9" frameborder="0" allowFullScreen="true"></iframe>"
+        powerbi_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"
 
         # Embed Power BI Dashboard
         components.iframe(powerbi_url, width=1000, height=600, scrolling=True)
