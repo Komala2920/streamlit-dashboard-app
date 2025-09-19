@@ -15,7 +15,7 @@ if "page" not in st.session_state:
 # LOGIN UI (HTML + Animation)
 # -------------------------
 def login_ui():
-    html_code = """
+    html_code
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -78,3 +78,4 @@ def login_ui():
         .container.right-panel-active .overlay-left{ transform: translateX(0); }
         .overlay-right{ right:0; transform: translateX(0); }
         .container.right-panel-active .overlay
+
