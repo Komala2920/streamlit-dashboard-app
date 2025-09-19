@@ -62,9 +62,6 @@ c.execute('''CREATE TABLE IF NOT EXISTS users
              (username TEXT UNIQUE, password TEXT, email TEXT, fullname TEXT)''')
 conn.commit()
 
-# ========= Apply Background =========
-set_background("background.jpg")
-
 # ========= App Title =========
 st.markdown("<h1 style='text-align: center; color: cyan;'>🌍 Global Balance</h1>", unsafe_allow_html=True)
 
@@ -85,6 +82,10 @@ for i, item in enumerate(nav_items):
 st.markdown("</div>", unsafe_allow_html=True)
 
 choice = st.session_state["page"]
+
+# ========= Background only for Login & Sign Up =========
+if choice in ["Login", "Sign Up"]:
+    set_background("background.jpg")
 
 # ========= Authentication =========
 if choice == "Sign Up":
@@ -115,16 +116,11 @@ elif choice == "Login":
             st.success(f"🎉 Welcome {user}!")
             st.session_state["user"] = data[0]   # username
             st.session_state["password"] = data[1]  
-
-            # Safe access with length checks
             st.session_state["email"] = data[2] if len(data) > 2 and data[2] else "Not Provided"
             st.session_state["fullname"] = data[3] if len(data) > 3 and data[3] else "Not Provided"
-
             st.session_state["page"] = "Home"
-
-         else:
+        else:
             st.error("❌ Invalid credentials.")
-
 
 # ========= Pages =========
 elif choice == "Home":
@@ -147,9 +143,7 @@ elif choice == "Dashboard":
     st.subheader("📊 Dashboard")
     if "user" in st.session_state:
         st.write("Here is your embedded Power BI dashboard:")
-
         powerbi_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"
-
         components.iframe(powerbi_url, width=1000, height=600, scrolling=True)
     else:
         st.warning("⚠ Please log in to view the dashboard.")
@@ -181,4 +175,4 @@ elif choice == "Logout":
         st.success("✅ You have logged out successfully.")
         st.session_state["page"] = "Login"
     else:
-        st.warning("⚠ You are not logged in.")                                       
+        st.warning("⚠ You are not logged in.")
