@@ -18,7 +18,6 @@ def login_signup_ui():
           max-width: 100%;
           min-height: 500px;
           margin: auto;
-          display: flex;
         }
         .form-container {
           position: absolute;
@@ -32,6 +31,7 @@ def login_signup_ui():
           text-align: left;
           width: 50%;
           background: #fff;
+          z-index: 1;  /* 👈 keep below overlay buttons */
         }
         .form-container h1 {
           margin-bottom: 20px;
@@ -49,24 +49,19 @@ def login_signup_ui():
         .sign-in-container {
           left: 0;
           z-index: 2;
-          align-items: center;
-          text-align: center;
         }
         .sign-up-container {
           left: 0;
           opacity: 0;
-          z-index: 2;
-          align-items: center;
-          padding-left: 10px;
         }
         .container.right-panel-active .sign-in-container {
           transform: translateX(100%);
+          opacity: 0;
         }
         .container.right-panel-active .sign-up-container {
           transform: translateX(100%);
           opacity: 1;
-          z-index: 5;
-          transition: all 0.6s ease-in-out;
+          z-index: 5;  /* 👈 bring sign up form to front */
         }
         .overlay-container{
           position:absolute;
@@ -76,7 +71,7 @@ def login_signup_ui():
           height:100%;
           overflow:hidden;
           transition:transform .6s ease-in-out;
-          z-index:100;
+          z-index:10;   /* 👈 overlay always on top */
         }
         .container.right-panel-active .overlay-container{ transform: translateX(-100%); }
         .overlay{
@@ -102,6 +97,7 @@ def login_signup_ui():
           height:100%;
           width:50%;
           transition:transform .6s ease-in-out;
+          cursor: pointer;   /* 👈 show hand cursor */
         }
         .overlay-left{ transform: translateX(-20%); left:0; }
         .container.right-panel-active .overlay-left{ transform: translateX(0); }
@@ -119,6 +115,7 @@ def login_signup_ui():
           text-transform: uppercase;
           transition: transform 80ms ease-in;
           margin-top: 15px;
+          cursor: pointer;
         }
         .btn:active { transform: scale(0.95); }
         .btn:focus { outline: none; }
@@ -179,7 +176,3 @@ def login_signup_ui():
 
 # Run
 login_signup_ui()
-
-
-
-
