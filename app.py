@@ -24,9 +24,6 @@ def set_background(png_file):
     """
     st.markdown(bg_css, unsafe_allow_html=True)
 
-# Optional: uncomment and set your background
-# set_background("background.png")
-
 # ---------------- LOGIN / SIGNUP UI ----------------
 def login_signup_ui():
     html_code = """
@@ -94,7 +91,13 @@ def login_signup_ui():
         signInButton.addEventListener('click', () => container.classList.remove("right-panel-active"));
     </script>
     """
-    components.html(html_code, height=650, scrolling=False)
+    # ✅ Fix: Enable keyboard/cursor input inside iframe
+    components.html(
+        html_code,
+        height=650,
+        scrolling=False,
+        sandbox=["allow-scripts", "allow-same-origin", "allow-forms", "allow-popups", "allow-modals"]
+    )
 
 # ---------------- DASHBOARD PAGES ----------------
 def home_page():
@@ -119,14 +122,11 @@ if "logged_in" not in st.session_state:
 if "page" not in st.session_state:
     st.session_state.page = "Home"
 
-# Show login/signup first
 if not st.session_state.logged_in:
     login_signup_ui()
-    # Temporary login trigger for demo (because HTML buttons cannot update backend)
-    if st.button("Demo Login"):  # 👈 unique button
+    if st.button("Demo Login"):
         st.session_state.logged_in = True
 else:
-    # Sidebar navigation
     st.sidebar.title("Navigation")
     if st.sidebar.button("🏠 Home"): st.session_state.page = "Home"
     if st.sidebar.button("📊 Dashboard"): st.session_state.page = "Dashboard"
@@ -134,8 +134,7 @@ else:
     if st.sidebar.button("💬 Feedback"): st.session_state.page = "Feedback"
     if st.sidebar.button("🚪 Logout"): st.session_state.logged_in = False
 
-    # Render pages
     if st.session_state.page == "Home": home_page()
     elif st.session_state.page == "Dashboard": dashboard_page()
     elif st.session_state.page == "Profile": profile_page()
-    elif st.session_state.page == "Feedback": feedback_page()                                                                  
+    elif st.session_state.page == "Feedback": feedback_page()
