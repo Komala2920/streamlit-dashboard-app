@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import os
 
+# ------------------ Setup ------------------
 st.set_page_config(page_title="Login | Signup", layout="centered")
 
 USER_FILE = "users.csv"
@@ -29,7 +30,7 @@ def authenticate(email, password):
         return user.iloc[0]["name"]
     return None
 
-# CSS for sliding panels
+# ------------------ CSS ------------------
 st.markdown("""
 <style>
 * {font-family: 'Poppins', sans-serif;}
@@ -42,6 +43,7 @@ st.markdown("""
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     overflow: hidden;
+    margin: auto;
 }
 .form-container {
     position: absolute;
@@ -135,43 +137,78 @@ button {
 </style>
 """, unsafe_allow_html=True)
 
-# Session state
+# ------------------ Session state ------------------
 if "right_panel" not in st.session_state:
     st.session_state.right_panel = False
 if "user" not in st.session_state:
     st.session_state.user = None
 
-# Container div
-st.markdown(f"""
-<div class="container {'right-panel-active' if st.session_state.right_panel else ''}" id="main-container">
-    <div class="form-container sign-up-container">
-        <form>
-            <h1>Create Account</h1>
-            <input type="text" placeholder="Name" id="signup_name"/>
-            <input type="email" placeholder="Email" id="signup_email"/>
-            <input type="password" placeholder="Password" id="signup_pass"/>
-        </form>
-    </div>
-    <div class="form-container sign-in-container">
-        <form>
-            <h1>Sign In</h1>
-            <input type="email" placeholder="Email" id="login_email"/>
-            <input type="password" placeholder="Password" id="login_pass"/>
-        </form>
-    </div>
-    <div class="overlay-container">
-        <div class="overlay">
-            <div class="overlay-panel overlay-left">
-                <h1>Welcome Back!</h1>
-                <p>To keep connected with us please login</p>
-                <button onclick="switchToSignIn()">Sign In</button>
-            </div>
-            <div class="overlay-panel overlay-right">
-                <h1>Hello, Friend!</h1>
-                <p>Enter details and start your journey</p>
-                <button onclick="switchToSignUp()">Sign Up</button>
-            </div>
+# ------------------ UI Layout ------------------
+container_class = "container right-panel-active" if st.session_state.right_panel else "container"
+st.markdown(f"<div class='{container_class}'>", unsafe_allow_html=True)
+
+# -------- Sign Up Form --------
+with st.container():
+    st.markdown("<div class='form-container sign-up-container'>", unsafe_allow_html=True)
+    with st.form("signup_form"):
+        st.subheader("Create Account")
+        name = st.text_input("Name")
+        email = st.text_input("Email")
+        password = st.text_input("Password", type="password")
+        signup_btn = st.form_submit_button("Sign Up")
+        if signup_btn:
+            if name and email and password:
+                if save_user(name, email, password):
+                    st.success("✅ Account created successfully! Please sign in.")
+                    st.session_state.right_panel = False
+                    st.rerun()
+                else:
+                    st.error("⚠ Email already registered. Try logging in.")
+            else:
+                st.warning("Please fill in all fields")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# -------- Sign In Form --------
+with st.container():
+    st.markdown("<div class='form-container sign-in-container'>", unsafe_allow_html=True)
+    with st.form("signin_form"):
+        st.subheader("Sign In")
+        email = st.text_input("Email", key="login_email")
+        password = st.text_input("Password", type="password", key="login_pass")
+        signin_btn = st.form_submit_button("Sign In")
+        if signin_btn:
+            user = authenticate(email, password)
+            if user:
+                st.session_state.user = user
+                st.success(f"Welcome back, {user}! 🎉")
+            else:
+                st.error("Invalid email or password")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# -------- Overlay --------
+st.markdown("""
+<div class="overlay-container">
+    <div class="overlay">
+        <div class="overlay-panel overlay-left">
+            <h1>Welcome Back!</h1>
+            <p>To keep connected, please login</p>
+""", unsafe_allow_html=True)
+if st.button("Sign In", key="to_signin"):
+    st.session_state.right_panel = False
+    st.rerun()
+st.markdown("""
+        </div>
+        <div class="overlay-panel overlay-right">
+            <h1>Hello, Friend!</h1>
+            <p>Enter details and start your journey</p>
+""", unsafe_allow_html=True)
+if st.button("Sign Up", key="to_signup"):
+    st.session_state.right_panel = True
+    st.rerun()
+st.markdown("""
         </div>
     </div>
 </div>
 """, unsafe_allow_html=True)
+
+st.markdown("</div>", unsafe_allow_html=True)  # close main container
