@@ -1,6 +1,0 @@
-streamlit
-streamlit-lottie
-pandas
-altair
-requests
-bcrypt
