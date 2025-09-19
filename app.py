@@ -35,7 +35,7 @@ choice = st.session_state["page"]
 
 # ========= Background only for Login & Sign Up =========
 if choice in ["Login", "Sign Up"]:
-    set_background("background.jpg")
+
 
 # ========= Authentication =========
 if choice == "Sign Up":
@@ -126,3 +126,4 @@ elif choice == "Logout":
         st.session_state["page"] = "Login"
     else:
         st.warning("⚠ You are not logged in.")                                                                                                        
+
