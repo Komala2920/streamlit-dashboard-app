@@ -160,10 +160,12 @@ def dashboard_ui():
 # --- MAIN LOGIC ---
 if not st.session_state.logged_in:
     login_ui()
-    params = st.experimental_get_query_params()
+    params = st.query_params
     if "isLoggedIn" in params:
         st.session_state.logged_in = True
-        st.experimental_set_query_params()  # clear
-        st.experimental_rerun()
+        st.query_params.clear()   # clear params
+        st.rerun()
 else:
     dashboard_ui()
+
+
