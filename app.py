@@ -1,142 +1,98 @@
-import streamlit as st
-import sqlite3
-import base64
-import pandas as pd
-import numpy as np
+# -------------------------
+# Global Dark Theme
+# -------------------------
+def global_dark_theme():
+    st.markdown(
+        """
+        <style>
+        body {
+            background-color: #0e0c2a;
+            background-image: radial-gradient(circle at 20% 30%, #1d1b3a 25%, transparent 40%),
+                              radial-gradient(circle at 80% 70%, #1d1b3a 25%, transparent 40%);
+            color: white;
+        }
+        .block-container {
+            padding-top: 2rem;
+        }
+        .login-box {
+            background-color: #1c1a3a;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0px 8px 24px rgba(0,0,0,0.4);
+            width: 380px;
+            margin: 100px auto;
+            text-align: center;
+        }
+        .login-box h1 {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: white;
+        }
+        .stTextInput > div > div > input {
+            background-color: #2a274d;
+            color: white;
+            border-radius: 8px;
+        }
+        .stButton>button {
+            background: #1376ff;
+            color: white;
+            border-radius: 8px;
+            width: 100%;
+            padding: 10px;
+            border: none;
+            font-size: 16px;
+        }
+        .stButton>button:hover {
+            background: #0d5ed6;
+        }
+        .forgot {
+            margin-top: 10px;
+            font-size: 13px;
+        }
+        .forgot a {
+            color: #8aa8ff;
+            text-decoration: none;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
-# ========= Background Setup =========
-def get_base64(bin_file):
-    with open(bin_file, "rb") as f:
-        data = f.read()
-    return base64.b64encode(data).decode()
+# -------------------------
+# Modified Login Page
+# -------------------------
+def show_login():
+    global_dark_theme()
 
-def set_background(png_file):
-    bin_str = get_base64(png_file)
-    page_bg_img = f"""
-    <style>
-    [data-testid="stAppViewContainer"] {{
-        background-image: url("data:image/jpg;base64,{bin_str}");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }}
-    [data-testid="stHeader"], [data-testid="stToolbar"] {{
-        background: rgba(0,0,0,0);
-    }}
-    .main {{
-        background-color: rgba(0, 0, 0, 0.65);
-        padding: 25px;
-        border-radius: 15px;
-        color: white;
-    }}
-    .nav-container {{
-        display: flex;
-        justify-content: center;
-        gap: 12px;
-        margin-bottom: 25px;
-    }}
-    .nav-button {{
-        background: linear-gradient(90deg, #00c6ff, #0072ff);
-        color: white;
-        border-radius: 8px;
-        padding: 10px 18px;
-        font-size: 15px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: 0.3s ease;
-        border: none;
-    }}
-    .nav-button:hover {{
-        background: linear-gradient(90deg, #0072ff, #00c6ff);
-        transform: translateY(-2px);
-        box-shadow: 0px 4px 12px rgba(0,0,0,0.4);
-    }}
-    </style>
-    """
-    st.markdown(page_bg_img, unsafe_allow_html=True)
+    st.markdown("<div class='login-box'>", unsafe_allow_html=True)
+    st.markdown("<h1>Global Balance</h1>", unsafe_allow_html=True)  # renamed here ✅
 
-# ========= Database Setup =========
-conn = sqlite3.connect('users.db')
-c = conn.cursor()
-c.execute('''CREATE TABLE IF NOT EXISTS users
-             (username TEXT UNIQUE, password TEXT)''')
-conn.commit()
+    email = st.text_input("Email address")
+    password = st.text_input("Password", type="password")
 
-# ========= Apply Background =========
-set_background("background.jpg")
-
-# ========= App Title =========
-st.markdown("<h1 style='text-align: center; color: cyan;'>🌍 Global Balance</h1>", unsafe_allow_html=True)
-
-# ========= Navigation Buttons =========
-if "page" not in st.session_state:
-    st.session_state["page"] = "Login"
-
-nav_items = ["Login", "Sign Up", "Home", "Dashboard", "Profile", "Feedback", "Logout"]
-
-st.markdown("<div class='nav-container'>", unsafe_allow_html=True)
-cols = st.columns(len(nav_items))
-for i, item in enumerate(nav_items):
-    if cols[i].button(item):
-        st.session_state["page"] = item
-st.markdown("</div>", unsafe_allow_html=True)
-
-choice = st.session_state["page"]
-
-# ========= Authentication =========
-if choice == "Sign Up":
-    st.subheader("🔐 Create an Account")
-    new_user = st.text_input("Username")
-    new_pass = st.text_input("Password", type="password")
-    if st.button("Sign Up"):
-        try:
-            c.execute("INSERT INTO users (username, password) VALUES (?,?)", (new_user, new_pass))
-            conn.commit()
-            st.success("✅ Account created successfully! Go to Login.")
-        except:
-            st.warning("⚠ Username already exists.")
-
-elif choice == "Login":
-    st.subheader("🔑 Login to Global Balance")
-    user = st.text_input("Username")
-    passwd = st.text_input("Password", type="password")
-    if st.button("Login"):
-        c.execute("SELECT * FROM users WHERE username=? AND password=?", (user, passwd))
-        data = c.fetchone()
-        if data:
-            st.success(f"🎉 Welcome {user}!")
-            st.session_state["user"] = user
+    if st.button("Log in"):
+        ok, name = verify_user(email, password)
+        if ok:
+            st.success("Welcome back, " + (name or email))
+            st.session_state.logged_in = True
+            st.session_state.user_email = email
         else:
-            st.error("❌ Invalid credentials.")
+            st.error("Invalid credentials")
 
-# ========= Pages =========
-elif choice == "Home":
-    st.subheader("🏠 Home")
-    st.write("Welcome to *Global Balance*! Explore the dashboard for insights.")
+    st.markdown("<div class='forgot'><a href='#'>Forgot your password?</a></div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
-elif choice == "Dashboard":
-    st.subheader("📊 Dashboard")
-    st.write("Interactive data visualization will go here.")
-    df = pd.DataFrame(np.random.randn(10, 2), columns=["Balance A", "Balance B"])
-    st.line_chart(df)
-
-elif choice == "Profile":
-    st.subheader("👤 Profile")
-    if "user" in st.session_state:
-        st.write(f"Logged in as: *{st.session_state['user']}*")
-    else:
-        st.warning("⚠ Please log in to view your profile.")
-
-elif choice == "Feedback":
-    st.subheader("💬 Feedback")
-    feedback = st.text_area("Share your feedback:")
-    if st.button("Submit Feedback"):
-        st.success("🙌 Thank you for your feedback!")
-
-elif choice == "Logout":
-    if "user" in st.session_state:
-        st.session_state.clear()
-        st.success("✅ You have logged out successfully.")
-    else:
-        st.warning("⚠ You are not logged in.")
+    # Keep signup expander below login
+    st.markdown("---")
+    st.info("Don't have an account? Sign up below.")
+    with st.expander("Sign up"):
+        name = st.text_input("Full name", key="signup_name")
+        email_s = st.text_input("Email", key="signup_email")
+        password_s = st.text_input("Password", type="password", key="signup_password")
+        if st.button("Create account"):
+            ok, msg = create_user(email_s, name, password_s)
+            if ok:
+                st.success("Account created — you can login now.")
+            else:
+                st.error(msg)
