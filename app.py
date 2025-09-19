@@ -1,181 +1,128 @@
 import streamlit as st
-import streamlit.components.v1 as components
+import sqlite3
+import base64
+import streamlit.components.v1 as components   # For Power BI
 
-st.set_page_config(page_title="Animated Login System", layout="wide")
 
-# -------------------------
-# SESSION STATE
-# -------------------------
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
+
+# ========= Database Setup =========
+conn = sqlite3.connect('users.db')
+c = conn.cursor()
+c.execute('''CREATE TABLE IF NOT EXISTS users
+             (username TEXT UNIQUE, password TEXT, email TEXT, fullname TEXT)''')
+conn.commit()
+
+# ========= App Title =========
+st.markdown("<h1 style='text-align: center; color: cyan;'>🌍 Global Balance</h1>", unsafe_allow_html=True)
+
+# ========= Navigation Setup =========
 if "page" not in st.session_state:
-    st.session_state.page = "Home"
+    st.session_state["page"] = "Login"
 
-# -------------------------
-# LOGIN UI (HTML + Animation)
-# -------------------------
-def login_ui():
-    html_code = """
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Poppins", sans-serif; }
-        body {
-          background: linear-gradient(to right, #20c997, #17a2b8);
-          height: 100vh;
-          width: 100vw;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          overflow: hidden;
-        }
-        .container {
-          background: #fff;
-          border-radius: 10px;
-          box-shadow: 0 14px 28px rgba(0,0,0,0.25),
-                      0 10px 10px rgba(0,0,0,0.22);
-          position: relative;
-          overflow: hidden;
-          width: 100%;
-          min-height: 100vh;
-          display: flex;
-        }
-        .form-container {
-          position: absolute;
-          top: 0;
-          height: 100%;
-          transition: all 0.6s ease-in-out;
-        }
-        .sign-in-container { left: 0; width: 50%; z-index: 2; height: 100%; }
-        .sign-up-container { left: 0; width: 50%; opacity: 0; z-index: 1; height: 100%; }
-        .container.right-panel-active .sign-in-container { transform: translateX(100%); }
-        .container.right-panel-active .sign-up-container {
-          transform: translateX(100%); opacity: 1; z-index: 5; animation: show 0.6s;
-        }
-        @keyframes show { 0%,49.99%{opacity:0} 50%,100%{opacity:1} }
-        form {
-          background: #fff; display: flex; flex-direction: column; padding: 0 50px;
-          height: 100%; justify-content: center; align-items: center; text-align: center;
-        }
-        form h1 { font-weight: bold; margin-bottom: 20px; }
-        form input {
-          background: #eee; border: none; padding: 12px 15px; margin: 8px 0; width: 100%;
-          max-width: 300px; border-radius: 4px;
-        }
-        .btn {
-          border-radius: 20px; border: 1px solid #20c997; background: #20c997; color: #fff;
-          font-size: 14px; font-weight: bold; padding: 12px 45px; letter-spacing: 1px;
-          text-transform: uppercase; transition: transform 80ms ease-in; cursor: pointer; margin-top: 10px;
-        }
-        .overlay-container{ position:absolute; top:0; left:50%; width:50%; height:100%; overflow:hidden; transition:transform .6s ease-in-out; z-index:100; }
-        .container.right-panel-active .overlay-container{ transform: translateX(-100%); }
-        .overlay{ background: linear-gradient(to right,#20c997,#17a2b8); position: relative; left:-100%; height:100%; width:200%; transform:translateX(0); transition:transform .6s ease-in-out; color:#fff; }
-        .container.right-panel-active .overlay{ transform: translateX(50%); }
-        .overlay-panel{ position:absolute; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 40px; text-align:center; top:0; height:100%; width:50%; transition:transform .6s ease-in-out; }
-        .overlay-left{ transform: translateX(-20%); left:0; }
-        .container.right-panel-active .overlay-left{ transform: translateX(0); }
-        .overlay-right{ right:0; transform: translateX(0); }
-        .container.right-panel-active .overlay-right{ transform: translateX(20%); }
-      </style>
-    </head>
-    <body>
-      <div class="container" id="container">
-        <!-- Sign Up -->
-        <div class="form-container sign-up-container">
-          <form>
-            <h1>Create Account</h1>
-            <input type="text" placeholder="Name" />
-            <input type="email" placeholder="Email" />
-            <input type="password" placeholder="Password" />
-            <!-- This sets query param -->
-            <button type="button" class="btn" onclick="window.location.search='?isLoggedIn=true'">Sign Up</button>
-          </form>
-        </div>
+if "user" not in st.session_state:  
+    nav_items = ["Login", "Sign Up"]
+else:  
+    nav_items = ["Home", "Dashboard", "Profile", "Feedback", "Logout"]
 
-        <!-- Sign In -->
-        <div class="form-container sign-in-container">
-          <form>
-            <h1>Sign In</h1>
-            <input type="email" placeholder="Email" />
-            <input type="password" placeholder="Password" />
-            <!-- This sets query param -->
-            <button type="button" class="btn" onclick="window.location.search='?isLoggedIn=true'">Sign In</button>
-          </form>
-        </div>
+st.markdown("<div class='nav-container'>", unsafe_allow_html=True)
+cols = st.columns(len(nav_items))
+for i, item in enumerate(nav_items):
+    if cols[i].button(item, key=f"nav_{item}"):
+        st.session_state["page"] = item
+st.markdown("</div>", unsafe_allow_html=True)
 
-        <!-- Overlay -->
-        <div class="overlay-container">
-          <div class="overlay">
-            <div class="overlay-panel overlay-left">
-              <h1>Welcome Back!</h1>
-              <p>To keep connected with us please login</p>
-              <button class="btn" id="signIn">Sign In</button>
-            </div>
-            <div class="overlay-panel overlay-right">
-              <h1>Hello, Friend!</h1>
-              <p>Enter your details and start your journey</p>
-              <button class="btn" id="signUp">Sign Up</button>
-            </div>
-          </div>
-        </div>
-      </div>
+choice = st.session_state["page"]
 
-      <script>
-        const signUpButton = document.getElementById('signUp');
-        const signInButton = document.getElementById('signIn');
-        const container = document.getElementById('container');
-        signUpButton.addEventListener('click', () => container.classList.add("right-panel-active"));
-        signInButton.addEventListener('click', () => container.classList.remove("right-panel-active"));
-      </script>
-    </body>
-    </html>
-    """
-    components.html(html_code, height=800, scrolling=False)
+# ========= Background only for Login & Sign Up =========
+if choice in ["Login", "Sign Up"]:
+    set_background("background.jpg")
 
-# -------------------------
-# DASHBOARD UI
-# -------------------------
-def dashboard_ui():
-    st.sidebar.title("Navigation")
-    choice = st.sidebar.radio("Go to:", ["Home", "Dashboard", "Profile", "Feedback", "Logout"])
-    st.session_state.page = choice
+# ========= Authentication =========
+if choice == "Sign Up":
+    st.subheader("🔐 Create an Account")
+    new_name = st.text_input("Full Name", key="signup_name")   
+    new_user = st.text_input("Username", key="signup_user")
+    new_email = st.text_input("Email", key="signup_email")
+    new_pass = st.text_input("Password", type="password", key="signup_pass")
 
-    if choice == "Home":
-        st.title("🏠 Home")
-        st.write("Welcome to the Home Page!")
+    if st.button("Sign Up", key="signup_btn"):
+        try:
+            c.execute("INSERT INTO users (username, password, email, fullname) VALUES (?,?,?,?)",
+                      (new_user, new_pass, new_email, new_name))
+            conn.commit()
+            st.success("✅ Account created successfully! Please go to Login.")
+        except:
+            st.warning("⚠ Username already exists.")
 
-    elif choice == "Dashboard":
-        st.title("📊 Dashboard")
-        st.write("Your dashboard content goes here.")
+elif choice == "Login":
+    st.subheader("🔑 Login to Global Balance")
+    user = st.text_input("Username", key="login_user")
+    passwd = st.text_input("Password", type="password", key="login_pass")
 
-    elif choice == "Profile":
-        st.title("👤 Profile")
-        st.write("User profile details displayed here.")
+    if st.button("Login", key="login_btn"):
+        c.execute("SELECT * FROM users WHERE username=? AND password=?", (user, passwd))
+        data = c.fetchone()
+        if data:
+            st.success(f"🎉 Welcome {user}!")
+            st.session_state["user"] = data[0]   # username
+            st.session_state["password"] = data[1]  
+            st.session_state["email"] = data[2] if len(data) > 2 and data[2] else "Not Provided"
+            st.session_state["fullname"] = data[3] if len(data) > 3 and data[3] else "Not Provided"
+            st.session_state["page"] = "Home"
+        else:
+            st.error("❌ Invalid credentials.")
 
-    elif choice == "Feedback":
-        st.title("💬 Feedback")
-        feedback = st.text_area("Enter your feedback here:")
-        if st.button("Submit"):
-            st.success("Thanks for your feedback!")
+# ========= Pages =========
+elif choice == "Home":
+    st.subheader("🏠 Home")
+    st.markdown("""
+    Welcome to **Global Balance** 🌍  
+    This platform provides an **interactive dashboard** built using Power BI, 
+    where you can monitor, analyze, and visualize global balance data effectively.  
 
-    elif choice == "Logout":
-        st.session_state.logged_in = False
-        st.query_params.clear()   # clear query params
-        st.rerun()
+    ### 🔹 Features:
+    - 📊 Real-time analytics  
+    - 🌐 Global insights  
+    - 📈 Interactive reports  
+    - 💡 Data-driven decision making  
 
-# -------------------------
-# MAIN APP
-# -------------------------
-if not st.session_state.logged_in:
-    login_ui()
+    👉 Navigate to the **Dashboard** tab to view the live reports.
+    """)
 
-    # check query params
-    params = st.query_params
-    if "isLoggedIn" in params:
-        st.session_state.logged_in = True
-        st.query_params.clear()
-        st.rerun()
-else:
-    dashboard_ui()
+elif choice == "Dashboard":
+    st.subheader("📊 Dashboard")
+    if "user" in st.session_state:
+        st.write("Here is your embedded Power BI dashboard:")
+        powerbi_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"
+        components.iframe(powerbi_url, width=1000, height=600, scrolling=True)
+    else:
+        st.warning("⚠ Please log in to view the dashboard.")
+
+elif choice == "Profile":
+    st.subheader("👤 Profile")
+    if "user" in st.session_state:
+        col1, col2 = st.columns([1, 3])
+        with col1:
+            st.image("profile.png", width=150)  
+        with col2:
+            st.markdown(f"""
+            **Full Name:** {st.session_state.get('fullname', 'Komala Rani Talisetti')}  
+            **Username:** {st.session_state['user']}  
+            **Email:** {st.session_state.get('email', 'talisettikomali@gmail.com')}  
+            """)
+    else:
+        st.warning("⚠ Please log in to view your profile.")
+
+elif choice == "Feedback":
+    st.subheader("💬 Feedback")
+    feedback = st.text_area("Share your feedback:", key="feedback_text")
+    if st.button("Submit Feedback", key="feedback_btn"):
+        st.success("🙌 Thank you for your feedback!")
+
+elif choice == "Logout":
+    if "user" in st.session_state:
+        st.session_state.clear()
+        st.success("✅ You have logged out successfully.")
+        st.session_state["page"] = "Login"
+    else:
+        st.warning("⚠ You are not logged in.")                                                                                                        
