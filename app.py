@@ -175,4 +175,4 @@ elif choice == "Logout":
         st.success("✅ You have logged out successfully.")
         st.session_state["page"] = "Login"
     else:
-        st.warning("⚠ You are not logged in.")                                                                                                       
+        st.warning("⚠ You are not logged in.")
