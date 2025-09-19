@@ -55,9 +55,9 @@ def login_signup_ui():
         .sign-up-container {
           left: 0;
           opacity: 0;
-          z-index: 1;
-          align-items: flex-start;   /* 👈 shift content left */
-          padding-left: 50px;        /* 👈 adjust left margin */
+          z-index: 2;
+          align-items: center;   /* 👈 shift content left */
+          padding-left: 10px;        /* 👈 adjust left margin */
         }
         .container.right-panel-active .sign-in-container {
           transform: translateX(100%);
@@ -171,4 +171,5 @@ def login_signup_ui():
 
 # Run
 login_signup_ui()
+
 
