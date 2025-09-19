@@ -157,14 +157,27 @@ def dashboard_ui():
         st.experimental_set_query_params()  # clear params
         st.experimental_rerun()
 
-# --- MAIN LOGIC ---
 if not st.session_state.logged_in:
-    login_ui()
-    params = st.query_params
-    if "isLoggedIn" in params:
-        st.session_state.logged_in = True
-        st.query_params.clear()   # clear params
-        st.rerun()
+    st.title("🔐 Login / Sign Up")
+
+    tab1, tab2 = st.tabs(["Sign In", "Sign Up"])
+
+    with tab1:
+        email = st.text_input("Email (Sign In)", key="signin_email")
+        pwd = st.text_input("Password (Sign In)", type="password", key="signin_pwd")
+        if st.button("Sign In"):
+            if email and pwd:   # dummy check
+                st.session_state.logged_in = True
+                st.rerun()
+
+    with tab2:
+        name = st.text_input("Name (Sign Up)", key="signup_name")
+        email2 = st.text_input("Email (Sign Up)", key="signup_email")
+        pwd2 = st.text_input("Password (Sign Up)", type="password", key="signup_pwd")
+        if st.button("Sign Up"):
+            if name and email2 and pwd2:
+                st.session_state.logged_in = True
+                st.rerun()
 else:
     dashboard_ui()
 
