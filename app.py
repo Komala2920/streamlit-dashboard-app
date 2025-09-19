@@ -60,7 +60,7 @@ def set_background(png_file):
 conn = sqlite3.connect('users.db', check_same_thread=False)
 c = conn.cursor()
 c.execute('''CREATE TABLE IF NOT EXISTS users
-             (username TEXT UNIQUE, password TEXT, email TEXT, fullname TEXT)''')
+             ("username" TEXT UNIQUE, "password" TEXT, email TEXT, fullname TEXT)''')
 conn.commit()
 
 # ========= Create Default Admin User =========
@@ -69,7 +69,7 @@ if c.fetchone()[0] == 0:  # If no users exist
     default_user = "admin"
     default_pass = "admin123"
     hashed_pw = bcrypt.hashpw(default_pass.encode(), bcrypt.gensalt()).decode()
-    c.execute('INSERT INTO users ("username", "password", "email", "fullname") VALUES (?,?,?,?)',
+    c.execute('INSERT INTO users ("username", "password", email, fullname) VALUES (?,?,?,?)',
               (default_user, hashed_pw, "admin@global.com", "Administrator"))
     conn.commit()
     st.sidebar.success("✅ Default admin user created: **admin / admin123**")
@@ -112,7 +112,7 @@ if choice == "Sign Up":
         if new_user and new_pass:
             hashed_pw = bcrypt.hashpw(new_pass.encode(), bcrypt.gensalt()).decode()
             try:
-                c.execute("INSERT INTO users (username, password, email, fullname) VALUES (?,?,?,?)",
+                c.execute('INSERT INTO users ("username", "password", email, fullname) VALUES (?,?,?,?)',
                           (new_user, hashed_pw, new_email, new_name))
                 conn.commit()
                 st.success("✅ Account created successfully! Please go to Login.")
@@ -127,7 +127,7 @@ elif choice == "Login":
     passwd = st.text_input("Password", type="password", key="login_pass")
 
     if st.button("Login", key="login_btn"):
-        c.execute("SELECT * FROM users WHERE username=?", (user,))
+        c.execute('SELECT * FROM users WHERE "username"=?', (user,))
         data = c.fetchone()
         if data and bcrypt.checkpw(passwd.encode(), data[1].encode()):
             st.success(f"🎉 Welcome {user}!")
