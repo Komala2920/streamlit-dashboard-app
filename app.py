@@ -62,6 +62,18 @@ c.execute('''CREATE TABLE IF NOT EXISTS users
              (username TEXT UNIQUE, password TEXT, email TEXT, fullname TEXT)''')
 conn.commit()
 
+# --- TEMPORARY DEBUG CODE ---
+# This will print all users and their passwords (for debugging only, remove later)
+st.subheader("Database Users (DEBUGGING ONLY)")
+c.execute("SELECT * FROM users")
+all_users = c.fetchall()
+if all_users:
+    for user_info in all_users:
+        st.write(f"Username: {user_info[0]}, Password: {user_info[1]}")
+else:
+    st.write("No users found in the database.")
+# ----------------------------
+
 # ========= App Title =========
 st.markdown("<h1 style='text-align: center; color: cyan;'>🌍 Global Balance</h1>", unsafe_allow_html=True)
 
@@ -126,8 +138,8 @@ elif choice == "Login":
 elif choice == "Home":
     st.subheader("🏠 Home")
     st.markdown("""
-    Welcome to **Global Balance** 🌍  
-    This platform provides an **interactive dashboard** built using Power BI, 
+    Welcome to *Global Balance* 🌍  
+    This platform provides an *interactive dashboard* built using Power BI, 
     where you can monitor, analyze, and visualize global balance data effectively.  
 
     ### 🔹 Features:
@@ -136,7 +148,7 @@ elif choice == "Home":
     - 📈 Interactive reports  
     - 💡 Data-driven decision making  
 
-    👉 Navigate to the **Dashboard** tab to view the live reports.
+    👉 Navigate to the *Dashboard* tab to view the live reports.
     """)
 
 elif choice == "Dashboard":
@@ -156,9 +168,9 @@ elif choice == "Profile":
             st.image("profile.png", width=150)  
         with col2:
             st.markdown(f"""
-            **Full Name:** {st.session_state.get('fullname', 'Komala Rani Talisetti')}  
-            **Username:** {st.session_state['user']}  
-            **Email:** {st.session_state.get('email', 'talisettikomali@gmail.com')}  
+            *Full Name:* {st.session_state.get('fullname', 'Komala Rani Talisetti')}  
+            *Username:* {st.session_state['user']}  
+            *Email:* {st.session_state.get('email', 'talisettikomali@gmail.com')}  
             """)
     else:
         st.warning("⚠ Please log in to view your profile.")
