@@ -1,148 +1,142 @@
 import streamlit as st
 import sqlite3
-import bcrypt
+import base64
+import pandas as pd
+import numpy as np
 
-# ========== DATABASE SETUP ==========
-conn = sqlite3.connect("users.db")
+# ========= Background Setup =========
+def get_base64(bin_file):
+    with open(bin_file, "rb") as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+def set_background(png_file):
+    bin_str = get_base64(png_file)
+    page_bg_img = f"""
+    <style>
+    [data-testid="stAppViewContainer"] {{
+        background-image: url("data:image/jpg;base64,{bin_str}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }}
+    [data-testid="stHeader"], [data-testid="stToolbar"] {{
+        background: rgba(0,0,0,0);
+    }}
+    .main {{
+        background-color: rgba(0, 0, 0, 0.65);
+        padding: 25px;
+        border-radius: 15px;
+        color: white;
+    }}
+    .nav-container {{
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 25px;
+    }}
+    .nav-button {{
+        background: linear-gradient(90deg, #00c6ff, #0072ff);
+        color: white;
+        border-radius: 8px;
+        padding: 10px 18px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s ease;
+        border: none;
+    }}
+    .nav-button:hover {{
+        background: linear-gradient(90deg, #0072ff, #00c6ff);
+        transform: translateY(-2px);
+        box-shadow: 0px 4px 12px rgba(0,0,0,0.4);
+    }}
+    </style>
+    """
+    st.markdown(page_bg_img, unsafe_allow_html=True)
+
+# ========= Database Setup =========
+conn = sqlite3.connect('users.db')
 c = conn.cursor()
 c.execute('''CREATE TABLE IF NOT EXISTS users
-             (id INTEGER PRIMARY KEY AUTOINCREMENT, 
-              name TEXT, email TEXT UNIQUE, password TEXT)''')
+             (username TEXT UNIQUE, password TEXT)''')
 conn.commit()
 
-# ========== HELPER FUNCTIONS ==========
-def create_user(name, email, password):
-    hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-    try:
-        c.execute("INSERT INTO users (name, email, password) VALUES (?, ?, ?)", (name, email, hashed))
-        conn.commit()
-        return True
-    except:
-        return False
+# ========= Apply Background =========
+set_background("background.jpg")
 
-def login_user(email, password):
-    c.execute("SELECT * FROM users WHERE email=?", (email,))
-    user = c.fetchone()
-    if user and bcrypt.checkpw(password.encode(), user[3]):
-        return {"id": user[0], "name": user[1], "email": user[2]}
-    return None
+# ========= App Title =========
+st.markdown("<h1 style='text-align: center; color: cyan;'>🌍 Global Balance</h1>", unsafe_allow_html=True)
 
-# ========== STREAMLIT CONFIG ==========
-st.set_page_config(page_title="Dashboard App", page_icon="🖥️", layout="wide")
-
-# Custom CSS for styling
-st.markdown("""
-<style>
-    body {background-color: #f3f5f7;}
-    .main-title {text-align: center; color: #20bfa9; font-size: 32px; font-weight: bold;}
-    .sidebar .sidebar-content {background-color: #20bfa9; color: white;}
-    .stButton button {
-        border-radius: 25px;
-        background-color: #20bfa9;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-    }
-    .stButton button:hover {
-        background-color: #17a58f;
-        color: #fff;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# ========== SESSION STATE ==========
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
-if "user" not in st.session_state:
-    st.session_state.user = None
+# ========= Navigation Buttons =========
 if "page" not in st.session_state:
-    st.session_state.page = "Login"
+    st.session_state["page"] = "Login"
 
-# ========== PAGES ==========
-def login_page():
-    st.markdown("<h2 class='main-title'>🔐 Login</h2>", unsafe_allow_html=True)
-    email = st.text_input("Email")
-    password = st.text_input("Password", type="password")
+nav_items = ["Login", "Sign Up", "Home", "Dashboard", "Profile", "Feedback", "Logout"]
+
+st.markdown("<div class='nav-container'>", unsafe_allow_html=True)
+cols = st.columns(len(nav_items))
+for i, item in enumerate(nav_items):
+    if cols[i].button(item):
+        st.session_state["page"] = item
+st.markdown("</div>", unsafe_allow_html=True)
+
+choice = st.session_state["page"]
+
+# ========= Authentication =========
+if choice == "Sign Up":
+    st.subheader("🔐 Create an Account")
+    new_user = st.text_input("Username")
+    new_pass = st.text_input("Password", type="password")
+    if st.button("Sign Up"):
+        try:
+            c.execute("INSERT INTO users (username, password) VALUES (?,?)", (new_user, new_pass))
+            conn.commit()
+            st.success("✅ Account created successfully! Go to Login.")
+        except:
+            st.warning("⚠ Username already exists.")
+
+elif choice == "Login":
+    st.subheader("🔑 Login to Global Balance")
+    user = st.text_input("Username")
+    passwd = st.text_input("Password", type="password")
     if st.button("Login"):
-        user = login_user(email, password)
-        if user:
-            st.session_state.logged_in = True
-            st.session_state.user = user
-            st.session_state.page = "Home"
-            st.success(f"Welcome back, {user['name']}!")
+        c.execute("SELECT * FROM users WHERE username=? AND password=?", (user, passwd))
+        data = c.fetchone()
+        if data:
+            st.success(f"🎉 Welcome {user}!")
+            st.session_state["user"] = user
         else:
-            st.error("Invalid email or password")
+            st.error("❌ Invalid credentials.")
 
-    st.write("Don't have an account?")
-    if st.button("Sign Up Here"):
-        st.session_state.page = "Signup"
+# ========= Pages =========
+elif choice == "Home":
+    st.subheader("🏠 Home")
+    st.write("Welcome to *Global Balance*! Explore the dashboard for insights.")
 
-def signup_page():
-    st.markdown("<h2 class='main-title'>📝 Sign Up</h2>", unsafe_allow_html=True)
-    name = st.text_input("Name")
-    email = st.text_input("Email")
-    password = st.text_input("Password", type="password")
-    if st.button("Register"):
-        if create_user(name, email, password):
-            st.success("Account created! Please log in.")
-            st.session_state.page = "Login"
-        else:
-            st.error("Email already exists!")
+elif choice == "Dashboard":
+    st.subheader("📊 Dashboard")
+    st.write("Interactive data visualization will go here.")
+    df = pd.DataFrame(np.random.randn(10, 2), columns=["Balance A", "Balance B"])
+    st.line_chart(df)
 
-    if st.button("Back to Login"):
-        st.session_state.page = "Login"
+elif choice == "Profile":
+    st.subheader("👤 Profile")
+    if "user" in st.session_state:
+        st.write(f"Logged in as: *{st.session_state['user']}*")
+    else:
+        st.warning("⚠ Please log in to view your profile.")
 
-def home_page():
-    st.markdown("<h2 class='main-title'>🏠 Home</h2>", unsafe_allow_html=True)
-    st.write("Welcome to the Home Page!")
-
-def dashboard_page():
-    st.markdown("<h2 class='main-title'>📊 Dashboard</h2>", unsafe_allow_html=True)
-    st.write("Here is your interactive dashboard content...")
-
-def profile_page():
-    st.markdown("<h2 class='main-title'>👤 Profile</h2>", unsafe_allow_html=True)
-    st.write(f"**Name:** {st.session_state.user['name']}")
-    st.write(f"**Email:** {st.session_state.user['email']}")
-
-def feedback_page():
-    st.markdown("<h2 class='main-title'>💬 Feedback</h2>", unsafe_allow_html=True)
-    feedback = st.text_area("Enter your feedback here:")
+elif choice == "Feedback":
+    st.subheader("💬 Feedback")
+    feedback = st.text_area("Share your feedback:")
     if st.button("Submit Feedback"):
-        st.success("Thank you for your feedback!")
+        st.success("🙌 Thank you for your feedback!")
 
-def logout():
-    st.session_state.logged_in = False
-    st.session_state.user = None
-    st.session_state.page = "Login"
-    st.success("Logged out successfully!")
-
-# ========== SIDEBAR NAVIGATION ==========
-if st.session_state.logged_in:
-    st.sidebar.title("📌 Navigation")
-    if st.sidebar.button("🏠 Home"):
-        st.session_state.page = "Home"
-    if st.sidebar.button("📊 Dashboard"):
-        st.session_state.page = "Dashboard"
-    if st.sidebar.button("👤 Profile"):
-        st.session_state.page = "Profile"
-    if st.sidebar.button("💬 Feedback"):
-        st.session_state.page = "Feedback"
-    if st.sidebar.button("🚪 Logout"):
-        logout()
-
-# ========== ROUTER ==========
-if not st.session_state.logged_in:
-    if st.session_state.page == "Login":
-        login_page()
-    elif st.session_state.page == "Signup":
-        signup_page()
-else:
-    if st.session_state.page == "Home":
-        home_page()
-    elif st.session_state.page == "Dashboard":
-        dashboard_page()
-    elif st.session_state.page == "Profile":
-        profile_page()
-    elif st.session_state.page == "Feedback":
-        feedback_page()
+elif choice == "Logout":
+    if "user" in st.session_state:
+        st.session_state.clear()
+        st.success("✅ You have logged out successfully.")
+    else:
+        st.warning("⚠ You are not logged in.")
