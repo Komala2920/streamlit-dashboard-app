@@ -11,7 +11,7 @@ html_code = """
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Poppins", sans-serif; }
     body {
-      background: #111;
+      background: linear-gradient(to right, #20c997, #17a2b8); /* Sign Up button colour background */
       height: 100vh;
       width: 100vw;
       display: flex;
@@ -19,18 +19,6 @@ html_code = """
       align-items: center;
       overflow: hidden;
     }
-
-    /* Background shapes */
-    .background-shapes {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      z-index: -1;
-    }
-    .shape { position: absolute; border-radius: 50%; opacity: 0.6; }
-    .shape1 { background: #fcd34d; width: 400px; height: 400px; bottom: -150px; left: -150px; }
-    .shape2 { background: #f87171; width: 400px; height: 400px; top: -150px; right: -150px; }
 
     /* Main container */
     .container {
@@ -192,11 +180,6 @@ html_code = """
   </style>
 </head>
 <body>
-  <div class="background-shapes">
-    <div class="shape shape1"></div>
-    <div class="shape shape2"></div>
-  </div>
-
   <div class="container" id="container">
     <!-- Sign Up -->
     <div class="form-container sign-up-container">
