@@ -6,14 +6,7 @@ st.set_page_config(page_title="Animated Login System", layout="wide")
 def login_signup_ui():
     html_code = """
     <style>
-        body {
-          background: linear-gradient(to right, #20c997, #17a2b8);
-          height: 100vh;
-          display: flex;
-          justify-content: center;  /* horizontal center */
-          align-items: center;      /* vertical center */
-          margin: 0;
-        }
+        body { background: linear-gradient(to right, #20c997, #17a2b8); }
         .container {
           background: #fff;
           border-radius: 10px;
@@ -24,6 +17,8 @@ def login_signup_ui():
           width: 900px;
           max-width: 100%;
           min-height: 500px;
+          margin: auto;
+          display: flex;
         }
         .form-container {
           position: absolute;
@@ -31,8 +26,10 @@ def login_signup_ui():
           height: 100%;
           transition: all 0.6s ease-in-out;
           display: flex;
+          justify-content: center;
           flex-direction: column;
           padding: 0 50px;
+          text-align: left;
           width: 50%;
           background: #fff;
         }
@@ -40,7 +37,6 @@ def login_signup_ui():
           margin-bottom: 20px;
           font-size: 28px;
           color: #20c997;
-          text-align: center;
         }
         .form-container input {
           background: #f3f3f3;
@@ -53,25 +49,18 @@ def login_signup_ui():
         .sign-in-container {
           left: 0;
           z-index: 2;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          flex-direction: column;
+          align-items: center;  /* keep centered */
           text-align: center;
         }
         .sign-up-container {
           left: 0;
           opacity: 0;
-          z-index: 1;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          flex-direction: column;
-          text-align: center;
+          z-index: 2;
+          align-items: center;   /* 👈 shift content left */
+          padding-left: 10px;        /* 👈 adjust left margin */
         }
         .container.right-panel-active .sign-in-container {
           transform: translateX(100%);
-          opacity: 0;
         }
         .container.right-panel-active .sign-up-container {
           transform: translateX(100%);
@@ -79,18 +68,18 @@ def login_signup_ui():
           z-index: 5;
           transition: all 0.6s ease-in-out;
         }
-        .overlay-container {
-          position: absolute;
-          top: 0;
-          left: 50%;
-          width: 50%;
-          height: 100%;
-          overflow: hidden;
-          transition: transform .6s ease-in-out;
-          z-index: 10;
+        .overlay-container{
+          position:absolute;
+          top:0;
+          left:50%;
+          width:50%;
+          height:100%;
+          overflow:hidden;
+          transition:transform .6s ease-in-out;
+          z-index:100;
         }
-        .container.right-panel-active .overlay-container { transform: translateX(-100%); }
-        .overlay {
+        .container.right-panel-active .overlay-container{ transform: translateX(-100%); }
+        .overlay{
           background: linear-gradient(to right,#20c997,#17a2b8);
           color: #fff;
           position: relative;
@@ -100,8 +89,8 @@ def login_signup_ui():
           transform:translateX(0);
           transition:transform .6s ease-in-out;
         }
-        .container.right-panel-active .overlay { transform: translateX(50%); }
-        .overlay-panel {
+        .container.right-panel-active .overlay{ transform: translateX(50%); }
+        .overlay-panel{
           position:absolute;
           display:flex;
           flex-direction:column;
@@ -113,12 +102,11 @@ def login_signup_ui():
           height:100%;
           width:50%;
           transition:transform .6s ease-in-out;
-          cursor: pointer;
         }
-        .overlay-left { transform: translateX(-20%); left:0; }
-        .container.right-panel-active .overlay-left { transform: translateX(0); }
-        .overlay-right { right:0; transform: translateX(0); }
-        .container.right-panel-active .overlay-right { transform: translateX(20%); }
+        .overlay-left{ transform: translateX(-20%); left:0; }
+        .container.right-panel-active .overlay-left{ transform: translateX(0); }
+        .overlay-right{ right:0; transform: translateX(0); }
+        .container.right-panel-active .overlay-right{ transform: translateX(20%); }
         .btn {
           border-radius: 20px;
           border: 1px solid #20c997;
@@ -131,7 +119,6 @@ def login_signup_ui():
           text-transform: uppercase;
           transition: transform 80ms ease-in;
           margin-top: 15px;
-          cursor: pointer;
         }
         .btn:active { transform: scale(0.95); }
         .btn:focus { outline: none; }
@@ -175,20 +162,12 @@ def login_signup_ui():
     <script>
         const signUpButton = document.getElementById('signUp');
         const signInButton = document.getElementById('signIn');
-        const signUpSubmit = document.getElementById('signup-submit');
         const container = document.getElementById('container');
-
         signUpButton.addEventListener('click', () => container.classList.add("right-panel-active"));
         signInButton.addEventListener('click', () => container.classList.remove("right-panel-active"));
-
-        // After signing up → go back to Sign In
-        signUpSubmit.addEventListener('click', () => {
-            alert("Account created successfully! Please log in.");
-            container.classList.remove("right-panel-active");
-        });
     </script>
     """
-    components.html(html_code, height=700, scrolling=False)
+    components.html(html_code, height=600, scrolling=False)
 
 # Run
-login_signup_ui()
+login_signup_ui()                                                            
