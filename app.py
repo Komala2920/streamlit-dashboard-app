@@ -1,187 +1,171 @@
 import streamlit as st
 import sqlite3
-import base64
-import hashlib
-import streamlit.components.v1 as components   # For Power BI
 
-# ========= Password Hashing =========
-def make_hash(password):
-    return hashlib.sha256(password.encode()).hexdigest()
-
-def check_hash(password, hashed):
-    return make_hash(password) == hashed
-
-# ========= Background Setup =========
-def get_base64(bin_file):
-    with open(bin_file, "rb") as f:
-        data = f.read()
-    return base64.b64encode(data).decode()
-
-def set_background(png_file):
-    bin_str = get_base64(png_file)
-    page_bg_img = f"""
-    <style>
-    [data-testid="stAppViewContainer"] {{
-        background-image: url("data:image/jpg;base64,{bin_str}");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }}
-    [data-testid="stHeader"], [data-testid="stToolbar"] {{
-        background: rgba(0,0,0,0);
-    }}
-    .main {{
-        background-color: rgba(0, 0, 0, 0.0);
-        padding: 25px;
-        border-radius: 15px;
-        color: white;
-    }}
-    .nav-container {{
-        display: flex;
-        justify-content: center;
-        gap: 12px;
-        margin-bottom: 25px;
-    }}
-    .nav-button {{
-        background: linear-gradient(90deg, #00c6ff, #0072ff);
-        color: white;
-        border-radius: 8px;
-        padding: 10px 18px;
-        font-size: 15px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: 0.3s ease;
-        border: none;
-    }}
-    .nav-button:hover {{
-        background: linear-gradient(90deg, #0072ff, #00c6ff);
-        transform: translateY(-2px);
-        box-shadow: 0px 4px 12px rgba(0,0,0,0.4);
-    }}
-    </style>
-    """
-    st.markdown(page_bg_img, unsafe_allow_html=True)
-
-# ========= Database Setup =========
-conn = sqlite3.connect('users.db')
+# ---------- DATABASE ----------
+conn = sqlite3.connect("users.db")
 c = conn.cursor()
-c.execute('''CREATE TABLE IF NOT EXISTS users
-             (username TEXT UNIQUE, password TEXT, email TEXT, fullname TEXT)''')
+c.execute('''
+    CREATE TABLE IF NOT EXISTS users (
+        username TEXT PRIMARY KEY,
+        email TEXT,
+        password TEXT
+    )
+''')
 conn.commit()
 
-# ========= App Title =========
-st.markdown("<h1 style='text-align: center; color: cyan;'>🌍 Global Balance</h1>", unsafe_allow_html=True)
+# ---------- HELPER FUNCTIONS ----------
+def add_user(username, email, password):
+    try:
+        c.execute("INSERT INTO users (username, email, password) VALUES (?, ?, ?)", (username, email, password))
+        conn.commit()
+        return True
+    except:
+        return False
 
-# ========= Navigation Setup =========
-if "page" not in st.session_state:
-    st.session_state["page"] = "Login"
+def login_user(email, password):
+    c.execute("SELECT * FROM users WHERE email=? AND password=?", (email, password))
+    return c.fetchone()
 
-if "user" not in st.session_state:  
-    nav_items = ["Login", "Sign Up"]
-else:  
-    nav_items = ["Home", "Dashboard", "Profile", "Feedback", "Logout"]
+def get_user(username):
+    c.execute("SELECT * FROM users WHERE username=?", (username,))
+    return c.fetchone()
 
-st.markdown("<div class='nav-container'>", unsafe_allow_html=True)
-cols = st.columns(len(nav_items))
-for i, item in enumerate(nav_items):
-    if cols[i].button(item, key=f"nav_{item}"):
-        st.session_state["page"] = item
-st.markdown("</div>", unsafe_allow_html=True)
+# ---------- STREAMLIT CONFIG ----------
+st.set_page_config(page_title="Streamlit App", page_icon="✨", layout="wide")
 
-choice = st.session_state["page"]
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+if "username" not in st.session_state:
+    st.session_state.username = None
 
-# ========= Background only for Login & Sign Up =========
-if choice in ["Login", "Sign Up"]:
-    set_background("background.jpg")
+# ---------- CUSTOM CSS ----------
+st.markdown("""
+    <style>
+    body {font-family: 'Segoe UI', sans-serif;}
+    .container {
+        width: 850px; height: 500px; margin: auto;
+        display: flex; background: #fff;
+        border-radius: 12px; box-shadow: 0 15px 25px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    .left-panel {
+        background: #20c997;
+        flex: 1; color: #fff; text-align: center;
+        display: flex; flex-direction: column; justify-content: center; align-items: center;
+        padding: 30px;
+    }
+    .left-panel h2 { font-size: 28px; margin-bottom: 10px; }
+    .left-panel p { font-size: 14px; margin-bottom: 30px; }
+    .left-btn {
+        border: 2px solid #fff; background: transparent; color: #fff;
+        padding: 12px 30px; border-radius: 30px; cursor: pointer;
+    }
+    .left-btn:hover { background: #fff; color: #20c997; }
 
-# ========= Authentication =========
-if choice == "Sign Up":
-    st.subheader("🔐 Create an Account")
-    new_name = st.text_input("Full Name", key="signup_name")   
-    new_user = st.text_input("Username", key="signup_user")
-    new_email = st.text_input("Email", key="signup_email")
-    new_pass = st.text_input("Password", type="password", key="signup_pass")
+    .right-panel {
+        flex: 1.3; padding: 40px; display: flex; flex-direction: column; justify-content: center;
+    }
+    .right-panel h2 { color: #20c997; margin-bottom: 20px; }
+    .social-icons { display: flex; gap: 15px; margin-bottom: 20px; }
+    .social-icons div {
+        width: 40px; height: 40px; border: 1px solid #ccc; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        color: #666; font-size: 18px;
+    }
+    input {
+        width: 100%; padding: 12px; margin: 10px 0;
+        border: 1px solid #ccc; border-radius: 6px;
+    }
+    .signup-btn {
+        background: #20c997; color: #fff; border: none;
+        padding: 12px 30px; border-radius: 30px; cursor: pointer;
+    }
+    .signup-btn:hover { background: #17a589; }
+    </style>
+""", unsafe_allow_html=True)
 
-    if st.button("Sign Up", key="signup_btn"):
-        try:
-            hashed_pass = make_hash(new_pass)
-            c.execute("INSERT INTO users (username, password, email, fullname) VALUES (?,?,?,?)",
-                      (new_user, hashed_pass, new_email, new_name))
-            conn.commit()
-            st.success("✅ Account created successfully! Please go to Login.")
-        except:
-            st.warning("⚠ Username already exists.")
-
-elif choice == "Login":
-    st.subheader("🔑 Login to Global Balance")
-    user = st.text_input("Username", key="login_user")
-    passwd = st.text_input("Password", type="password", key="login_pass")
-
-    if st.button("Login", key="login_btn"):
-        c.execute("SELECT * FROM users WHERE username=?", (user,))
-        data = c.fetchone()
-        if data and check_hash(passwd, data[1]):  # Verify hashed password
-            st.success(f"🎉 Welcome {user}!")
-            st.session_state["user"] = data[0]   # username
-            st.session_state["password"] = data[1]  
-            st.session_state["email"] = data[2] if len(data) > 2 and data[2] else "Not Provided"
-            st.session_state["fullname"] = data[3] if len(data) > 3 and data[3] else "Not Provided"
-            st.session_state["page"] = "Home"
-        else:
-            st.error("❌ Invalid credentials.")
-
-# ========= Pages =========
-elif choice == "Home":
-    st.subheader("🏠 Home")
+# ---------- LOGIN / SIGNUP ----------
+def login_signup_page():
     st.markdown("""
-    Welcome to *Global Balance* 🌍  
-    This platform provides an *interactive dashboard* built using Power BI, 
-    where you can monitor, analyze, and visualize global balance data effectively.  
+    <div class="container">
+        <div class="left-panel">
+            <h2>Welcome Back!</h2>
+            <p>To keep connected with us please login with your personal info</p>
+            <button class="left-btn" onclick="document.getElementById('login_form').style.display='block'">SIGN IN</button>
+        </div>
+        <div class="right-panel">
+            <h2>Create Account</h2>
+            <div class="social-icons">
+                <div>f</div><div>G+</div><div>in</div>
+            </div>
+            <p>or use your email for registration:</p>
+    """, unsafe_allow_html=True)
 
-    ### 🔹 Features:
-    - 📊 Real-time analytics  
-    - 🌐 Global insights  
-    - 📈 Interactive reports  
-    - 💡 Data-driven decision making  
+    with st.form("signup_form"):
+        username = st.text_input("Username")
+        email = st.text_input("Email")
+        password = st.text_input("Password", type="password")
+        if st.form_submit_button("SIGN UP"):
+            if add_user(username, email, password):
+                st.success("Account created! You can login now.")
+            else:
+                st.error("User already exists!")
 
-    👉 Navigate to the *Dashboard* tab to view the live reports.
-    """)
+    st.markdown("</div></div>", unsafe_allow_html=True)
 
-elif choice == "Dashboard":
-    st.subheader("📊 Dashboard")
-    if "user" in st.session_state:
-        st.write("Here is your embedded Power BI dashboard:")
-        powerbi_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"
-        components.iframe(powerbi_url, width=1000, height=600, scrolling=True)
-    else:
-        st.warning("⚠ Please log in to view the dashboard.")
+    st.write("---")
+    st.subheader("Login")
+    with st.form("login_form"):
+        login_email = st.text_input("Email", key="login_email")
+        login_password = st.text_input("Password", type="password", key="login_pass")
+        if st.form_submit_button("Login"):
+            user = login_user(login_email, login_password)
+            if user:
+                st.session_state.logged_in = True
+                st.session_state.username = user[0]
+                st.success("Login successful!")
+                st.experimental_rerun()
+            else:
+                st.error("Invalid credentials!")
 
-elif choice == "Profile":
-    st.subheader("👤 Profile")
-    if "user" in st.session_state:
-        col1, col2 = st.columns([1, 3])
-        with col1:
-            st.image("profile.png", width=150)  
-        with col2:
-            st.markdown(f"""
-            *Full Name:* {st.session_state.get('fullname', 'Komala Rani Talisetti')}  
-            *Username:* {st.session_state['user']}  
-            *Email:* {st.session_state.get('email', 'talisettikomali@gmail.com')}  
-            """)
-    else:
-        st.warning("⚠ Please log in to view your profile.")
+# ---------- APP PAGES ----------
+def home_page():
+    st.title(f"Welcome, {st.session_state.username} 👋")
+    st.write("This is the *Home Page*")
 
-elif choice == "Feedback":
-    st.subheader("💬 Feedback")
-    feedback = st.text_area("Share your feedback:", key="feedback_text")
-    if st.button("Submit Feedback", key="feedback_btn"):
-        st.success("🙌 Thank you for your feedback!")
+def dashboard_page():
+    st.title("📊 Dashboard")
+    st.write("Your dashboard content goes here.")
 
-elif choice == "Logout":
-    if "user" in st.session_state:
-        st.session_state.clear()
-        st.success("✅ You have logged out successfully.")
-        st.session_state["page"] = "Login"
-    else:
-        st.warning("⚠ You are not logged in.")
+def profile_page():
+    st.title("👤 Profile")
+    st.write(f"Username: {st.session_state.username}")
+
+def feedback_page():
+    st.title("💬 Feedback")
+    feedback = st.text_area("Your feedback:")
+    if st.button("Submit"):
+        st.success("Thanks for your feedback!")
+
+def logout():
+    st.session_state.logged_in = False
+    st.session_state.username = None
+    st.experimental_rerun()
+
+# ---------- NAVIGATION ----------
+if not st.session_state.logged_in:
+    login_signup_page()
+else:
+    menu = ["Home", "Dashboard", "Profile", "Feedback", "Logout"]
+    choice = st.sidebar.radio("Navigation", menu)
+
+    if choice == "Home":
+        home_page()
+    elif choice == "Dashboard":
+        dashboard_page()
+    elif choice == "Profile":
+        profile_page()
+    elif choice == "Feedback":
+        feedback_page()
+    elif choice == "Logout":
+        logout()
