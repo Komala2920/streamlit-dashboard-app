@@ -1,5 +1,5 @@
 import streamlit as st
-import streamlit.components.v1 as components
+import streamlit.components.v1 as components  
 
 st.set_page_config(page_title="Animated Login System", layout="wide")
 
@@ -89,8 +89,8 @@ def login_ui():
             <input type="text" placeholder="Name" />
             <input type="email" placeholder="Email" />
             <input type="password" placeholder="Password" />
-            <!-- This sets query param -->
-            <button type="button" class="btn" onclick="window.location.search='?isLoggedIn=true'">Sign Up</button>
+            <!-- Trigger Streamlit login -->
+            <button type="button" class="btn" onclick="parent.postMessage({login:true}, '*')">Sign Up</button>
           </form>
         </div>
 
@@ -100,8 +100,8 @@ def login_ui():
             <h1>Sign In</h1>
             <input type="email" placeholder="Email" />
             <input type="password" placeholder="Password" />
-            <!-- This sets query param -->
-            <button type="button" class="btn" onclick="window.location.search='?isLoggedIn=true'">Sign In</button>
+            <!-- Trigger Streamlit login -->
+            <button type="button" class="btn" onclick="parent.postMessage({login:true}, '*')">Sign In</button>
           </form>
         </div>
 
@@ -134,6 +134,65 @@ def login_ui():
     """
     components.html(html_code, height=800, scrolling=False)
 
+
+# -------------------------
+# HOME PAGE
+# -------------------------
+def home_page():
+    st.markdown(
+        """
+        <style>
+        .home-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px;
+        }
+        .home-title {
+            font-size: 40px;
+            font-weight: bold;
+            color: #20c997;
+            margin-bottom: 10px;
+        }
+        .home-subtitle {
+            font-size: 20px;
+            color: #555;
+            margin-bottom: 30px;
+        }
+        .home-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            max-width: 700px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        """
+        <div class="home-container">
+            <div class="home-title">🌍 Welcome to Global Balance</div>
+            <div class="home-subtitle">Your personal space to explore, analyze, and share insights.</div>
+            <div class="home-card">
+                <h3>✨ Features</h3>
+                <ul style="text-align:left; font-size:18px; line-height:1.8;">
+                    <li>📊 Interactive Dashboard with Analytics</li>
+                    <li>👤 Manage Your Profile and Preferences</li>
+                    <li>💬 Share Feedback and Suggestions</li>
+                    <li>🔐 Secure Login & Logout System</li>
+                </ul>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
 # -------------------------
 # DASHBOARD UI
 # -------------------------
@@ -143,8 +202,7 @@ def dashboard_ui():
     st.session_state.page = choice
 
     if choice == "Home":
-        st.title("🏠 Home")
-        st.write("Welcome to the Home Page!")
+        home_page()
 
     elif choice == "Dashboard":
         st.title("📊 Dashboard")
@@ -162,20 +220,18 @@ def dashboard_ui():
 
     elif choice == "Logout":
         st.session_state.logged_in = False
-        st.query_params.clear()   # clear query params
         st.rerun()
+
 
 # -------------------------
 # MAIN APP
 # -------------------------
 if not st.session_state.logged_in:
     login_ui()
-
-    # check query params
-    params = st.query_params
-    if "isLoggedIn" in params:
+    # 🔑 Check login trigger
+    if st.experimental_get_query_params().get("login", [None])[0] == "true":
         st.session_state.logged_in = True
-        st.query_params.clear()
-        st.rerun()
+        st.session_state.page = "Home"   # go to home directly
+        st.experimental_rerun()
 else:
     dashboard_ui()
