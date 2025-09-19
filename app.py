@@ -1,14 +1,11 @@
 import streamlit as st
 
-# Page config
+# Page setup
 st.set_page_config(page_title="Login & Signup UI", layout="centered")
 
-# CSS styling for custom layout
+# CSS + HTML
 st.markdown("""
     <style>
-    .main {
-        background-color: #f5f7f9;
-    }
     .container {
         display: flex;
         justify-content: center;
@@ -84,33 +81,30 @@ st.markdown("""
         font-size: 14px;
     }
     </style>
-""", unsafe_allow_html=True)
 
-# HTML layout
-st.markdown("""
-<div class="container">
-    <div class="box">
-        <!-- Left Panel -->
-        <div class="left">
-            <h1>Welcome Back!</h1>
-            <p>To keep connected with us please login with your personal info</p>
-            <button>Sign In</button>
-        </div>
-        
-        <!-- Right Panel -->
-        <div class="right">
-            <h2>Create Account</h2>
-            <div class="input-box">
-                <input type="text" placeholder="Name">
+    <div class="container">
+        <div class="box">
+            <!-- Left Panel -->
+            <div class="left">
+                <h1>Welcome Back!</h1>
+                <p>To keep connected with us please login with your personal info</p>
+                <button>Sign In</button>
             </div>
-            <div class="input-box">
-                <input type="email" placeholder="Email">
+            
+            <!-- Right Panel -->
+            <div class="right">
+                <h2>Create Account</h2>
+                <div class="input-box">
+                    <input type="text" placeholder="Name">
+                </div>
+                <div class="input-box">
+                    <input type="email" placeholder="Email">
+                </div>
+                <div class="input-box">
+                    <input type="password" placeholder="Password">
+                </div>
+                <button class="signup-btn">Sign Up</button>
             </div>
-            <div class="input-box">
-                <input type="password" placeholder="Password">
-            </div>
-            <button class="signup-btn">Sign Up</button>
         </div>
     </div>
-</div>
 """, unsafe_allow_html=True)
