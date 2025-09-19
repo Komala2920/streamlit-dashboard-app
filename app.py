@@ -3,13 +3,17 @@ import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Animated Login System", layout="wide")
 
+# -------------------------
 # SESSION STATE
+# -------------------------
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 if "page" not in st.session_state:
     st.session_state.page = "Home"
 
-# --- LOGIN UI with working sign in / sign up ---
+# -------------------------
+# LOGIN UI (HTML + Animation)
+# -------------------------
 def login_ui():
     html_code = """
     <!DOCTYPE html>
@@ -80,22 +84,24 @@ def login_ui():
       <div class="container" id="container">
         <!-- Sign Up -->
         <div class="form-container sign-up-container">
-          <form onsubmit="doSignup(); return false;">
+          <form>
             <h1>Create Account</h1>
-            <input type="text" placeholder="Name" id="signupName"/>
-            <input type="email" placeholder="Email" id="signupEmail"/>
-            <input type="password" placeholder="Password" id="signupPwd"/>
-            <button type="submit" class="btn">Sign Up</button>
+            <input type="text" placeholder="Name" />
+            <input type="email" placeholder="Email" />
+            <input type="password" placeholder="Password" />
+            <!-- This sets query param -->
+            <button type="button" class="btn" onclick="window.location.search='?isLoggedIn=true'">Sign Up</button>
           </form>
         </div>
 
         <!-- Sign In -->
         <div class="form-container sign-in-container">
-          <form onsubmit="doSignin(); return false;">
+          <form>
             <h1>Sign In</h1>
-            <input type="email" placeholder="Email" id="signinEmail"/>
-            <input type="password" placeholder="Password" id="signinPwd"/>
-            <button type="submit" class="btn">Sign In</button>
+            <input type="email" placeholder="Email" />
+            <input type="password" placeholder="Password" />
+            <!-- This sets query param -->
+            <button type="button" class="btn" onclick="window.location.search='?isLoggedIn=true'">Sign In</button>
           </form>
         </div>
 
@@ -122,22 +128,15 @@ def login_ui():
         const container = document.getElementById('container');
         signUpButton.addEventListener('click', () => container.classList.add("right-panel-active"));
         signInButton.addEventListener('click', () => container.classList.remove("right-panel-active"));
-
-        function doSignin() {
-          const msg = {type: "login", status: "ok", mode: "signin"};
-          window.parent.postMessage(msg, "*");
-        }
-        function doSignup() {
-          const msg = {type: "login", status: "ok", mode: "signup"};
-          window.parent.postMessage(msg, "*");
-        }
       </script>
     </body>
     </html>
     """
     components.html(html_code, height=800, scrolling=False)
 
-# --- DASHBOARD PAGES ---
+# -------------------------
+# DASHBOARD UI
+# -------------------------
 def dashboard_ui():
     st.sidebar.title("Navigation")
     choice = st.sidebar.radio("Go to:", ["Home", "Dashboard", "Profile", "Feedback", "Logout"])
@@ -163,15 +162,16 @@ def dashboard_ui():
 
     elif choice == "Logout":
         st.session_state.logged_in = False
+        st.query_params.clear()   # clear query params
         st.rerun()
 
-# --- MAIN LOGIC ---
-msg = st.experimental_get_query_params()  # just a placeholder for component messages
-
+# -------------------------
+# MAIN APP
+# -------------------------
 if not st.session_state.logged_in:
     login_ui()
 
-    # CHECK query params returned from browser reload
+    # check query params
     params = st.query_params
     if "isLoggedIn" in params:
         st.session_state.logged_in = True
