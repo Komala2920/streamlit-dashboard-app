@@ -121,7 +121,8 @@ elif choice == "Login":
             st.session_state["fullname"] = data[3] if len(data) > 3 and data[3] else "Not Provided"
 
             st.session_state["page"] = "Home"
-        else:
+
+ else:
             st.error("❌ Invalid credentials.")
 
 
