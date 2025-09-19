@@ -1,48 +1,5 @@
 import streamlit as st
 import sqlite3
-import base64
-
-# ========= Background Setup =========
-def get_base64(bin_file):
-    with open(bin_file, "rb") as f:
-        data = f.read()
-    return base64.b64encode(data).decode()
-
-def set_background(png_file):
-    bin_str = get_base64(png_file)
-    page_bg_img = f"""
-    <style>
-    [data-testid="stAppViewContainer"] {{
-        background-image: url("data:image/jpg;base64,{bin_str}");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }}
-    [data-testid="stHeader"], [data-testid="stToolbar"] {{
-        background: rgba(0,0,0,0);
-    }}
-    .main {{
-        background-color: rgba(0, 0, 0, 0.65);
-        padding: 25px;
-        border-radius: 15px;
-        color: white;
-    }}
-    button, .stButton button {{
-        background: linear-gradient(90deg, #00c6ff, #0072ff);
-        color: white;
-        border-radius: 12px;
-        padding: 10px 20px;
-        border: none;
-        font-size: 16px;
-    }}
-    button:hover {{
-        background: linear-gradient(90deg, #0072ff, #00c6ff);
-        color: #fff;
-    }}
-    </style>
-    """
-    st.markdown(page_bg_img, unsafe_allow_html=True)
 
 # ========= Database Setup =========
 conn = sqlite3.connect('users.db')
@@ -50,9 +7,6 @@ c = conn.cursor()
 c.execute('''CREATE TABLE IF NOT EXISTS users
              (username TEXT UNIQUE, password TEXT)''')
 conn.commit()
-
-# ========= Apply Background =========
-set_background("background.jpg")
 
 # ========= App Title =========
 st.markdown("<h1 style='text-align: center; color: cyan;'>🌍 Global Balance</h1>", unsafe_allow_html=True)
@@ -98,7 +52,6 @@ elif choice == "Dashboard":
     # Example chart
     import pandas as pd
     import numpy as np
-    import matplotlib.pyplot as plt
     df = pd.DataFrame(np.random.randn(10, 2), columns=["Balance A", "Balance B"])
     st.line_chart(df)
 
@@ -120,4 +73,4 @@ elif choice == "Logout":
         st.session_state.clear()
         st.success("✅ You have logged out successfully.")
     else:
-        st.warning("⚠ You are not logged in.")                                                                        
+        st.warning("⚠ You are not logged in.")
