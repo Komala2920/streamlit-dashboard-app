@@ -1,11 +1,8 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
-st.set_page_config(page_title="Animated Login/Signup", layout="centered")
+st.set_page_config(page_title="Full Screen Animated Login/Signup", layout="wide")
 
-# ----------------------------
-# HTML + CSS + JS with SAME BACKGROUND
-# ----------------------------
 html_code = """
 <!DOCTYPE html>
 <html lang="en">
@@ -13,15 +10,17 @@ html_code = """
   <meta charset="UTF-8">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Poppins", sans-serif; }
-
     body {
       background: #111;
+      height: 100vh;
+      width: 100vw;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      overflow: hidden;
     }
 
+    /* Background shapes */
     .background-shapes {
       position: absolute;
       width: 100%;
@@ -29,16 +28,11 @@ html_code = """
       overflow: hidden;
       z-index: -1;
     }
+    .shape { position: absolute; border-radius: 50%; opacity: 0.6; }
+    .shape1 { background: #fcd34d; width: 400px; height: 400px; bottom: -150px; left: -150px; }
+    .shape2 { background: #f87171; width: 400px; height: 400px; top: -150px; right: -150px; }
 
-    .shape {
-      position: absolute;
-      border-radius: 50%;
-      opacity: 0.6;
-    }
-
-    .shape1 { background: #fcd34d; width: 300px; height: 300px; bottom: -100px; left: -100px; }
-    .shape2 { background: #f87171; width: 300px; height: 300px; top: -100px; right: -100px; }
-
+    /* Main container */
     .container {
       background: #fff;
       border-radius: 10px;
@@ -46,9 +40,10 @@ html_code = """
                   0 10px 10px rgba(0,0,0,0.22);
       position: relative;
       overflow: hidden;
-      width: 900px;
+      width: 100%;
       max-width: 100%;
-      min-height: 500px;
+      min-height: 100vh;
+      display: flex;
     }
 
     .form-container {
@@ -62,6 +57,7 @@ html_code = """
       left: 0;
       width: 50%;
       z-index: 2;
+      height: 100%;
     }
 
     .sign-up-container {
@@ -69,6 +65,7 @@ html_code = """
       width: 50%;
       opacity: 0;
       z-index: 1;
+      height: 100%;
     }
 
     .container.right-panel-active .sign-in-container {
@@ -105,6 +102,7 @@ html_code = """
       padding: 12px 15px;
       margin: 8px 0;
       width: 100%;
+      max-width: 300px;
       border-radius: 4px;
     }
 
@@ -255,4 +253,4 @@ html_code = """
 </html>
 """
 
-components.html(html_code, height=650, scrolling=False)
+components.html(html_code, height=800, scrolling=False)
