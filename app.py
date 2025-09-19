@@ -1,7 +1,7 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
-st.set_page_config(page_title="Full Screen Animated Login/Signup", layout="wide")
+st.set_page_config(page_title="Animated Login/Signup", layout="wide")
 
 html_code = """
 <!DOCTYPE html>
@@ -11,30 +11,18 @@ html_code = """
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Poppins", sans-serif; }
     body {
-      background: #111;
       height: 100vh;
       width: 100vw;
       display: flex;
       justify-content: center;
       align-items: center;
       overflow: hidden;
+      background: url("https://i.ibb.co/vB13g4h/bg-animation.gif") no-repeat center center fixed;
+      background-size: cover;
     }
 
-    /* Background shapes */
-    .background-shapes {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      z-index: -1;
-    }
-    .shape { position: absolute; border-radius: 50%; opacity: 0.6; }
-    .shape1 { background: #fcd34d; width: 400px; height: 400px; bottom: -150px; left: -150px; }
-    .shape2 { background: #f87171; width: 400px; height: 400px; top: -150px; right: -150px; }
-
-    /* Main container */
     .container {
-      background: #fff;
+      background: rgba(255,255,255,0.9);
       border-radius: 10px;
       box-shadow: 0 14px 28px rgba(0,0,0,0.25), 
                   0 10px 10px rgba(0,0,0,0.22);
@@ -85,7 +73,7 @@ html_code = """
     }
 
     form {
-      background: #fff;
+      background: transparent;
       display: flex;
       flex-direction: column;
       padding: 0 50px;
@@ -95,7 +83,7 @@ html_code = """
       text-align: center;
     }
 
-    form h1 { font-weight: bold; margin-bottom: 20px; }
+    form h1 { font-weight: bold; margin-bottom: 20px; color: #333; }
     form input {
       background: #eee;
       border: none;
@@ -140,7 +128,7 @@ html_code = """
     }
 
     .overlay {
-      background: linear-gradient(to right, #20c997, #17a2b8);
+      background: linear-gradient(to right, rgba(32,201,151,0.9), rgba(23,162,184,0.9));
       background-repeat: no-repeat;
       background-size: cover;
       background-position: 0 0;
@@ -192,11 +180,6 @@ html_code = """
   </style>
 </head>
 <body>
-  <div class="background-shapes">
-    <div class="shape shape1"></div>
-    <div class="shape shape2"></div>
-  </div>
-
   <div class="container" id="container">
     <!-- Sign Up -->
     <div class="form-container sign-up-container">
