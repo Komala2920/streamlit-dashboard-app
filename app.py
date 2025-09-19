@@ -90,28 +90,44 @@ if choice in ["Login", "Sign Up"]:
 # ========= Authentication =========
 if choice == "Sign Up":
     st.subheader("🔐 Create an Account")
-    new_name = st.text_input("Full Name", key="signup_name")   
-    new_user = st.text_input("Username", key="signup_user")
-    new_email = st.text_input("Email", key="signup_email")
-    new_pass = st.text_input("Password", type="password", key="signup_pass")
 
-    if st.button("Sign Up", key="signup_btn"):
-        try:
-            c.execute("INSERT INTO users (username, password, email, fullname) VALUES (?,?,?,?)",
-                      (new_user, new_pass, new_email, new_name))
-            conn.commit()
-            st.success("✅ Account created successfully! Please go to Login.")
-        except:
-            st.warning("⚠ Username already exists.")
+    col1, col2 = st.columns([1, 1])
+
+    with col1:
+        # Show GIF (left side)
+        st.markdown(
+            f"""
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <img src="data:image/gif;base64,{get_base64('Web Design Trends That Will Dominate In 2019 _ B3 Multimedia Solutions.gif')}" 
+                     alt="Signup Animation" width="350">
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with col2:
+        # Sign-up form
+        new_name = st.text_input("Full Name", key="signup_name")   
+        new_user = st.text_input("Username", key="signup_user")
+        new_email = st.text_input("Email", key="signup_email")
+        new_pass = st.text_input("Password", type="password", key="signup_pass")
+
+        if st.button("Sign Up", key="signup_btn"):
+            try:
+                c.execute("INSERT INTO users (username, password, email, fullname) VALUES (?,?,?,?)",
+                          (new_user, new_pass, new_email, new_name))
+                conn.commit()
+                st.success("✅ Account created successfully! Please go to Login.")
+            except:
+                st.warning("⚠ Username already exists.")
 
 elif choice == "Login":
     st.subheader("🔑 Login to Global Balance")
 
-    # Two-column layout for GIF + Login form
     col1, col2 = st.columns([1, 1])
 
     with col1:
-        # Show the GIF (left side)
+        # Show GIF (left side)
         st.markdown(
             f"""
             <div style="display: flex; justify-content: center; align-items: center;">
@@ -123,7 +139,7 @@ elif choice == "Login":
         )
 
     with col2:
-        # Login form (right side)
+        # Login form
         user = st.text_input("Username", key="login_user")
         passwd = st.text_input("Password", type="password", key="login_pass")
 
