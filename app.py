@@ -34,7 +34,10 @@ st.markdown("</div>", unsafe_allow_html=True)
 choice = st.session_state["page"]
 
 # ========= Background only for Login & Sign Up =========
-if choice in ["Login", "Sign Up"]:
+
+  if choice == "Sign Up":
+    st.write("You chose Sign Up")
+
 
 
 # ========= Authentication =========
@@ -126,4 +129,5 @@ elif choice == "Logout":
         st.session_state["page"] = "Login"
     else:
         st.warning("⚠ You are not logged in.")                                                                                                        
+
 
