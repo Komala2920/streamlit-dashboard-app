@@ -41,7 +41,7 @@ def login_signup_ui():
         .form-container input {
           background: #f3f3f3;
           border: none;
-          padding: 12px 15px;
+          padding: 8px 30px;
           margin: 10px 0;
           width: 100%;
           border-radius: 5px;
@@ -60,7 +60,7 @@ def login_signup_ui():
         }
         .container.right-panel-active .sign-up-container {
           transform: translateX(100%);
-          opacity: 1;
+          opacity: 0;
           z-index: 5;  /* 👈 bring sign up form to front */
         }
         .overlay-container{
@@ -176,3 +176,4 @@ def login_signup_ui():
 
 # Run
 login_signup_ui()
+
