@@ -1,7 +1,7 @@
 import streamlit as st
 import sqlite3
 import base64
-import streamlit.components.v1 as components   # For Power BI
+import streamlit.components.v1 as components
 
 # ========= Background Setup =========
 def get_base64(bin_file):
@@ -24,36 +24,85 @@ def set_background(png_file):
         background: rgba(0,0,0,0);
     }}
     .main {{
-        background-color: rgba(0, 0, 0, 0.0);
+        background-color: rgba(255, 255, 255, 0.85);
         padding: 25px;
         border-radius: 15px;
-        color: white;
+        color: #333;
     }}
-    .nav-container {{
+    /* Custom login/signup card */
+    .auth-container {{
         display: flex;
         justify-content: center;
-        gap: 12px;
+        align-items: center;
+        gap: 30px;
+        padding: 40px;
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }}
+    .auth-left {{
+        flex: 1;
+        background: linear-gradient(135deg, #3bb78f, #0bab64);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+        border-radius: 15px;
+        text-align: center;
+    }}
+    .auth-left h2 {{
+        font-size: 28px;
+        margin-bottom: 15px;
+    }}
+    .auth-left p {{
+        font-size: 14px;
         margin-bottom: 25px;
     }}
-    .nav-button {{
-        background: linear-gradient(90deg, #00c6ff, #0072ff);
-        color: white;
-        border-radius: 8px;
-        padding: 10px 18px;
-        font-size: 15px;
+    .auth-btn {{
+        padding: 12px 35px;
+        background: transparent;
+        border: 2px solid #fff;
+        border-radius: 25px;
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+    }}
+    .auth-btn:hover {{
+        background: #fff;
+        color: #0bab64;
+    }}
+    .auth-right {{
+        flex: 1.2;
+        padding: 30px;
+    }}
+    .auth-right h2 {{
+        text-align: center;
+        color: #0bab64;
+        margin-bottom: 20px;
+    }}
+    .signup-btn {{
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 25px;
+        background: #0bab64;
+        color: #fff;
+        font-size: 16px;
         font-weight: bold;
         cursor: pointer;
-        transition: 0.3s ease;
-        border: none;
+        margin-top: 10px;
+        transition: 0.3s;
     }}
-    .nav-button:hover {{
-        background: linear-gradient(90deg, #0072ff, #00c6ff);
-        transform: translateY(-2px);
-        box-shadow: 0px 4px 12px rgba(0,0,0,0.4);
+    .signup-btn:hover {{
+        background: #3bb78f;
     }}
     </style>
     """
     st.markdown(page_bg_img, unsafe_allow_html=True)
+
 
 # ========= Database Setup =========
 conn = sqlite3.connect('users.db')
@@ -83,30 +132,25 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 choice = st.session_state["page"]
 
-# ========= Background only for Login & Sign Up =========
+# ========= Background for Login & Sign Up =========
 if choice in ["Login", "Sign Up"]:
     set_background("background.jpg")
 
 # ========= Authentication =========
 if choice == "Sign Up":
-    st.subheader("🔐 Create an Account")
+    st.markdown("<div class='auth-container'>", unsafe_allow_html=True)
 
-    col1, col2 = st.columns([1, 1])
-
+    col1, col2 = st.columns([1, 2])
     with col1:
-        # Show GIF (left side)
-        st.markdown(
-            f"""
-            <div style="display: flex; justify-content: center; align-items: center;">
-                <img src="data:image/gif;base64,{get_base64('Web Design Trends That Will Dominate In 2019 _ B3 Multimedia Solutions.gif')}" 
-                     alt="Signup Animation" width="350">
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        st.markdown("""
+        <div class="auth-left">
+            <h2>Welcome Back!</h2>
+            <p>To keep connected with us please login with your personal info</p>
+        </div>
+        """, unsafe_allow_html=True)
 
     with col2:
-        # Sign-up form
+        st.markdown("<div class='auth-right'><h2>Create Account</h2>", unsafe_allow_html=True)
         new_name = st.text_input("Full Name", key="signup_name")   
         new_user = st.text_input("Username", key="signup_user")
         new_email = st.text_input("Email", key="signup_email")
@@ -120,26 +164,24 @@ if choice == "Sign Up":
                 st.success("✅ Account created successfully! Please go to Login.")
             except:
                 st.warning("⚠ Username already exists.")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
 elif choice == "Login":
-    st.subheader("🔑 Login to Global Balance")
+    st.markdown("<div class='auth-container'>", unsafe_allow_html=True)
 
-    col1, col2 = st.columns([1, 1])
-
+    col1, col2 = st.columns([1, 2])
     with col1:
-        # Show GIF (left side)
-        st.markdown(
-            f"""
-            <div style="display: flex; justify-content: center; align-items: center;">
-                <img src="data:image/gif;base64,{get_base64('Web Design Trends That Will Dominate In 2019 _ B3 Multimedia Solutions.gif')}" 
-                     alt="Login Animation" width="350">
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        st.markdown("""
+        <div class="auth-left">
+            <h2>Hello, Friend!</h2>
+            <p>Enter your personal details and start your journey with us</p>
+        </div>
+        """, unsafe_allow_html=True)
 
     with col2:
-        # Login form
+        st.markdown("<div class='auth-right'><h2>Login</h2>", unsafe_allow_html=True)
         user = st.text_input("Username", key="login_user")
         passwd = st.text_input("Password", type="password", key="login_pass")
 
@@ -148,13 +190,16 @@ elif choice == "Login":
             data = c.fetchone()
             if data:
                 st.success(f"🎉 Welcome {user}!")
-                st.session_state["user"] = data[0]   # username
+                st.session_state["user"] = data[0]
                 st.session_state["password"] = data[1]  
                 st.session_state["email"] = data[2] if len(data) > 2 and data[2] else "Not Provided"
                 st.session_state["fullname"] = data[3] if len(data) > 3 and data[3] else "Not Provided"
                 st.session_state["page"] = "Home"
             else:
                 st.error("❌ Invalid credentials.")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # ========= Pages =========
 elif choice == "Home":
@@ -190,9 +235,9 @@ elif choice == "Profile":
             st.image("profile.png", width=150)  
         with col2:
             st.markdown(f"""
-            *Full Name:* {st.session_state.get('fullname', 'Komala Rani Talisetti')}  
+            *Full Name:* {st.session_state.get('fullname', 'Not Provided')}  
             *Username:* {st.session_state['user']}  
-            *Email:* {st.session_state.get('email', 'talisettikomali@gmail.com')}  
+            *Email:* {st.session_state.get('email', 'Not Provided')}  
             """)
     else:
         st.warning("⚠ Please log in to view your profile.")
