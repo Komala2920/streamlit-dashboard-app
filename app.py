@@ -100,8 +100,6 @@ if choice == "Sign Up":
                       (new_user, new_pass, new_email, new_name))
             conn.commit()
             st.success("✅ Account created successfully! Please go to Login.")
-        except:
-            st.warning("⚠ Username already exists.")
 
 elif choice == "Login":
     st.subheader("🔑 Login to Global Balance")
