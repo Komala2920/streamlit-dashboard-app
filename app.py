@@ -243,16 +243,17 @@ def dashboard_ui():
 
 # ---- MAIN APP ----
 st.title("")
-message = st.st.query_params()
+message = st.query_params()
 
 if not st.session_state.logged_in:
     login_ui()
 
     # Capture login event from frontend
-    login_event = st.st.query_params()
+    login_event = st.query_params()
     if "isLoggedIn" in login_event:
         st.session_state.logged_in = True
         st.rerun()
 else:
     dashboard_ui()
+
 
