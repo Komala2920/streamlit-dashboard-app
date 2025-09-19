@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.set_page_config(page_title="Animated Login System", layout="wide")
+st.set_page_config(page_title="Manual Login Dashboard", layout="wide")
 
 # -------------------------
 # SESSION STATE
@@ -11,47 +11,33 @@ if "page" not in st.session_state:
     st.session_state.page = "Home"
 
 # -------------------------
-# LOGIN PAGE
+# LOGIN UI (Manual with Streamlit inputs)
 # -------------------------
 def login_ui():
-    st.markdown(
-        """
-        <style>
-        .login-box {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            max-width: 400px;
-            margin: auto;
-            text-align: center;
-        }
-        .login-title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 1rem;
-            color: #20c997;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
+    st.title("🔑 Login System")
 
-    st.markdown('<div class="login-box">', unsafe_allow_html=True)
-    st.markdown('<div class="login-title">🔐 Sign In</div>', unsafe_allow_html=True)
-
+    st.subheader("Sign In")
     email = st.text_input("Email")
     password = st.text_input("Password", type="password")
 
-    if st.button("Login", use_container_width=True):
-        if email and password:   # simple check (replace with DB check later)
+    if st.button("Login"):
+        # ✅ Hardcoded credentials (can be replaced with DB later)
+        if email == "admin@gmail.com" and password == "12345":
             st.session_state.logged_in = True
-            st.success("Login successful!")
+            st.session_state.page = "Home"
+            st.success("Login successful! Redirecting...")
             st.rerun()
         else:
-            st.error("Please enter email and password")
+            st.error("Invalid email or password")
 
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.divider()
+
+    st.subheader("Sign Up (Demo)")
+    new_email = st.text_input("New Email")
+    new_password = st.text_input("New Password", type="password")
+    if st.button("Sign Up"):
+        # This doesn’t save users permanently (demo only)
+        st.success(f"User {new_email} registered successfully!")
 
 # -------------------------
 # DASHBOARD UI
@@ -76,11 +62,12 @@ def dashboard_ui():
     elif choice == "Feedback":
         st.title("💬 Feedback")
         feedback = st.text_area("Enter your feedback here:")
-        if st.button("Submit"):
+        if st.button("Submit Feedback"):
             st.success("Thanks for your feedback!")
 
     elif choice == "Logout":
         st.session_state.logged_in = False
+        st.success("Logged out successfully!")
         st.rerun()
 
 # -------------------------
