@@ -25,18 +25,16 @@ def login_signup_ui():
           height: 100%;
           transition: all 0.6s ease-in-out;
           display: flex;
-          justify-content: center;
           flex-direction: column;
           padding: 0 50px;
-          text-align: left;
           width: 50%;
           background: #fff;
-          z-index: 1;  /* 👈 keep below overlay buttons */
         }
         .form-container h1 {
           margin-bottom: 20px;
           font-size: 28px;
           color: #20c997;
+          text-align: center;
         }
         .form-container input {
           background: #f3f3f3;
@@ -49,10 +47,21 @@ def login_signup_ui():
         .sign-in-container {
           left: 0;
           z-index: 2;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+          text-align: center;
         }
         .sign-up-container {
           left: 0;
           opacity: 0;
+          z-index: 1;
+          display: flex;
+          justify-content: center;   /* center vertically */
+          align-items: center;       /* center horizontally */
+          flex-direction: column;
+          text-align: center;
         }
         .container.right-panel-active .sign-in-container {
           transform: translateX(100%);
@@ -61,7 +70,8 @@ def login_signup_ui():
         .container.right-panel-active .sign-up-container {
           transform: translateX(100%);
           opacity: 1;
-          z-index: 5;  /* 👈 bring sign up form to front */
+          z-index: 5;
+          transition: all 0.6s ease-in-out;
         }
         .overlay-container{
           position:absolute;
@@ -71,7 +81,7 @@ def login_signup_ui():
           height:100%;
           overflow:hidden;
           transition:transform .6s ease-in-out;
-          z-index:10;   /* 👈 overlay always on top */
+          z-index:10;
         }
         .container.right-panel-active .overlay-container{ transform: translateX(-100%); }
         .overlay{
@@ -97,7 +107,7 @@ def login_signup_ui():
           height:100%;
           width:50%;
           transition:transform .6s ease-in-out;
-          cursor: pointer;   /* 👈 show hand cursor */
+          cursor: pointer;
         }
         .overlay-left{ transform: translateX(-20%); left:0; }
         .container.right-panel-active .overlay-left{ transform: translateX(0); }
