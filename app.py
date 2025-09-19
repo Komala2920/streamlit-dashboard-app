@@ -171,7 +171,7 @@ msg = st.experimental_get_query_params()  # just a placeholder for component mes
 if not st.session_state.logged_in:
     login_ui()
     # Listen for login success messages from JS
-    message = st.experimental_get_query_params()
+   message = st.query_params
     # Workaround: just use a hidden streamlit input to simulate
     if "_component_messages" in st.session_state:
         for m in st.session_state._component_messages:
@@ -180,3 +180,4 @@ if not st.session_state.logged_in:
                 st.rerun()
 else:
     dashboard_ui()
+
