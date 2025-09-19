@@ -26,11 +26,10 @@ def login_signup_ui():
           height: 100%;
           transition: all 0.6s ease-in-out;
           display: flex;
-          align-items: center;
           justify-content: center;
           flex-direction: column;
           padding: 0 50px;
-          text-align: center;
+          text-align: left;
           width: 50%;
           background: #fff;
         }
@@ -47,8 +46,19 @@ def login_signup_ui():
           width: 100%;
           border-radius: 5px;
         }
-        .sign-in-container { left: 0; z-index: 2; }
-        .sign-up-container { left: 0; opacity: 0; z-index: 1; }
+        .sign-in-container {
+          left: 0;
+          z-index: 2;
+          align-items: center;  /* keep centered */
+          text-align: center;
+        }
+        .sign-up-container {
+          left: 0;
+          opacity: 0;
+          z-index: 1;
+          align-items: flex-start;   /* 👈 shift content left */
+          padding-left: 80px;        /* 👈 adjust left margin */
+        }
         .container.right-panel-active .sign-in-container {
           transform: translateX(100%);
         }
@@ -159,7 +169,5 @@ def login_signup_ui():
     """
     components.html(html_code, height=600, scrolling=False)
 
-# -------------------------
-# MAIN APP
-# -------------------------
+# Run
 login_signup_ui()
