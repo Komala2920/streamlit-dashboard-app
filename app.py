@@ -1,118 +1,239 @@
 import streamlit as st
-import pandas as pd
-import os
+import streamlit.components.v1 as components
 
-USER_FILE = "users.csv"
+st.set_page_config(page_title="Full Screen Animated Login/Signup", layout="wide")
 
-# ------------------ Helpers ------------------
-if not os.path.exists(USER_FILE):
-    df = pd.DataFrame(columns=["name", "email", "password"])
-    df.to_csv(USER_FILE, index=False)
+html_code = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Poppins", sans-serif; }
+    body {
+      background: linear-gradient(to right, #20c997, #17a2b8); /* Sign Up button colour background */
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
 
-def load_users():
-    return pd.read_csv(USER_FILE)
+    /* Main container */
+    .container {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 14px 28px rgba(0,0,0,0.25), 
+                  0 10px 10px rgba(0,0,0,0.22);
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      max-width: 100%;
+      min-height: 100vh;
+      display: flex;
+    }
 
-def save_user(name, email, password):
-    df = load_users()
-    if email in df["email"].values:
-        return False
-    new_user = pd.DataFrame([[name, email, password]], columns=["name", "email", "password"])
-    df = pd.concat([df, new_user], ignore_index=True)
-    df.to_csv(USER_FILE, index=False)
-    return True
+    .form-container {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      transition: all 0.6s ease-in-out;
+    }
 
-def authenticate(email, password):
-    df = load_users()
-    user = df[(df["email"] == email) & (df["password"] == password)]
-    if not user.empty:
-        return user.iloc[0]["name"]
-    return None
+    .sign-in-container {
+      left: 0;
+      width: 50%;
+      z-index: 2;
+      height: 100%;
+    }
 
-# ------------------ UI Config ------------------
-st.set_page_config(page_title="Sliding Login", layout="centered")
+    .sign-up-container {
+      left: 0;
+      width: 50%;
+      opacity: 0;
+      z-index: 1;
+      height: 100%;
+    }
 
-st.markdown("""
-<style>
-.container {
-    width: 800px;
-    max-width: 100%;
-    min-height: 480px;
-    position: relative;
-    overflow: hidden;
-    margin: auto;
-    background: #fff;
-    border-radius: 15px;
-    box-shadow: 0 14px 28px rgba(0,0,0,0.25),
-                0 10px 10px rgba(0,0,0,0.22);
-    transition: all 0.6s ease-in-out;
-    display: flex;
-}
-.panel {
-    flex: 1;
-    padding: 40px;
-    transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
-}
-.hidden {
-    transform: translateX(100%);
-    opacity: 0;
-    pointer-events: none;
-}
-.visible {
-    transform: translateX(0%);
-    opacity: 1;
-}
-h2 {
-    color: #20c997;
-}
-</style>
-""", unsafe_allow_html=True)
+    .container.right-panel-active .sign-in-container {
+      transform: translateX(100%);
+    }
 
-# Session state for sliding toggle
-if "show_signup" not in st.session_state:
-    st.session_state.show_signup = False
+    .container.right-panel-active .sign-up-container {
+      transform: translateX(100%);
+      opacity: 1;
+      z-index: 5;
+      animation: show 0.6s;
+    }
 
-# ------------------ Layout ------------------
-st.markdown("<div class='container'>", unsafe_allow_html=True)
+    @keyframes show {
+      0%, 49.99% { opacity: 0; z-index: 1; }
+      50%, 100% { opacity: 1; z-index: 5; }
+    }
 
-# Sign In Panel
-signin_class = "panel visible" if not st.session_state.show_signup else "panel hidden"
-st.markdown(f"<div class='{signin_class}'>", unsafe_allow_html=True)
-st.subheader("Sign In")
-with st.form("signin"):
-    email = st.text_input("Email", key="login_email")
-    password = st.text_input("Password", type="password", key="login_pass")
-    submitted = st.form_submit_button("Sign In")
-    if submitted:
-        user = authenticate(email, password)
-        if user:
-            st.success(f"🎉 Welcome back, {user}!")
-        else:
-            st.error("❌ Invalid credentials")
-if st.button("Go to Sign Up"):
-    st.session_state.show_signup = True
-    st.rerun()
-st.markdown("</div>", unsafe_allow_html=True)
+    form {
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      padding: 0 50px;
+      height: 100%;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
 
-# Sign Up Panel
-signup_class = "panel visible" if st.session_state.show_signup else "panel hidden"
-st.markdown(f"<div class='{signup_class}'>", unsafe_allow_html=True)
-st.subheader("Create Account")
-with st.form("signup"):
-    name = st.text_input("Name", key="signup_name")
-    email = st.text_input("Email", key="signup_email")
-    password = st.text_input("Password", type="password", key="signup_pass")
-    submitted = st.form_submit_button("Sign Up")
-    if submitted:
-        ok = save_user(name, email, password)
-        if ok:
-            st.success("✅ Account created successfully! Please sign in.")
-            st.session_state.show_signup = False
-            st.rerun()
-        else:
-            st.error("❌ Email already exists!")
-if st.button("Go to Sign In"):
-    st.session_state.show_signup = False
-    st.rerun()
-st.markdown("</div>", unsafe_allow_html=True)
+    form h1 { font-weight: bold; margin-bottom: 20px; }
+    form input {
+      background: #eee;
+      border: none;
+      padding: 12px 15px;
+      margin: 8px 0;
+      width: 100%;
+      max-width: 300px;
+      border-radius: 4px;
+    }
 
-st.markdown("</div>", unsafe_allow_html=True)
+    button {
+      border-radius: 20px;
+      border: 1px solid #20c997;
+      background: #20c997;
+      color: #fff;
+      font-size: 14px;
+      font-weight: bold;
+      padding: 12px 45px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: transform 80ms ease-in;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:active { transform: scale(0.95); }
+    button:focus { outline: none; }
+
+    .overlay-container {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 50%;
+      height: 100%;
+      overflow: hidden;
+      transition: transform 0.6s ease-in-out;
+      z-index: 100;
+    }
+
+    .container.right-panel-active .overlay-container {
+      transform: translateX(-100%);
+    }
+
+    .overlay {
+      background: linear-gradient(to right, #20c997, #17a2b8);
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: 0 0;
+      color: #fff;
+      position: relative;
+      left: -100%;
+      height: 100%;
+      width: 200%;
+      transform: translateX(0);
+      transition: transform 0.6s ease-in-out;
+    }
+
+    .container.right-panel-active .overlay {
+      transform: translateX(50%);
+    }
+
+    .overlay-panel {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 40px;
+      text-align: center;
+      top: 0;
+      height: 100%;
+      width: 50%;
+      transform: translateX(0);
+      transition: transform 0.6s ease-in-out;
+    }
+
+    .overlay-left {
+      transform: translateX(-20%);
+      left: 0;
+    }
+
+    .container.right-panel-active .overlay-left {
+      transform: translateX(0);
+    }
+
+    .overlay-right {
+      right: 0;
+      transform: translateX(0);
+    }
+
+    .container.right-panel-active .overlay-right {
+      transform: translateX(20%);
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="container">
+    <!-- Sign Up -->
+    <div class="form-container sign-up-container">
+      <form>
+        <h1>Create Account</h1>
+        <input type="text" placeholder="Name" />
+        <input type="email" placeholder="Email" />
+        <input type="password" placeholder="Password" />
+        <button>Sign Up</button>
+      </form>
+    </div>
+
+    <!-- Sign In -->
+    <div class="form-container sign-in-container">
+      <form>
+        <h1>Sign In</h1>
+        <input type="email" placeholder="Email" />
+        <input type="password" placeholder="Password" />
+        <button>Sign In</button>
+      </form>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay-container">
+      <div class="overlay">
+        <div class="overlay-panel overlay-left">
+          <h1>Welcome Back!</h1>
+          <p>To keep connected with us please login</p>
+          <button class="ghost" id="signIn">Sign In</button>
+        </div>
+        <div class="overlay-panel overlay-right">
+          <h1>Hello, Friend!</h1>
+          <p>Enter your details and start your journey</p>
+          <button class="ghost" id="signUp">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const signUpButton = document.getElementById('signUp');
+    const signInButton = document.getElementById('signIn');
+    const container = document.getElementById('container');
+
+    signUpButton.addEventListener('click', () => {
+      container.classList.add("right-panel-active");
+    });
+
+    signInButton.addEventListener('click', () => {
+      container.classList.remove("right-panel-active");
+    });
+  </script>
+</body>
+</html>
+"""
+
+components.html(html_code, height=800, scrolling=False)
