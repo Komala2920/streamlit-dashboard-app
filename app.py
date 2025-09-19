@@ -8,7 +8,7 @@ st.set_page_config(page_title="Animated Login System", layout="wide")
 def get_base64(bin_file):
     with open(bin_file, "rb") as f:
         data = f.read()
-    return base64.b64encode(data).decode()   # fixed small bug: was f.read().read()
+    return base64.b64encode(data.read()).decode()
 
 def set_background(png_file):
     bin_str = get_base64(png_file)
@@ -23,6 +23,9 @@ def set_background(png_file):
     </style>
     """
     st.markdown(bg_css, unsafe_allow_html=True)
+
+# Set your background image here
+# set_background("background.png")   # 👈 add your background image file
 
 # ---------------- LOGIN / SIGNUP UI ----------------
 def login_signup_ui():
@@ -193,7 +196,7 @@ def login_signup_ui():
         signInButton.addEventListener('click', () => container.classList.remove("right-panel-active"));
     </script>
     """
-    components.html(html_code, height=650, scrolling=False, allow_input=True)  # 👈 FIXED
+    components.html(html_code, height=650, scrolling=False)
 
 # ---------------- DASHBOARD PAGES ----------------
 def home_page():
@@ -237,4 +240,4 @@ else:
     elif st.session_state.page == "Profile":
         profile_page()
     elif st.session_state.page == "Feedback":
-        feedback_page()
+        feedback_page()                                           change in this code and give me
