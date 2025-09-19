@@ -1,8 +1,33 @@
 import streamlit as st
 import streamlit.components.v1 as components
+import base64
 
 st.set_page_config(page_title="Animated Login System", layout="wide")
 
+# ---------------- BACKGROUND SETUP ----------------
+def get_base64(bin_file):
+    with open(bin_file, "rb") as f:
+        data = f.read()
+    return base64.b64encode(data.read()).decode()
+
+def set_background(png_file):
+    bin_str = get_base64(png_file)
+    bg_css = f"""
+    <style>
+    [data-testid="stAppViewContainer"] {{
+        background-image: url("data:image/png;base64,{bin_str}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }}
+    </style>
+    """
+    st.markdown(bg_css, unsafe_allow_html=True)
+
+# Set your background image here
+# set_background("background.png")   # 👈 add your background image file
+
+# ---------------- LOGIN / SIGNUP UI ----------------
 def login_signup_ui():
     html_code = """
     <style>
@@ -37,27 +62,30 @@ def login_signup_ui():
           margin-bottom: 20px;
           font-size: 28px;
           color: #20c997;
+          text-align: center;
         }
         .form-container input {
           background: #f3f3f3;
           border: none;
           padding: 12px 15px;
-          margin: 10px 0;
-          width: 100%;
+          margin: 10px auto;
+          width: 80%;
           border-radius: 5px;
+          display: block;
         }
         .sign-in-container {
           left: 0;
           z-index: 2;
-          align-items: center;  /* keep centered */
+          align-items: center;
           text-align: center;
         }
         .sign-up-container {
           left: 0;
           opacity: 0;
           z-index: 2;
-          align-items: center;   /* 👈 shift content left */
-          padding-left: 10px;        /* 👈 adjust left margin */
+          align-items: center;
+          padding-left: 0;
+          text-align: center;
         }
         .container.right-panel-active .sign-in-container {
           transform: translateX(100%);
@@ -119,6 +147,7 @@ def login_signup_ui():
           text-transform: uppercase;
           transition: transform 80ms ease-in;
           margin-top: 15px;
+          cursor: pointer;
         }
         .btn:active { transform: scale(0.95); }
         .btn:focus { outline: none; }
@@ -167,7 +196,48 @@ def login_signup_ui():
         signInButton.addEventListener('click', () => container.classList.remove("right-panel-active"));
     </script>
     """
-    components.html(html_code, height=600, scrolling=False)
+    components.html(html_code, height=650, scrolling=False)
 
-# Run
-login_signup_ui()                                                            
+# ---------------- DASHBOARD PAGES ----------------
+def home_page():
+    st.title("🏠 Home")
+    st.write("Welcome to the Home page!")
+
+def dashboard_page():
+    st.title("📊 Dashboard")
+    st.write("This is the dashboard.")
+
+def profile_page():
+    st.title("👤 Profile")
+    st.write("Your profile details go here.")
+
+def feedback_page():
+    st.title("💬 Feedback")
+    st.text_area("Enter your feedback here:")
+
+# ---------------- MAIN APP ----------------
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+if "page" not in st.session_state:
+    st.session_state.page = "Home"
+
+if not st.session_state.logged_in:
+    login_signup_ui()
+else:
+    # Sidebar navigation
+    st.sidebar.title("Navigation")
+    if st.sidebar.button("🏠 Home"): st.session_state.page = "Home"
+    if st.sidebar.button("📊 Dashboard"): st.session_state.page = "Dashboard"
+    if st.sidebar.button("👤 Profile"): st.session_state.page = "Profile"
+    if st.sidebar.button("💬 Feedback"): st.session_state.page = "Feedback"
+    if st.sidebar.button("🚪 Logout"): st.session_state.logged_in = False
+
+    # Render pages
+    if st.session_state.page == "Home":
+        home_page()
+    elif st.session_state.page == "Dashboard":
+        dashboard_page()
+    elif st.session_state.page == "Profile":
+        profile_page()
+    elif st.session_state.page == "Feedback":
+        feedback_page()
