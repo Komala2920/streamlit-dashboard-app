@@ -1,5 +1,5 @@
 import streamlit as st
-import streamlit.components.v1 as components  
+import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Animated Login System", layout="wide")
 
@@ -15,7 +15,7 @@ if "page" not in st.session_state:
 # LOGIN UI (HTML + Animation)
 # -------------------------
 def login_ui():
-    html_code
+    html_code = """
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -77,5 +77,102 @@ def login_ui():
         .overlay-left{ transform: translateX(-20%); left:0; }
         .container.right-panel-active .overlay-left{ transform: translateX(0); }
         .overlay-right{ right:0; transform: translateX(0); }
-        .container.right-panel-active .overlay
+        .container.right-panel-active .overlay-right{ transform: translateX(20%); }
+      </style>
+    </head>
+    <body>
+      <div class="container" id="container">
+        <!-- Sign Up -->
+        <div class="form-container sign-up-container">
+          <form>
+            <h1>Create Account</h1>
+            <input type="text" placeholder="Name" />
+            <input type="email" placeholder="Email" />
+            <input type="password" placeholder="Password" />
+            <!-- Trigger Streamlit login -->
+            <button type="button" class="btn" onclick="parent.postMessage({login:true}, '*')">Sign Up</button>
+          </form>
+        </div>
 
+        <!-- Sign In -->
+        <div class="form-container sign-in-container">
+          <form>
+            <h1>Sign In</h1>
+            <input type="email" placeholder="Email" />
+            <input type="password" placeholder="Password" />
+            <!-- Trigger Streamlit login -->
+            <button type="button" class="btn" onclick="parent.postMessage({login:true}, '*')">Sign In</button>
+          </form>
+        </div>
+
+        <!-- Overlay -->
+        <div class="overlay-container">
+          <div class="overlay">
+            <div class="overlay-panel overlay-left">
+              <h1>Welcome Back!</h1>
+              <p>To keep connected with us please login</p>
+              <button class="btn" id="signIn">Sign In</button>
+            </div>
+            <div class="overlay-panel overlay-right">
+              <h1>Hello, Friend!</h1>
+              <p>Enter your details and start your journey</p>
+              <button class="btn" id="signUp">Sign Up</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const container = document.getElementById('container');
+        signUpButton.addEventListener('click', () => container.classList.add("right-panel-active"));
+        signInButton.addEventListener('click', () => container.classList.remove("right-panel-active"));
+      </script>
+    </body>
+    </html>
+    """
+    components.html(html_code, height=800, scrolling=False)
+
+# -------------------------
+# DASHBOARD UI
+# -------------------------
+def dashboard_ui():
+    st.sidebar.title("Navigation")
+    choice = st.sidebar.radio("Go to:", ["Home", "Dashboard", "Profile", "Feedback", "Logout"])
+    st.session_state.page = choice
+
+    if choice == "Home":
+        st.title("🏠 Home")
+        st.write("Welcome to the Home Page!")
+
+    elif choice == "Dashboard":
+        st.title("📊 Dashboard")
+        st.write("Your dashboard content goes here.")
+
+    elif choice == "Profile":
+        st.title("👤 Profile")
+        st.write("User profile details displayed here.")
+
+    elif choice == "Feedback":
+        st.title("💬 Feedback")
+        feedback = st.text_area("Enter your feedback here:")
+        if st.button("Submit"):
+            st.success("Thanks for your feedback!")
+
+    elif choice == "Logout":
+        st.session_state.logged_in = False
+        st.rerun()
+
+# -------------------------
+# MAIN APP
+# -------------------------
+if not st.session_state.logged_in:
+    login_ui()
+    # 🔑 Check login trigger
+    if st.experimental_get_query_params().get("login", [None])[0] == "true":
+        st.session_state.logged_in = True
+        st.session_state.page = "Home"   # go to home directly
+        st.experimental_rerun()
+else:
+    dashboard_ui()
