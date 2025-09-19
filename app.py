@@ -12,12 +12,12 @@ if "page" not in st.session_state:
     st.session_state.page = "Home"
 
 # -------------------------
-# LOGIN UI
+# LOGIN & SIGNUP UI
 # -------------------------
-def login_ui():
-    st.markdown(
-        """
-        <style>
+def login_signup_ui():
+    html_code = """
+    <style>
+        body { background: linear-gradient(to right, #20c997, #17a2b8); }
         .container {
           background: #fff;
           border-radius: 10px;
@@ -25,9 +25,10 @@ def login_ui():
                       0 10px 10px rgba(0,0,0,0.22);
           position: relative;
           overflow: hidden;
-          width: 80%;
+          width: 900px;
+          max-width: 100%;
+          min-height: 500px;
           margin: auto;
-          min-height: 80vh;
           display: flex;
         }
         .form-container {
@@ -35,142 +36,126 @@ def login_ui():
           top: 0;
           height: 100%;
           transition: all 0.6s ease-in-out;
-        }
-        .sign-in-container {
-          left: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+          padding: 0 50px;
+          text-align: center;
           width: 50%;
-          z-index: 2;
+          background: #fff;
         }
+        .sign-in-container { left: 0; z-index: 2; }
+        .sign-up-container { left: 0; opacity: 0; z-index: 1; }
         .container.right-panel-active .sign-in-container {
           transform: translateX(100%);
-        }
-        .sign-up-container {
-          left: 0;
-          width: 50%;
-          opacity: 0;
-          z-index: 1;
         }
         .container.right-panel-active .sign-up-container {
           transform: translateX(100%);
           opacity: 1;
           z-index: 5;
-          animation: show 0.6s;
+          transition: all 0.6s ease-in-out;
         }
-        @keyframes show {
-          0% { opacity: 0; }
-          100% { opacity: 1; }
+        .overlay-container{
+          position:absolute;
+          top:0;
+          left:50%;
+          width:50%;
+          height:100%;
+          overflow:hidden;
+          transition:transform .6s ease-in-out;
+          z-index:100;
         }
-        .overlay-container {
-          position: absolute;
-          top: 0;
-          left: 50%;
-          width: 50%;
-          height: 100%;
-          overflow: hidden;
-          transition: transform 0.6s ease-in-out;
-          z-index: 100;
-        }
-        .container.right-panel-active .overlay-container {
-          transform: translateX(-100%);
-        }
-        .overlay {
+        .container.right-panel-active .overlay-container{ transform: translateX(-100%); }
+        .overlay{
           background: linear-gradient(to right,#20c997,#17a2b8);
-          background-repeat: no-repeat;
-          background-size: cover;
-          background-position: 0 0;
-          color: #FFFFFF;
+          color: #fff;
           position: relative;
-          left: -100%;
-          height: 100%;
-          width: 200%;
-          transform: translateX(0);
-          transition: transform 0.6s ease-in-out;
+          left:-100%;
+          height:100%;
+          width:200%;
+          transform:translateX(0);
+          transition:transform .6s ease-in-out;
         }
-        .container.right-panel-active .overlay {
-          transform: translateX(50%);
+        .container.right-panel-active .overlay{ transform: translateX(50%); }
+        .overlay-panel{
+          position:absolute;
+          display:flex;
+          flex-direction:column;
+          align-items:center;
+          justify-content:center;
+          padding:0 40px;
+          text-align:center;
+          top:0;
+          height:100%;
+          width:50%;
+          transition:transform .6s ease-in-out;
         }
-        .overlay-panel {
-          position: absolute;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          padding: 0 40px;
-          text-align: center;
-          top: 0;
-          height: 100%;
-          width: 50%;
-          transition: transform 0.6s ease-in-out;
+        .overlay-left{ transform: translateX(-20%); left:0; }
+        .container.right-panel-active .overlay-left{ transform: translateX(0); }
+        .overlay-right{ right:0; transform: translateX(0); }
+        .container.right-panel-active .overlay-right{ transform: translateX(20%); }
+        .btn {
+          border-radius: 20px;
+          border: 1px solid #20c997;
+          background-color: #20c997;
+          color: #fff;
+          font-size: 14px;
+          font-weight: bold;
+          padding: 12px 45px;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+          transition: transform 80ms ease-in;
         }
-        .overlay-left {
-          transform: translateX(-20%);
-          left: 0;
-        }
-        .container.right-panel-active .overlay-left {
-          transform: translateX(0);
-        }
-        .overlay-right {
-          right: 0;
-          transform: translateX(0);
-        }
-        .container.right-panel-active .overlay-right {
-          transform: translateX(20%);
-        }
-        </style>
+        .btn:active { transform: scale(0.95); }
+        .btn:focus { outline: none; }
+    </style>
 
-        <div class="container" id="container">
-            <div class="form-container sign-in-container" id="signin-box"></div>
-            <div class="form-container sign-up-container" id="signup-box"></div>
-            <div class="overlay-container">
-              <div class="overlay">
-                <div class="overlay-panel overlay-left">
-                  <h1>Welcome Back!</h1>
-                  <p>To keep connected with us please login</p>
-                  <button class="btn" id="signIn">Sign In</button>
-                </div>
-                <div class="overlay-panel overlay-right">
-                  <h1>Hello, Friend!</h1>
-                  <p>Enter your details and start your journey</p>
-                  <button class="btn" id="signUp">Sign Up</button>
-                </div>
-              </div>
-            </div>
+    <div class="container" id="container">
+        <!-- Sign In Form -->
+        <div class="form-container sign-in-container">
+          <h1>Sign In</h1>
+          <input id="signin-email" placeholder="Email" />
+          <input id="signin-password" type="password" placeholder="Password" />
+          <button class="btn" id="signin-submit">Login</button>
         </div>
 
-        <script>
-            const signUpButton = document.getElementById('signUp');
-            const signInButton = document.getElementById('signIn');
-            const container = document.getElementById('container');
-            signUpButton.addEventListener('click', () => container.classList.add("right-panel-active"));
-            signInButton.addEventListener('click', () => container.classList.remove("right-panel-active"));
-        </script>
-        """,
-        unsafe_allow_html=True,
-    )
+        <!-- Sign Up Form -->
+        <div class="form-container sign-up-container">
+          <h1>Create Account</h1>
+          <input id="signup-name" placeholder="Name" />
+          <input id="signup-email" placeholder="Email" />
+          <input id="signup-password" type="password" placeholder="Password" />
+          <button class="btn" id="signup-submit">Sign Up</button>
+        </div>
 
-    # ----------------- SIGN IN FORM (inside white box) -----------------
-    with st.container():
-        with st.expander("🔐 Sign In", expanded=True):
-            email = st.text_input("Email (Sign In)")
-            password = st.text_input("Password (Sign In)", type="password")
-            if st.button("Login"):
-                if email and password:
-                    st.session_state.logged_in = True
-                    st.success("Login successful!")
-                    st.rerun()
-                else:
-                    st.error("Please enter email & password")
+        <!-- Overlay -->
+        <div class="overlay-container">
+          <div class="overlay">
+            <div class="overlay-panel overlay-left">
+              <h1>Welcome Back!</h1>
+              <p>To keep connected with us please login</p>
+              <button class="btn" id="signIn">Sign In</button>
+            </div>
+            <div class="overlay-panel overlay-right">
+              <h1>Hello, Friend!</h1>
+              <p>Enter your details and start your journey</p>
+              <button class="btn" id="signUp">Sign Up</button>
+            </div>
+          </div>
+        </div>
+    </div>
 
-    # ----------------- SIGN UP FORM (inside white box) -----------------
-    with st.container():
-        with st.expander("🆕 Sign Up", expanded=False):
-            new_email = st.text_input("Email (Sign Up)")
-            new_password = st.text_input("Password (Sign Up)", type="password")
-            if st.button("Register"):
-                if new_email and new_password:
-                    st.success("Account created (dummy for now)")
-                else:
-                    st.error("Please enter details")
+    <script>
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const container = document.getElementById('container');
+        signUpButton.addEventListener('click', () => container.classList.add("right-panel-active"));
+        signInButton.addEventListener('click', () => container.classList.remove("right-panel-active"));
+    </script>
+    """
+    components.html(html_code, height=600, scrolling=False)
+
 
 # -------------------------
 # DASHBOARD UI
@@ -195,7 +180,7 @@ def dashboard_ui():
     elif choice == "Feedback":
         st.title("💬 Feedback")
         feedback = st.text_area("Enter your feedback here:")
-        if st.button("Submit Feedback"):
+        if st.button("Submit"):
             st.success("Thanks for your feedback!")
 
     elif choice == "Logout":
@@ -206,6 +191,6 @@ def dashboard_ui():
 # MAIN APP
 # -------------------------
 if not st.session_state.logged_in:
-    login_ui()
+    login_signup_ui()
 else:
     dashboard_ui()
