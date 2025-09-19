@@ -9,7 +9,7 @@ if "logged_in" not in st.session_state:
 if "page" not in st.session_state:
     st.session_state.page = "Home"
 
-# LOGIN UI (HTML) - buttons set ?isLoggedIn=true on click
+# --- LOGIN UI with animation ---
 def login_ui():
     html_code = """
     <!DOCTYPE html>
@@ -85,7 +85,6 @@ def login_ui():
             <input type="text" placeholder="Name" />
             <input type="email" placeholder="Email" />
             <input type="password" placeholder="Password" />
-            <!-- This will set the query param and reload -->
             <button type="button" class="btn" onclick="window.location.search='?isLoggedIn=true'">Sign Up</button>
           </form>
         </div>
@@ -96,7 +95,6 @@ def login_ui():
             <h1>Sign In</h1>
             <input type="email" placeholder="Email" />
             <input type="password" placeholder="Password" />
-            <!-- This will set the query param and reload -->
             <button type="button" class="btn" onclick="window.location.search='?isLoggedIn=true'">Sign In</button>
           </form>
         </div>
@@ -119,7 +117,6 @@ def login_ui():
       </div>
 
       <script>
-        // overlay toggle (no login)
         const signUpButton = document.getElementById('signUp');
         const signInButton = document.getElementById('signIn');
         const container = document.getElementById('container');
@@ -131,8 +128,7 @@ def login_ui():
     """
     components.html(html_code, height=800, scrolling=False)
 
-
-# DASHBOARD UI
+# --- DASHBOARD PAGES ---
 def dashboard_ui():
     st.sidebar.title("Navigation")
     choice = st.sidebar.radio("Go to:", ["Home", "Dashboard", "Profile", "Feedback", "Logout"])
@@ -157,21 +153,15 @@ def dashboard_ui():
             st.success("Thanks for your feedback!")
 
     elif choice == "Logout":
-        # logout -> clear session and return to login
         st.session_state.logged_in = False
-        # clear any query params so we don't auto-login on refresh
-        st.experimental_set_query_params()
+        st.experimental_set_query_params()  # clear params
         st.experimental_rerun()
 
-
-# MAIN
+# --- MAIN LOGIC ---
 if not st.session_state.logged_in:
     login_ui()
-
-    # CHECK query params returned from browser reload
     params = st.experimental_get_query_params()
     if "isLoggedIn" in params:
-        # mark logged in and clear params
         st.session_state.logged_in = True
         st.experimental_set_query_params()  # clear
         st.experimental_rerun()
