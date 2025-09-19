@@ -3,14 +3,13 @@ import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Animated Login System", layout="wide")
 
-# ---- SESSION STATE ----
+# SESSION STATE
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 if "page" not in st.session_state:
     st.session_state.page = "Home"
 
-
-# ---- LOGIN INTERFACE (HTML + CSS + JS) ----
+# LOGIN UI (HTML) - buttons set ?isLoggedIn=true on click
 def login_ui():
     html_code = """
     <!DOCTYPE html>
@@ -36,7 +35,6 @@ def login_ui():
           position: relative;
           overflow: hidden;
           width: 100%;
-          max-width: 100%;
           min-height: 100vh;
           display: flex;
         }
@@ -46,164 +44,87 @@ def login_ui():
           height: 100%;
           transition: all 0.6s ease-in-out;
         }
-        .sign-in-container {
-          left: 0;
-          width: 50%;
-          z-index: 2;
-          height: 100%;
-        }
-        .sign-up-container {
-          left: 0;
-          width: 50%;
-          opacity: 0;
-          z-index: 1;
-          height: 100%;
-        }
-        .container.right-panel-active .sign-in-container {
-          transform: translateX(100%);
-        }
+        .sign-in-container { left: 0; width: 50%; z-index: 2; height: 100%; }
+        .sign-up-container { left: 0; width: 50%; opacity: 0; z-index: 1; height: 100%; }
+        .container.right-panel-active .sign-in-container { transform: translateX(100%); }
         .container.right-panel-active .sign-up-container {
-          transform: translateX(100%);
-          opacity: 1;
-          z-index: 5;
-          animation: show 0.6s;
+          transform: translateX(100%); opacity: 1; z-index: 5; animation: show 0.6s;
         }
-        @keyframes show {
-          0%, 49.99% { opacity: 0; z-index: 1; }
-          50%, 100% { opacity: 1; z-index: 5; }
-        }
+        @keyframes show { 0%,49.99%{opacity:0} 50%,100%{opacity:1} }
         form {
-          background: #fff;
-          display: flex;
-          flex-direction: column;
-          padding: 0 50px;
-          height: 100%;
-          justify-content: center;
-          align-items: center;
-          text-align: center;
+          background: #fff; display: flex; flex-direction: column; padding: 0 50px;
+          height: 100%; justify-content: center; align-items: center; text-align: center;
         }
         form h1 { font-weight: bold; margin-bottom: 20px; }
         form input {
-          background: #eee;
-          border: none;
-          padding: 12px 15px;
-          margin: 8px 0;
-          width: 100%;
-          max-width: 300px;
-          border-radius: 4px;
+          background: #eee; border: none; padding: 12px 15px; margin: 8px 0; width: 100%;
+          max-width: 300px; border-radius: 4px;
         }
-        button {
-          border-radius: 20px;
-          border: 1px solid #20c997;
-          background: #20c997;
-          color: #fff;
-          font-size: 14px;
-          font-weight: bold;
-          padding: 12px 45px;
-          letter-spacing: 1px;
-          text-transform: uppercase;
-          transition: transform 80ms ease-in;
-          cursor: pointer;
-          margin-top: 10px;
+        .btn {
+          border-radius: 20px; border: 1px solid #20c997; background: #20c997; color: #fff;
+          font-size: 14px; font-weight: bold; padding: 12px 45px; letter-spacing: 1px;
+          text-transform: uppercase; transition: transform 80ms ease-in; cursor: pointer; margin-top: 10px;
         }
-        button:active { transform: scale(0.95); }
-        button:focus { outline: none; }
-        .overlay-container {
-          position: absolute;
-          top: 0;
-          left: 50%;
-          width: 50%;
-          height: 100%;
-          overflow: hidden;
-          transition: transform 0.6s ease-in-out;
-          z-index: 100;
-        }
-        .container.right-panel-active .overlay-container {
-          transform: translateX(-100%);
-        }
-        .overlay {
-          background: linear-gradient(to right, #20c997, #17a2b8);
-          color: #fff;
-          position: relative;
-          left: -100%;
-          height: 100%;
-          width: 200%;
-          transform: translateX(0);
-          transition: transform 0.6s ease-in-out;
-        }
-        .container.right-panel-active .overlay {
-          transform: translateX(50%);
-        }
-        .overlay-panel {
-          position: absolute;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          padding: 0 40px;
-          text-align: center;
-          top: 0;
-          height: 100%;
-          width: 50%;
-          transform: translateX(0);
-          transition: transform 0.6s ease-in-out;
-        }
-        .overlay-left { transform: translateX(-20%); left: 0; }
-        .container.right-panel-active .overlay-left { transform: translateX(0); }
-        .overlay-right { right: 0; transform: translateX(0); }
-        .container.right-panel-active .overlay-right { transform: translateX(20%); }
+        .overlay-container{ position:absolute; top:0; left:50%; width:50%; height:100%; overflow:hidden; transition:transform .6s ease-in-out; z-index:100; }
+        .container.right-panel-active .overlay-container{ transform: translateX(-100%); }
+        .overlay{ background: linear-gradient(to right,#20c997,#17a2b8); position: relative; left:-100%; height:100%; width:200%; transform:translateX(0); transition:transform .6s ease-in-out; color:#fff; }
+        .container.right-panel-active .overlay{ transform: translateX(50%); }
+        .overlay-panel{ position:absolute; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 40px; text-align:center; top:0; height:100%; width:50%; transition:transform .6s ease-in-out; }
+        .overlay-left{ transform: translateX(-20%); left:0; }
+        .container.right-panel-active .overlay-left{ transform: translateX(0); }
+        .overlay-right{ right:0; transform: translateX(0); }
+        .container.right-panel-active .overlay-right{ transform: translateX(20%); }
       </style>
     </head>
     <body>
       <div class="container" id="container">
         <!-- Sign Up -->
         <div class="form-container sign-up-container">
-          <form action="#">
+          <form>
             <h1>Create Account</h1>
             <input type="text" placeholder="Name" />
             <input type="email" placeholder="Email" />
             <input type="password" placeholder="Password" />
-            <button type="button" onclick="streamlitLogin()">Sign Up</button>
+            <!-- This will set the query param and reload -->
+            <button type="button" class="btn" onclick="window.location.search='?isLoggedIn=true'">Sign Up</button>
           </form>
         </div>
+
         <!-- Sign In -->
         <div class="form-container sign-in-container">
-          <form action="#">
+          <form>
             <h1>Sign In</h1>
             <input type="email" placeholder="Email" />
             <input type="password" placeholder="Password" />
-            <button type="button" onclick="streamlitLogin()">Sign In</button>
+            <!-- This will set the query param and reload -->
+            <button type="button" class="btn" onclick="window.location.search='?isLoggedIn=true'">Sign In</button>
           </form>
         </div>
+
         <!-- Overlay -->
         <div class="overlay-container">
           <div class="overlay">
             <div class="overlay-panel overlay-left">
               <h1>Welcome Back!</h1>
               <p>To keep connected with us please login</p>
-              <button class="ghost" id="signIn">Sign In</button>
+              <button class="btn" id="signIn">Sign In</button>
             </div>
             <div class="overlay-panel overlay-right">
               <h1>Hello, Friend!</h1>
               <p>Enter your details and start your journey</p>
-              <button class="ghost" id="signUp">Sign Up</button>
+              <button class="btn" id="signUp">Sign Up</button>
             </div>
           </div>
         </div>
       </div>
+
       <script>
+        // overlay toggle (no login)
         const signUpButton = document.getElementById('signUp');
         const signInButton = document.getElementById('signIn');
         const container = document.getElementById('container');
-        signUpButton.addEventListener('click', () => {
-          container.classList.add("right-panel-active");
-        });
-        signInButton.addEventListener('click', () => {
-          container.classList.remove("right-panel-active");
-        });
-        function streamlitLogin(){
-            window.parent.postMessage({isLoggedIn:true}, "*");
-        }
+        signUpButton.addEventListener('click', () => container.classList.add("right-panel-active"));
+        signInButton.addEventListener('click', () => container.classList.remove("right-panel-active"));
       </script>
     </body>
     </html>
@@ -211,7 +132,7 @@ def login_ui():
     components.html(html_code, height=800, scrolling=False)
 
 
-# ---- DASHBOARD UI ----
+# DASHBOARD UI
 def dashboard_ui():
     st.sidebar.title("Navigation")
     choice = st.sidebar.radio("Go to:", ["Home", "Dashboard", "Profile", "Feedback", "Logout"])
@@ -236,24 +157,23 @@ def dashboard_ui():
             st.success("Thanks for your feedback!")
 
     elif choice == "Logout":
+        # logout -> clear session and return to login
         st.session_state.logged_in = False
-        st.session_state.page = "Home"
-        st.rerun()
+        # clear any query params so we don't auto-login on refresh
+        st.experimental_set_query_params()
+        st.experimental_rerun()
 
 
-# ---- MAIN APP ----
-st.title("")
-message = st.query_params()
-
+# MAIN
 if not st.session_state.logged_in:
     login_ui()
 
-    # Capture login event from frontend
-    login_event = st.query_params()
-    if "isLoggedIn" in login_event:
+    # CHECK query params returned from browser reload
+    params = st.experimental_get_query_params()
+    if "isLoggedIn" in params:
+        # mark logged in and clear params
         st.session_state.logged_in = True
-        st.rerun()
+        st.experimental_set_query_params()  # clear
+        st.experimental_rerun()
 else:
     dashboard_ui()
-
-
