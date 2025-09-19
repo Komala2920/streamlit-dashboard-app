@@ -2,16 +2,19 @@ import streamlit as st
 import sqlite3
 
 # ---------- DATABASE ----------
-conn = sqlite3.connect("users.db")
-c = conn.cursor()
-c.execute('''
-    CREATE TABLE IF NOT EXISTS users (
-        username TEXT PRIMARY KEY,
-        email TEXT,
-        password TEXT
-    )
-''')
-conn.commit()
+def init_db():
+    conn = sqlite3.connect("app_data.db")
+    c = conn.cursor()
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            email TEXT UNIQUE,
+            password TEXT
+        )
+    ''')
+    conn.commit()
+    conn.close()
 
 # ---------- HELPER FUNCTIONS ----------
 def add_user(username, email, password):
