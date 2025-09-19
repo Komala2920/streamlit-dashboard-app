@@ -3,17 +3,6 @@ import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Animated Login System", layout="wide")
 
-# -------------------------
-# SESSION STATE
-# -------------------------
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
-if "page" not in st.session_state:
-    st.session_state.page = "Home"
-
-# -------------------------
-# LOGIN & SIGNUP UI
-# -------------------------
 def login_signup_ui():
     html_code = """
     <style>
@@ -44,6 +33,19 @@ def login_signup_ui():
           text-align: center;
           width: 50%;
           background: #fff;
+        }
+        .form-container h1 {
+          margin-bottom: 20px;
+          font-size: 28px;
+          color: #20c997;
+        }
+        .form-container input {
+          background: #f3f3f3;
+          border: none;
+          padding: 12px 15px;
+          margin: 10px 0;
+          width: 100%;
+          border-radius: 5px;
         }
         .sign-in-container { left: 0; z-index: 2; }
         .sign-up-container { left: 0; opacity: 0; z-index: 1; }
@@ -106,6 +108,7 @@ def login_signup_ui():
           letter-spacing: 1px;
           text-transform: uppercase;
           transition: transform 80ms ease-in;
+          margin-top: 15px;
         }
         .btn:active { transform: scale(0.95); }
         .btn:focus { outline: none; }
@@ -156,41 +159,7 @@ def login_signup_ui():
     """
     components.html(html_code, height=600, scrolling=False)
 
-
-# -------------------------
-# DASHBOARD UI
-# -------------------------
-def dashboard_ui():
-    st.sidebar.title("Navigation")
-    choice = st.sidebar.radio("Go to:", ["Home", "Dashboard", "Profile", "Feedback", "Logout"])
-    st.session_state.page = choice
-
-    if choice == "Home":
-        st.title("🏠 Home")
-        st.write("Welcome to the Home Page!")
-
-    elif choice == "Dashboard":
-        st.title("📊 Dashboard")
-        st.write("Your dashboard content goes here.")
-
-    elif choice == "Profile":
-        st.title("👤 Profile")
-        st.write("User profile details displayed here.")
-
-    elif choice == "Feedback":
-        st.title("💬 Feedback")
-        feedback = st.text_area("Enter your feedback here:")
-        if st.button("Submit"):
-            st.success("Thanks for your feedback!")
-
-    elif choice == "Logout":
-        st.session_state.logged_in = False
-        st.rerun()
-
 # -------------------------
 # MAIN APP
 # -------------------------
-if not st.session_state.logged_in:
-    login_signup_ui()
-else:
-    dashboard_ui()
+login_signup_ui()
