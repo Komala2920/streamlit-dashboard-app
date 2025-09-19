@@ -54,7 +54,7 @@ def login_signup_ui():
           text-align: center;
         }
         .sign-up-container {
-          left: 0;
+          left: 2;
           opacity: 0;
           z-index: 2;
           display: flex;
@@ -186,4 +186,5 @@ def login_signup_ui():
 
 # Run
 login_signup_ui()
+
 
