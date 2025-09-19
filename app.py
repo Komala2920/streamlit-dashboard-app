@@ -4,7 +4,7 @@ import streamlit.components.v1 as components
 st.set_page_config(page_title="Animated Login/Signup", layout="centered")
 
 # ----------------------------
-# HTML + CSS + JS for Sliding Exchange
+# HTML + CSS + JS with SAME BACKGROUND
 # ----------------------------
 html_code = """
 <!DOCTYPE html>
@@ -13,7 +13,32 @@ html_code = """
   <meta charset="UTF-8">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Poppins", sans-serif; }
-    body { background: #f6f5f7; }
+
+    body {
+      background: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .background-shapes {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    .shape {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.6;
+    }
+
+    .shape1 { background: #fcd34d; width: 300px; height: 300px; bottom: -100px; left: -100px; }
+    .shape2 { background: #f87171; width: 300px; height: 300px; top: -100px; right: -100px; }
+
     .container {
       background: #fff;
       border-radius: 10px;
@@ -21,11 +46,9 @@ html_code = """
                   0 10px 10px rgba(0,0,0,0.22);
       position: relative;
       overflow: hidden;
-      width: 768px;
+      width: 900px;
       max-width: 100%;
-      min-height: 480px;
-      margin: auto;
-      margin-top: 30px;
+      min-height: 500px;
     }
 
     .form-container {
@@ -87,8 +110,8 @@ html_code = """
 
     button {
       border-radius: 20px;
-      border: 1px solid #4CAF50;
-      background: #4CAF50;
+      border: 1px solid #20c997;
+      background: #20c997;
       color: #fff;
       font-size: 14px;
       font-weight: bold;
@@ -171,6 +194,11 @@ html_code = """
   </style>
 </head>
 <body>
+  <div class="background-shapes">
+    <div class="shape shape1"></div>
+    <div class="shape shape2"></div>
+  </div>
+
   <div class="container" id="container">
     <!-- Sign Up -->
     <div class="form-container sign-up-container">
@@ -227,4 +255,4 @@ html_code = """
 </html>
 """
 
-components.html(html_code, height=600, scrolling=False)
+components.html(html_code, height=650, scrolling=False)
