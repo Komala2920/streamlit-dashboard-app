@@ -1,6 +1,7 @@
 import streamlit as st
 import sqlite3
 import base64
+import bcrypt
 import streamlit.components.v1 as components   # For Power BI
 
 # ========= Background Setup =========
@@ -56,7 +57,7 @@ def set_background(png_file):
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
 # ========= Database Setup =========
-conn = sqlite3.connect('users.db')
+conn = sqlite3.connect('users.db', check_same_thread=False)
 c = conn.cursor()
 c.execute('''CREATE TABLE IF NOT EXISTS users
              (username TEXT UNIQUE, password TEXT, email TEXT, fullname TEXT)''')
@@ -65,13 +66,14 @@ conn.commit()
 # ========= App Title =========
 st.markdown("<h1 style='text-align: center; color: cyan;'>🌍 Global Balance</h1>", unsafe_allow_html=True)
 
-# ========= Navigation Setup =========
+# ========= Session Setup =========
 if "page" not in st.session_state:
     st.session_state["page"] = "Login"
 
-if "user" not in st.session_state:  
+# ========= Navigation Setup =========
+if "user" not in st.session_state:
     nav_items = ["Login", "Sign Up"]
-else:  
+else:
     nav_items = ["Home", "Dashboard", "Profile", "Feedback", "Logout"]
 
 st.markdown("<div class='nav-container'>", unsafe_allow_html=True)
@@ -90,19 +92,23 @@ if choice in ["Login", "Sign Up"]:
 # ========= Authentication =========
 if choice == "Sign Up":
     st.subheader("🔐 Create an Account")
-    new_name = st.text_input("Full Name", key="signup_name")   
+    new_name = st.text_input("Full Name", key="signup_name")
     new_user = st.text_input("Username", key="signup_user")
     new_email = st.text_input("Email", key="signup_email")
     new_pass = st.text_input("Password", type="password", key="signup_pass")
 
     if st.button("Sign Up", key="signup_btn"):
-        try:
-            c.execute("INSERT INTO users (username, password, email, fullname) VALUES (?,?,?,?)",
-                      (new_user, new_pass, new_email, new_name))
-            conn.commit()
-            st.success("✅ Account created successfully! Please go to Login.")
-        except:
-            st.warning("⚠ Username already exists.")
+        if new_user and new_pass:
+            hashed_pw = bcrypt.hashpw(new_pass.encode(), bcrypt.gensalt()).decode()
+            try:
+                c.execute("INSERT INTO users (username, password, email, fullname) VALUES (?,?,?,?)",
+                          (new_user, hashed_pw, new_email, new_name))
+                conn.commit()
+                st.success("✅ Account created successfully! Please go to Login.")
+            except:
+                st.warning("⚠ Username already exists.")
+        else:
+            st.error("❌ Username and Password required!")
 
 elif choice == "Login":
     st.subheader("🔑 Login to Global Balance")
@@ -110,14 +116,14 @@ elif choice == "Login":
     passwd = st.text_input("Password", type="password", key="login_pass")
 
     if st.button("Login", key="login_btn"):
-        c.execute("SELECT * FROM users WHERE username=? AND password=?", (user, passwd))
+        c.execute("SELECT * FROM users WHERE username=?", (user,))
         data = c.fetchone()
-        if data:
+        if data and bcrypt.checkpw(passwd.encode(), data[1].encode()):
             st.success(f"🎉 Welcome {user}!")
             st.session_state["user"] = data[0]   # username
-            st.session_state["password"] = data[1]  
-            st.session_state["email"] = data[2] if len(data) > 2 and data[2] else "Not Provided"
-            st.session_state["fullname"] = data[3] if len(data) > 3 and data[3] else "Not Provided"
+            st.session_state["password"] = data[1]
+            st.session_state["email"] = data[2] if data[2] else "Not Provided"
+            st.session_state["fullname"] = data[3] if data[3] else "Not Provided"
             st.session_state["page"] = "Home"
         else:
             st.error("❌ Invalid credentials.")
@@ -153,12 +159,12 @@ elif choice == "Profile":
     if "user" in st.session_state:
         col1, col2 = st.columns([1, 3])
         with col1:
-            st.image("profile.png", width=150)  
+            st.image("profile.png", width=150)
         with col2:
             st.markdown(f"""
-            **Full Name:** {st.session_state.get('fullname', 'Komala Rani Talisetti')}  
+            **Full Name:** {st.session_state.get('fullname')}  
             **Username:** {st.session_state['user']}  
-            **Email:** {st.session_state.get('email', 'talisettikomali@gmail.com')}  
+            **Email:** {st.session_state.get('email')}  
             """)
     else:
         st.warning("⚠ Please log in to view your profile.")
@@ -175,4 +181,4 @@ elif choice == "Logout":
         st.success("✅ You have logged out successfully.")
         st.session_state["page"] = "Login"
     else:
-        st.warning("⚠ You are not logged in.")                                                                                                        
+        st.warning("⚠ You are not logged in.")
