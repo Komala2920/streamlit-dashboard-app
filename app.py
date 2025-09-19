@@ -91,13 +91,8 @@ def login_signup_ui():
         signInButton.addEventListener('click', () => container.classList.remove("right-panel-active"));
     </script>
     """
-    # ✅ Fix: Enable keyboard/cursor input inside iframe
-    components.html(
-        html_code,
-        height=650,
-        scrolling=False,
-        sandbox=["allow-scripts", "allow-same-origin", "allow-forms", "allow-popups", "allow-modals"]
-    )
+    # ✅ Fixed: allow_input enables cursor typing inside iframe
+    components.html(html_code, height=650, scrolling=False, allow_input=True)
 
 # ---------------- DASHBOARD PAGES ----------------
 def home_page():
@@ -138,3 +133,4 @@ else:
     elif st.session_state.page == "Dashboard": dashboard_page()
     elif st.session_state.page == "Profile": profile_page()
     elif st.session_state.page == "Feedback": feedback_page()
+
