@@ -63,6 +63,17 @@ c.execute('''CREATE TABLE IF NOT EXISTS users
              (username TEXT UNIQUE, password TEXT, email TEXT, fullname TEXT)''')
 conn.commit()
 
+# ========= Create Default Admin User =========
+c.execute("SELECT COUNT(*) FROM users")
+if c.fetchone()[0] == 0:  # If no users exist
+    default_user = "admin"
+    default_pass = "admin123"
+    hashed_pw = bcrypt.hashpw(default_pass.encode(), bcrypt.gensalt()).decode()
+    c.execute("INSERT INTO users (username, password, email, fullname) VALUES (?,?,?,?)",
+              (default_user, hashed_pw, "admin@global.com", "Administrator"))
+    conn.commit()
+    st.sidebar.success("✅ Default admin user created: **admin / admin123**")
+
 # ========= App Title =========
 st.markdown("<h1 style='text-align: center; color: cyan;'>🌍 Global Balance</h1>", unsafe_allow_html=True)
 
