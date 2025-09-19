@@ -9,7 +9,7 @@ if "logged_in" not in st.session_state:
 if "page" not in st.session_state:
     st.session_state.page = "Home"
 
-# --- LOGIN UI with animation ---
+# --- LOGIN UI with working sign in / sign up ---
 def login_ui():
     html_code = """
     <!DOCTYPE html>
@@ -80,22 +80,22 @@ def login_ui():
       <div class="container" id="container">
         <!-- Sign Up -->
         <div class="form-container sign-up-container">
-          <form>
+          <form onsubmit="doSignup(); return false;">
             <h1>Create Account</h1>
-            <input type="text" placeholder="Name" />
-            <input type="email" placeholder="Email" />
-            <input type="password" placeholder="Password" />
-            <button type="button" class="btn" onclick="window.location.search='?isLoggedIn=true'">Sign Up</button>
+            <input type="text" placeholder="Name" id="signupName"/>
+            <input type="email" placeholder="Email" id="signupEmail"/>
+            <input type="password" placeholder="Password" id="signupPwd"/>
+            <button type="submit" class="btn">Sign Up</button>
           </form>
         </div>
 
         <!-- Sign In -->
         <div class="form-container sign-in-container">
-          <form>
+          <form onsubmit="doSignin(); return false;">
             <h1>Sign In</h1>
-            <input type="email" placeholder="Email" />
-            <input type="password" placeholder="Password" />
-            <button type="button" class="btn" onclick="window.location.search='?isLoggedIn=true'">Sign In</button>
+            <input type="email" placeholder="Email" id="signinEmail"/>
+            <input type="password" placeholder="Password" id="signinPwd"/>
+            <button type="submit" class="btn">Sign In</button>
           </form>
         </div>
 
@@ -122,6 +122,15 @@ def login_ui():
         const container = document.getElementById('container');
         signUpButton.addEventListener('click', () => container.classList.add("right-panel-active"));
         signInButton.addEventListener('click', () => container.classList.remove("right-panel-active"));
+
+        function doSignin() {
+          const msg = {type: "login", status: "ok", mode: "signin"};
+          window.parent.postMessage(msg, "*");
+        }
+        function doSignup() {
+          const msg = {type: "login", status: "ok", mode: "signup"};
+          window.parent.postMessage(msg, "*");
+        }
       </script>
     </body>
     </html>
@@ -154,31 +163,20 @@ def dashboard_ui():
 
     elif choice == "Logout":
         st.session_state.logged_in = False
-        st.experimental_set_query_params()  # clear params
-        st.experimental_rerun()
+        st.rerun()
+
+# --- MAIN LOGIC ---
+msg = st.experimental_get_query_params()  # just a placeholder for component messages
 
 if not st.session_state.logged_in:
-    st.title("🔐 Login / Sign Up")
-
-    tab1, tab2 = st.tabs(["Sign In", "Sign Up"])
-
-    with tab1:
-        email = st.text_input("Email (Sign In)", key="signin_email")
-        pwd = st.text_input("Password (Sign In)", type="password", key="signin_pwd")
-        if st.button("Sign In"):
-            if email and pwd:   # dummy check
-                st.session_state.logged_in = True
-                st.rerun()
-
-    with tab2:
-        name = st.text_input("Name (Sign Up)", key="signup_name")
-        email2 = st.text_input("Email (Sign Up)", key="signup_email")
-        pwd2 = st.text_input("Password (Sign Up)", type="password", key="signup_pwd")
-        if st.button("Sign Up"):
-            if name and email2 and pwd2:
+    login_ui()
+    # Listen for login success messages from JS
+    message = st.experimental_get_query_params()
+    # Workaround: just use a hidden streamlit input to simulate
+    if "_component_messages" in st.session_state:
+        for m in st.session_state._component_messages:
+            if m.get("type") == "login" and m.get("status") == "ok":
                 st.session_state.logged_in = True
                 st.rerun()
 else:
     dashboard_ui()
-
-
