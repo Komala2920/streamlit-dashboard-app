@@ -49,15 +49,15 @@ def login_signup_ui():
         .sign-in-container {
           left: 0;
           z-index: 2;
-          align-items: center;  /* keep centered */
+          align-items: center;
           text-align: center;
         }
         .sign-up-container {
           left: 0;
           opacity: 0;
           z-index: 2;
-          align-items: center;   /* 👈 shift content left */
-          padding-left: 10px;        /* 👈 adjust left margin */
+          align-items: flex-start;
+          padding-left: 40px;
         }
         .container.right-panel-active .sign-in-container {
           transform: translateX(100%);
@@ -162,14 +162,20 @@ def login_signup_ui():
     <script>
         const signUpButton = document.getElementById('signUp');
         const signInButton = document.getElementById('signIn');
+        const signUpSubmit = document.getElementById('signup-submit');
         const container = document.getElementById('container');
+
         signUpButton.addEventListener('click', () => container.classList.add("right-panel-active"));
         signInButton.addEventListener('click', () => container.classList.remove("right-panel-active"));
+
+        // After signing up → go back to Sign In
+        signUpSubmit.addEventListener('click', () => {
+            alert("Account created successfully! Please log in.");
+            container.classList.remove("right-panel-active");
+        });
     </script>
     """
     components.html(html_code, height=600, scrolling=False)
 
 # Run
 login_signup_ui()
-
-
