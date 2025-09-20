@@ -238,10 +238,10 @@ else:
                     st.success("✅ Profile updated successfully!")
 
 
-        elif st.session_state.page == "💬 Feedback":
-            st.header("💬 Feedback")
+    elif st.session_state.page == "💬 Feedback":
+        st.header("💬 Feedback")
 
-            st.markdown("""
+        st.markdown("""
         We value your feedback! Please share your thoughts to help us improve **Global Balance**.
         """)
 
@@ -270,3 +270,4 @@ else:
                 )
                 conn.commit()
                 st.success("✅ Thank you! Your feedback has been submitted.")
+
