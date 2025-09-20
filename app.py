@@ -5,7 +5,7 @@ import streamlit.components.v1 as components
 import pandas as pd
 
 # ---------------------- DATABASE ----------------------
-conn = sqlite3.connect('users.db')
+conn = sqlite3.connect('users.db', check_same_thread=False)
 c = conn.cursor()
 c.execute('CREATE TABLE IF NOT EXISTS users(username TEXT, password TEXT)')
 conn.commit()
@@ -135,23 +135,18 @@ else:
         st.markdown("""
         1. **Interactive Dashboards** 📊  
            View global financial metrics, trends, and income inequality data using embedded Power BI dashboards.  
-           Provides intuitive charts and tables for better insights.
 
         2. **Profile Management** 👤  
            Maintain and update your account information.  
-           Customize settings and monitor your activity securely.
 
         3. **Feedback Portal** 💬  
            Share suggestions, report issues, or provide ideas to enhance the platform.  
-           Feedback is acknowledged and valued for continuous improvement.
 
         4. **Secure Login & Signup** 🔐  
            Passwords are hashed and securely stored.  
-           Smooth and safe authentication ensures privacy and security.
 
         5. **Guided Navigation & Tips** 📝  
-           Easily navigate between pages using the sidebar.  
-           Quick tips help you make the most out of the platform.
+           Easily navigate between pages using the sidebar.
         """)
 
         st.subheader("📌 Quick Tips")
@@ -159,8 +154,7 @@ else:
         1. Use the sidebar to navigate between Home, Dashboard, Profile, and Feedback pages.  
         2. Explore the **Dashboard** for interactive visual insights.  
         3. Keep your profile updated for a personalized experience.  
-        4. Share feedback to help us enhance the platform.  
-        5. Highlights give you quick access to key features.
+        4. Share feedback to help us enhance the platform.
         """)
 
     # --- Dashboard Page ---
@@ -169,15 +163,6 @@ else:
         st.subheader("🌐 Dashboard Overview")
         st.markdown("""
         The dashboard provides an interactive view of **global economic and financial metrics**, including income inequality, GDP trends, and other key financial indicators.  
-        It allows you to explore patterns, compare countries, and analyze trends over time.
-        """)
-
-        st.subheader("📝 How to Use")
-        st.markdown("""
-        - Use filters and slicers in the dashboard to customize your view by region, year, or indicators.  
-        - Hover over charts and maps to see detailed data points.  
-        - Export visuals for reports or presentations.  
-        - Analyze trends to gain insights into global financial patterns.
         """)
 
         dashboard_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"
@@ -222,21 +207,45 @@ else:
     elif st.session_state.page == "💬 Feedback":
         st.header("💬 Feedback")
         st.markdown("We value your feedback! Please share your thoughts to help us improve **Global Balance**.")
+
         with st.form("feedback_form"):
             col1, col2 = st.columns(2)
             with col1:
                 rating = st.slider("Rate your experience", 1, 5, 5)
-                usability = st.selectbox("How easy was it to use the platform?", 
-                                         ["Very Easy", "Easy", "Neutral", "Difficult", "Very Difficult"], index=1)
+                usability = st.selectbox(
+                    "How easy was it to use the platform?", 
+                    ["Very Easy", "Easy", "Neutral", "Difficult", "Very Difficult"], 
+                    index=1
+                )
             with col2:
                 comment = st.text_area("Your comments", placeholder="Write your feedback here...")
                 suggestions = st.text_area("Suggestions / Feature Requests", placeholder="Any ideas or features you want?")
+
             submitted = st.form_submit_button("Submit Feedback")
             if submitted:
-                c.execute("CREATE TABLE IF NOT EXISTS feedback(username TEXT, rating INTEGER, usability TEXT, comment TEXT, suggestions TEXT)")
+                # Create feedback table if it doesn't exist
+                c.execute("""
+                    CREATE TABLE IF NOT EXISTS feedback(
+                        username TEXT, 
+                        rating INTEGER, 
+                        usability TEXT, 
+                        comment TEXT, 
+                        suggestions TEXT
+                    )
+                """)
                 c.execute(
                     "INSERT INTO feedback(username, rating, usability, comment, suggestions) VALUES (?, ?, ?, ?, ?)",
                     (st.session_state.user, rating, usability, comment, suggestions)
                 )
                 conn.commit()
                 st.success("✅ Thank you! Your feedback has been submitted.")
+
+        # Show previous feedback
+        st.subheader("📋 Your Previous Feedback")
+        c.execute("SELECT rating, usability, comment, suggestions FROM feedback WHERE username=?", (st.session_state.user,))
+        rows = c.fetchall()
+        if rows:
+            feedback_df = pd.DataFrame(rows, columns=["Rating", "Usability", "Comment", "Suggestions"])
+            st.dataframe(feedback_df)
+        else:
+            st.info("You haven't submitted any feedback yet.")
