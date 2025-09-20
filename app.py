@@ -5,6 +5,9 @@ st.set_page_config(page_title="ArBitrage Platform", layout="centered")
 # ---------------- SESSION STATE ----------------
 if "page" not in st.session_state:
     st.session_state.page = "login"
+if "users" not in st.session_state:
+    # temporary in-memory users dictionary {username: password}
+    st.session_state.users = {"admin": "1234"}
 
 def navigate(page):
     st.session_state.page = page
@@ -163,7 +166,7 @@ body {
 st.markdown(page_bg, unsafe_allow_html=True)
 
 # ---------------- NAVIGATION BAR ----------------
-if st.session_state.page != "login":
+if st.session_state.page not in ["login", "signup"]:
     st.markdown('<div class="navbar">', unsafe_allow_html=True)
     col1, col2, col3, col4, col5 = st.columns(5)
     with col1: 
@@ -180,36 +183,43 @@ if st.session_state.page != "login":
 
 # ---------------- PAGES ----------------
 if st.session_state.page == "login":
-    html_code = """
-    <div class="container">
-      <!-- Left side (Sign Up) -->
-      <div class="left">
-        <h1>Hello! Welcome to the ArBitrage trading platform</h1>
-        <p>Don’t have an account yet?</p>
-        <button onclick="alert('Redirecting to signup page...')">Sign Up</button>
-      </div>
+    # login form using streamlit inputs
+    col1, col2 = st.columns([1,1])
+    with col1:
+        st.markdown("""
+        <div class="left">
+            <h1>Hello! Welcome to the ArBitrage trading platform</h1>
+            <p>Don’t have an account yet?</p>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("Sign Up"):
+            navigate("signup")
+    with col2:
+        st.markdown("<div class='right'>", unsafe_allow_html=True)
+        st.subheader("Sign In")
+        login = st.text_input("Login or Email")
+        password = st.text_input("Password", type="password")
+        if st.button("Sign In"):
+            if login in st.session_state.users and st.session_state.users[login] == password:
+                st.success("✅ Login successful!")
+                navigate("home")
+            else:
+                st.error("❌ Invalid username or password")
+        st.markdown("</div>", unsafe_allow_html=True)
 
-      <!-- Right side (Sign In) -->
-      <div class="right">
-        <h2>Sign In</h2>
-        <form>
-          <div class="form-group">
-            <label for="login">Login or Email</label>
-            <input type="text" id="login" placeholder="Enter your login or email" required>
-          </div>
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" placeholder="Enter your password" required>
-          </div>
-          <button type="submit" class="btn">Sign In</button>
-        </form>
-        <p class="small-text">
-          By clicking "Sign Up" button, you agree to our <a href="#">Terms & Conditions</a>.
-        </p>
-      </div>
-    </div>
-    """
-    st.markdown(html_code, unsafe_allow_html=True)
+elif st.session_state.page == "signup":
+    st.subheader("📝 Create New Account")
+    new_user = st.text_input("Choose Username")
+    new_pass = st.text_input("Choose Password", type="password")
+    if st.button("Register"):
+        if new_user in st.session_state.users:
+            st.warning("⚠️ Username already exists!")
+        elif new_user and new_pass:
+            st.session_state.users[new_user] = new_pass
+            st.success("✅ Account created! Please login.")
+            navigate("login")
+        else:
+            st.error("❌ Please fill all fields")
 
 elif st.session_state.page == "home":
     st.subheader("🏠 Welcome to Home Page")
