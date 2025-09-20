@@ -163,22 +163,26 @@ else:
         """)
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # --- Dashboard Page ---
-    elif st.session_state.page == "📊 Dashboard":
-        st.header("📊 Dashboard")
+# --- Dashboard Page ---
+elif st.session_state.page == "📊 Dashboard":
+    st.header("📊 Dashboard")
 
-        # KPI Cards
-        col1, col2, col3 = st.columns(3)
-        col1.metric("Total GDP", "44 Trillion", "+2.5%")
-        col2.metric("Total Population", "3.8 Billion", "+0.8%")
-        col3.metric("Countries Tracked", 195, "0")
+    # KPI Cards
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Total GDP", "44 Trillion", "+2.5%")
+    col2.metric("Total Population", "3.8 Billion", "+0.8%")
+    col3.metric("Countries Tracked", 195, "0")
 
-        # Charts
+    # Charts
+    try:
+        import plotly.express as px
+
         df = pd.DataFrame({
             "Country": ["USA", "India", "China", "Germany", "UK"],
             "GDP": [21, 2.9, 14, 4.2, 2.8],
             "Population": [331, 1380, 1441, 83, 68]
         })
+
         st.subheader("GDP by Country")
         fig = px.bar(df, x="Country", y="GDP", color="Country", text="GDP")
         st.plotly_chart(fig, use_container_width=True)
@@ -186,6 +190,9 @@ else:
         st.subheader("Population Distribution")
         fig2 = px.pie(df, names="Country", values="Population", color="Country")
         st.plotly_chart(fig2, use_container_width=True)
+
+    except ModuleNotFoundError:
+        st.warning("⚠️ Plotly is not installed. Install Plotly to see interactive charts.")
 
         # Embedded Power BI
         st.subheader("🌐 Income Inequality Dashboard")
@@ -240,3 +247,4 @@ else:
             st.dataframe(df_feedback)
         else:
             st.info("You haven't submitted any feedback yet.")
+
