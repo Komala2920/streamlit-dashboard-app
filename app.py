@@ -1,240 +1,162 @@
 import streamlit as st
+import sqlite3
+import hashlib
 
-st.set_page_config(page_title="ArBitrage Platform", layout="centered")
+# ---------------------- DATABASE ----------------------
+conn = sqlite3.connect('users.db')
+c = conn.cursor()
+c.execute('CREATE TABLE IF NOT EXISTS users(username TEXT, password TEXT)')
+conn.commit()
 
-# ---------------- SESSION STATE ----------------
+# ---------------------- UTILS -------------------------
+def make_hash(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def check_user(username, password):
+    c.execute('SELECT * FROM users WHERE username=? AND password=?', (username, make_hash(password)))
+    return c.fetchone()
+
+def add_user(username, password):
+    c.execute('INSERT INTO users(username, password) VALUES (?, ?)', (username, make_hash(password)))
+    conn.commit()
+
+# ---------------------- CSS ---------------------------
+st.markdown("""
+    <style>
+    body {
+        background: linear-gradient(135deg,#0f172a 0%,#0b3b63 40%,#2c6b5f 100%);
+        color: white;
+        font-family: 'Segoe UI', sans-serif;
+    }
+    .stButton button {
+        background: #2563eb;
+        color: white;
+        border-radius: 8px;
+        padding: 0.6em 1.2em;
+        border: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .stButton button:hover {
+        background: #1d4ed8;
+        transform: scale(1.05);
+    }
+    .nav-btn {
+        display:inline-block;
+        margin: 0.3em;
+        padding: 0.5em 1em;
+        background:#0ea5e9;
+        color:white;
+        border-radius:6px;
+        font-weight:500;
+        cursor:pointer;
+        text-decoration:none;
+    }
+    .nav-btn:hover {
+        background:#0284c7;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# ---------------------- APP ---------------------------
 if "page" not in st.session_state:
     st.session_state.page = "login"
-if "users" not in st.session_state:
-    # temporary in-memory users dictionary {username: password}
-    st.session_state.users = {"admin": "1234"}
+if "user" not in st.session_state:
+    st.session_state.user = None
 
-def navigate(page):
-    st.session_state.page = page
-
-# ---------------- CSS ----------------
-page_bg = """
-<style>
-body {
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #1f2235;
-}
-
-/* Navigation bar */
-.navbar {
-  display: flex;
-  justify-content: space-around;
-  background: #2a2c3a;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 30px;
-}
-
-.navbar button {
-  background: #00d1ff;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
-  color: white;
-  font-size: 15px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.navbar button:hover {
-  background: #00a8cc;
-}
-
-/* Container */
-.container {
-  display: flex;
-  width: 900px;
-  height: 500px;
-  margin: auto;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-/* Left (Sign Up) */
-.left {
-  flex: 1;
-  background: linear-gradient(135deg, #2c3e91, #3a60d2);
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 40px;
-  text-align: center;
-}
-
-.left h1 {
-  font-size: 26px;
-  margin-bottom: 10px;
-}
-
-.left p {
-  margin-bottom: 20px;
-}
-
-.left button {
-  padding: 12px 30px;
-  background: #00d1ff;
-  border: none;
-  border-radius: 8px;
-  color: #fff;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.left button:hover {
-  background: #00a8cc;
-}
-
-/* Right (Login) */
-.right {
-  flex: 1;
-  background: #2a2c3a;
-  padding: 60px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  color: #fff;
-}
-
-.right h2 {
-  margin-bottom: 30px;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  font-size: 14px;
-  margin-bottom: 6px;
-  color: #ccc;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 6px;
-  background: #1c1e2a;
-  color: #fff;
-  font-size: 14px;
-}
-
-.form-group input:focus {
-  outline: 2px solid #00d1ff;
-}
-
-.btn {
-  padding: 12px;
-  width: 100%;
-  border: none;
-  border-radius: 6px;
-  background: #00d1ff;
-  color: #fff;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.btn:hover {
-  background: #00a8cc;
-}
-
-.small-text {
-  margin-top: 15px;
-  font-size: 12px;
-  color: #aaa;
-}
-
-.small-text a {
-  color: #00d1ff;
-  text-decoration: none;
-}
-</style>
-"""
-
-st.markdown(page_bg, unsafe_allow_html=True)
-
-# ---------------- NAVIGATION BAR ----------------
-if st.session_state.page not in ["login", "signup"]:
-    st.markdown('<div class="navbar">', unsafe_allow_html=True)
-    col1, col2, col3, col4, col5 = st.columns(5)
-    with col1: 
-        if st.button("🏠 Home"): navigate("home")
-    with col2: 
-        if st.button("📊 Dashboard"): navigate("dashboard")
-    with col3: 
-        if st.button("👤 Profile"): navigate("profile")
-    with col4: 
-        if st.button("💬 Feedback"): navigate("feedback")
-    with col5: 
-        if st.button("🚪 Logout"): navigate("login")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# ---------------- PAGES ----------------
-if st.session_state.page == "login":
-    # login form using streamlit inputs
-    col1, col2 = st.columns([1,1])
-    with col1:
-        st.markdown("""
-        <div class="left">
-            <h1>Hello! Welcome to the ArBitrage trading platform</h1>
-            <p>Don’t have an account yet?</p>
-        </div>
-        """, unsafe_allow_html=True)
-        if st.button("Sign Up"):
-            navigate("signup")
-    with col2:
-        st.markdown("<div class='right'>", unsafe_allow_html=True)
-        st.subheader("Sign In")
-        login = st.text_input("Login or Email")
-        password = st.text_input("Password", type="password")
-        if st.button("Sign In"):
-            if login in st.session_state.users and st.session_state.users[login] == password:
-                st.success("✅ Login successful!")
-                navigate("home")
-            else:
-                st.error("❌ Invalid username or password")
-        st.markdown("</div>", unsafe_allow_html=True)
-
-elif st.session_state.page == "signup":
-    st.subheader("📝 Create New Account")
-    new_user = st.text_input("Choose Username")
-    new_pass = st.text_input("Choose Password", type="password")
-    if st.button("Register"):
-        if new_user in st.session_state.users:
-            st.warning("⚠️ Username already exists!")
-        elif new_user and new_pass:
-            st.session_state.users[new_user] = new_pass
-            st.success("✅ Account created! Please login.")
-            navigate("login")
+def login_page():
+    st.title("🔐 Sign In")
+    username = st.text_input("Login / Email")
+    password = st.text_input("Password", type="password")
+    if st.button("Sign In"):
+        user = check_user(username, password)
+        if user:
+            st.session_state.user = username
+            st.session_state.page = "home"
+            st.success("Login successful ✅")
         else:
-            st.error("❌ Please fill all fields")
+            st.error("Invalid username or password ❌")
+    st.write("Don't have an account?")
+    if st.button("Sign Up"):
+        st.session_state.page = "signup"
 
-elif st.session_state.page == "home":
-    st.subheader("🏠 Welcome to Home Page")
-    st.write("This is the home section of your platform.")
+def signup_page():
+    st.title("📝 Sign Up")
+    username = st.text_input("Choose Username")
+    password = st.text_input("Choose Password", type="password")
+    if st.button("Register"):
+        if username and password:
+            add_user(username, password)
+            st.success("Account created ✅ Now you can login.")
+            st.session_state.page = "login"
+        else:
+            st.error("Please enter valid details.")
+    if st.button("Back to Login"):
+        st.session_state.page = "login"
 
-elif st.session_state.page == "dashboard":
-    st.subheader("📊 Dashboard")
-    st.write("Your trading dashboard will be shown here.")
+def nav_bar():
+    st.markdown(
+        """
+        <div style="text-align:center;">
+            <a class="nav-btn" href="?page=home">🏠 Home</a>
+            <a class="nav-btn" href="?page=dashboard">📊 Dashboard</a>
+            <a class="nav-btn" href="?page=profile">👤 Profile</a>
+            <a class="nav-btn" href="?page=feedback">💬 Feedback</a>
+            <a class="nav-btn" href="?page=logout">🚪 Logout</a>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-elif st.session_state.page == "profile":
-    st.subheader("👤 Profile")
-    st.write("Manage your profile and settings here.")
+def home_page():
+    nav_bar()
+    st.header("🏠 Welcome to Dashboard App")
+    st.write(f"Hello, **{st.session_state.user}** 👋")
+    st.image("https://cdn-icons-png.flaticon.com/512/906/906343.png", width=120)
 
-elif st.session_state.page == "feedback":
-    st.subheader("💬 Feedback")
-    st.text_area("Enter your feedback:")
+def dashboard_page():
+    nav_bar()
+    st.header("📊 Dashboard")
+    st.write("Here you can add analytics, charts, KPIs etc.")
+    st.line_chart({"Data": [10, 20, 30, 25, 15, 40]})
+
+def profile_page():
+    nav_bar()
+    st.header("👤 Profile")
+    st.write(f"Username: **{st.session_state.user}**")
+    st.write("Email: user@example.com (dummy)")
+    st.write("You can extend this with more info.")
+
+def feedback_page():
+    nav_bar()
+    st.header("💬 Feedback")
+    feedback = st.text_area("Leave your feedback:")
     if st.button("Submit Feedback"):
         st.success("✅ Thanks for your feedback!")
+
+def logout_page():
+    st.session_state.user = None
+    st.session_state.page = "login"
+    st.success("You have been logged out.")
+
+# ---------------------- ROUTING ---------------------------
+if st.session_state.user:
+    query_params = st.experimental_get_query_params()
+    if "page" in query_params:
+        st.session_state.page = query_params["page"][0]
+
+    if st.session_state.page == "home":
+        home_page()
+    elif st.session_state.page == "dashboard":
+        dashboard_page()
+    elif st.session_state.page == "profile":
+        profile_page()
+    elif st.session_state.page == "feedback":
+        feedback_page()
+    elif st.session_state.page == "logout":
+        logout_page()
+else:
+    if st.session_state.page == "login":
+        login_page()
+    elif st.session_state.page == "signup":
+        signup_page()
