@@ -159,7 +159,6 @@ body {
 }
 </style>
 """
-
 st.markdown(page_bg, unsafe_allow_html=True)
 
 # ---------------- NAVIGATION BAR ----------------
@@ -180,36 +179,23 @@ if st.session_state.page != "login":
 
 # ---------------- PAGES ----------------
 if st.session_state.page == "login":
-    html_code = """
-    <div class="container">
-      <!-- Left side (Sign Up) -->
-      <div class="left">
-        <h1>Hello! Welcome to the ArBitrage trading platform</h1>
-        <p>Don’t have an account yet?</p>
-        <button onclick="alert('Redirecting to signup page...')">Sign Up</button>
-      </div>
+    col1, col2 = st.columns(2)
 
-      <!-- Right side (Sign In) -->
-      <div class="right">
-        <h2>Sign In</h2>
-        <form>
-          <div class="form-group">
-            <label for="login">Login or Email</label>
-            <input type="text" id="login" placeholder="Enter your login or email" required>
-          </div>
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" placeholder="Enter your password" required>
-          </div>
-          <button type="submit" class="btn">Sign In</button>
-        </form>
-        <p class="small-text">
-          By clicking "Sign Up" button, you agree to our <a href="#">Terms & Conditions</a>.
-        </p>
-      </div>
-    </div>
-    """
-    st.markdown(html_code, unsafe_allow_html=True)
+    with col1:
+        st.markdown("## Hello! Welcome to the ArBitrage trading platform")
+        st.write("Don’t have an account yet?")
+        if st.button("Sign Up"):
+            navigate("home")
+
+    with col2:
+        st.markdown("### Sign In")
+        login = st.text_input("Login or Email")
+        password = st.text_input("Password", type="password")
+        if st.button("Sign In"):
+            if login and password:  # fake validation
+                navigate("home")
+            else:
+                st.error("Please enter login and password!")
 
 elif st.session_state.page == "home":
     st.subheader("🏠 Welcome to Home Page")
@@ -225,6 +211,6 @@ elif st.session_state.page == "profile":
 
 elif st.session_state.page == "feedback":
     st.subheader("💬 Feedback")
-    st.text_area("Enter your feedback:")
+    feedback = st.text_area("Enter your feedback:")
     if st.button("Submit Feedback"):
         st.success("✅ Thanks for your feedback!")
