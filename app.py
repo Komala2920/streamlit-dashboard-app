@@ -4,22 +4,13 @@ import hashlib
 import streamlit.components.v1 as components
 
 # ---------------------- DATABASE ----------------------
-conn = sqlite3.connect('users.db') 
+conn = sqlite3.connect('users.db')
 c = conn.cursor()
-c.execute(''' 
-   CREATE TABLE IF NOT EXISTS users( 
-     username TEXT, 
-     password TEXT, 
-     firstname TEXT, 
-    lastname TEXT, 
-    email TEXT, 
-    profile_pic TEXT
- ) 
-''') 
+c.execute('CREATE TABLE IF NOT EXISTS users(username TEXT, password TEXT)')
 conn.commit()
 
 # ---------------------- UTILS -------------------------
-def make_hash(password): 
+def make_hash(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
 def check_user(username, password):
@@ -213,5 +204,3 @@ else:
         feedback = st.text_area("Write your feedback:")
         if st.button("Submit Feedback"):
             st.success("✅ Thanks for your feedback!")                                                       
-
-
