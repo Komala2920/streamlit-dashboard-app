@@ -237,10 +237,10 @@ else:
                 if submitted:
                     st.success("✅ Profile updated successfully!")
                     
-elif st.session_state.page == "💬 Feedback":
-    st.header("💬 Share Your Feedback")
+    elif st.session_state.page == "💬 Feedback":
+         st.header("💬 Share Your Feedback")
 
-        st.markdown("We value your feedback! Please rate your experience and leave a comment to help us improve 🚀")
+         st.markdown("We value your feedback! Please rate your experience and leave a comment to help us improve 🚀")
 
     with st.form("feedback_form"):
         # Feedback Rating
@@ -263,5 +263,6 @@ elif st.session_state.page == "💬 Feedback":
             st.write(f"- ⭐ Rating: {rating}/5")
             st.write(f"- 📂 Category: {category}")
             st.write(f"- 📝 Comment: {feedback_text if feedback_text else 'No comment'}")
+
 
 
