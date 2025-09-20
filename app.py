@@ -1,6 +1,7 @@
 import streamlit as st
 import sqlite3
 import hashlib
+import base64
 
 # ---------------------- DATABASE ----------------------
 conn = sqlite3.connect('users.db')
@@ -20,15 +21,25 @@ def add_user(username, password):
     c.execute('INSERT INTO users(username, password) VALUES (?, ?)', (username, make_hash(password)))
     conn.commit()
 
-# ---------------------- CSS ---------------------------
-st.markdown("""
+# ---------------------- BACKGROUND IMAGE ----------------------
+def get_base64(file):
+    with open(file, "rb") as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+def set_background(png_file):
+    bin_str = get_base64(png_file)
+    bg_css = f"""
     <style>
-    body {
-        background: linear-gradient(135deg,#0f172a 0%,#0b3b63 40%,#2c6b5f 100%);
-        color: white;
+    body {{
+        background-image: url("data:image/jpeg;base64,{bin_str}");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
         font-family: 'Segoe UI', sans-serif;
-    }
-    .stButton button {
+        color: white;
+    }}
+    .stButton button {{
         background: #2563eb;
         color: white;
         border-radius: 8px;
@@ -36,12 +47,12 @@ st.markdown("""
         border: none;
         font-weight: 600;
         transition: all 0.3s ease;
-    }
-    .stButton button:hover {
+    }}
+    .stButton button:hover {{
         background: #1d4ed8;
         transform: scale(1.05);
-    }
-    .nav-btn {
+    }}
+    .nav-btn {{
         display:inline-block;
         margin: 0.3em;
         padding: 0.5em 1em;
@@ -51,20 +62,32 @@ st.markdown("""
         font-weight:500;
         cursor:pointer;
         text-decoration:none;
-    }
-    .nav-btn:hover {
+    }}
+    .nav-btn:hover {{
         background:#0284c7;
-    }
+    }}
+    .logo {{
+        position: absolute;
+        top: 15px;
+        left: 20px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #38bdf8;
+    }}
     </style>
-""", unsafe_allow_html=True)
+    """
+    st.markdown(bg_css, unsafe_allow_html=True)
 
 # ---------------------- APP ---------------------------
+set_background("download (3).jpeg")  # use your uploaded image as background
+
 if "page" not in st.session_state:
     st.session_state.page = "login"
 if "user" not in st.session_state:
     st.session_state.user = None
 
 def login_page():
+    st.markdown("<div class='logo'>ArBitrage</div>", unsafe_allow_html=True)
     st.title("🔐 Sign In")
     username = st.text_input("Login / Email")
     password = st.text_input("Password", type="password")
@@ -81,6 +104,7 @@ def login_page():
         st.session_state.page = "signup"
 
 def signup_page():
+    st.markdown("<div class='logo'>ArBitrage</div>", unsafe_allow_html=True)
     st.title("📝 Sign Up")
     username = st.text_input("Choose Username")
     password = st.text_input("Choose Password", type="password")
@@ -97,7 +121,7 @@ def signup_page():
 def nav_bar():
     st.markdown(
         """
-        <div style="text-align:center;">
+        <div style="text-align:center; margin-top:60px;">
             <a class="nav-btn" href="?page=home">🏠 Home</a>
             <a class="nav-btn" href="?page=dashboard">📊 Dashboard</a>
             <a class="nav-btn" href="?page=profile">👤 Profile</a>
@@ -109,18 +133,21 @@ def nav_bar():
     )
 
 def home_page():
+    st.markdown("<div class='logo'>ArBitrage</div>", unsafe_allow_html=True)
     nav_bar()
     st.header("🏠 Welcome to Dashboard App")
     st.write(f"Hello, **{st.session_state.user}** 👋")
     st.image("https://cdn-icons-png.flaticon.com/512/906/906343.png", width=120)
 
 def dashboard_page():
+    st.markdown("<div class='logo'>ArBitrage</div>", unsafe_allow_html=True)
     nav_bar()
     st.header("📊 Dashboard")
     st.write("Here you can add analytics, charts, KPIs etc.")
     st.line_chart({"Data": [10, 20, 30, 25, 15, 40]})
 
 def profile_page():
+    st.markdown("<div class='logo'>ArBitrage</div>", unsafe_allow_html=True)
     nav_bar()
     st.header("👤 Profile")
     st.write(f"Username: **{st.session_state.user}**")
@@ -128,6 +155,7 @@ def profile_page():
     st.write("You can extend this with more info.")
 
 def feedback_page():
+    st.markdown("<div class='logo'>ArBitrage</div>", unsafe_allow_html=True)
     nav_bar()
     st.header("💬 Feedback")
     feedback = st.text_area("Leave your feedback:")
