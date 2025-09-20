@@ -80,8 +80,8 @@ if st.session_state.user is None:
             user = check_user(username, password)
             if user:
                 st.session_state.user = username
+                st.session_state.page = "🏠 Home"  # Redirect to home after login
                 st.success("✅ Login successful")
-                st.experimental_rerun()
             else:
                 st.error("❌ Invalid username or password")
 
@@ -104,11 +104,12 @@ else:
     nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🚪 Logout"]
     for item in nav_items:
         if st.sidebar.button(item, key=item):
-            st.session_state.page = item
             if item == "🚪 Logout":
                 st.session_state.user = None
+                st.session_state.page = "🏠 Home"  # Reset to login
                 st.success("🚪 You have been logged out.")
-                st.experimental_rerun()
+            else:
+                st.session_state.page = item
 
     # --- Page Content ---
     if st.session_state.page == "🏠 Home":
