@@ -237,4 +237,36 @@ else:
                 if submitted:
                     st.success("✅ Profile updated successfully!")
 
-                    
+
+        elif st.session_state.page == "💬 Feedback":
+            st.header("💬 Feedback")
+
+            st.markdown("""
+        We value your feedback! Please share your thoughts to help us improve **Global Balance**.
+        """)
+
+        with st.form("feedback_form"):
+            # Columns for layout
+            col1, col2 = st.columns(2)
+
+            with col1:
+                rating = st.slider("Rate your experience", 1, 5, 5)  # 1-5 stars
+                usability = st.selectbox("How easy was it to use the platform?", 
+                                         ["Very Easy", "Easy", "Neutral", "Difficult", "Very Difficult"], index=1)
+            with col2:
+                comment = st.text_area("Your comments", placeholder="Write your feedback here...")
+                suggestions = st.text_area("Suggestions / Feature Requests", placeholder="Any ideas or features you want?")
+
+            submitted = st.form_submit_button("Submit Feedback")
+            if submitted:
+                # Create feedback table if it doesn't exist
+                c.execute(
+                    "CREATE TABLE IF NOT EXISTS feedback(username TEXT, rating INTEGER, usability TEXT, comment TEXT, suggestions TEXT)"
+                )
+                # Insert feedback into table
+                c.execute(
+                    "INSERT INTO feedback(username, rating, usability, comment, suggestions) VALUES (?, ?, ?, ?, ?)",
+                    (st.session_state.user, rating, usability, comment, suggestions)
+                )
+                conn.commit()
+                st.success("✅ Thank you! Your feedback has been submitted.")
