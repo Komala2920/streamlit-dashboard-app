@@ -159,9 +159,9 @@ def logout_page():
 
 # ---------------------- ROUTING ----------------------
 if st.session_state.user:
-    query_params = st.experimental_get_query_params()
+    query_params = st.query_params  # ✅ Updated here
     if "page" in query_params:
-        st.session_state.page = query_params["page"][0]
+        st.session_state.page = query_params["page"]
 
     if st.session_state.page == "home":
         home_page()
