@@ -118,61 +118,50 @@ else:
     if st.session_state.page == "🏠 Home":
         st.header("🏠 Welcome Home")
         st.write(f"Hello, **{st.session_state.user}** 👋")
-        st.success("This is your Global Balance overview.")
-
-        # --- Mini Dashboard Stats ---
-        st.markdown("### 📊 Your Activity Overview")
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.metric("Tasks Completed", 15)
-        with col2:
-            st.metric("Pending Tasks", 3)
-        with col3:
-            st.metric("Active Projects", 2)
-
-        # --- Website / Dashboard Overview ---
-        st.markdown("### 🌐 Platform Overview")
-        st.write("""
-        - **Dashboard:** Track your tasks, performance, and insights.
-        - **Profile:** View and update your personal details.
-        - **Feedback:** Share suggestions or report issues.
+        st.info("""
+        Welcome to **Global Balance**, your personal dashboard for monitoring global financial metrics.
+        Navigate using the sidebar to explore data, view your profile, and submit feedback.
         """)
-
-        # --- Recent Activity ---
-        st.markdown("### 📝 Recent Activity")
-        st.write("- Completed 'Market Analysis' task")
-        st.write("- Updated profile information")
-        st.write("- Submitted feedback on Dashboard improvements")
-
-        # --- Quick Navigation Buttons ---
-        st.markdown("### 🔗 Quick Navigation")
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            if st.button("Go to Dashboard"):
-                st.session_state.page = "📊 Dashboard"
-        with col2:
-            if st.button("View Profile"):
-                st.session_state.page = "👤 Profile"
-        with col3:
-            if st.button("Feedback"):
-                st.session_state.page = "💬 Feedback"
+        if st.button("Learn More About the Dashboard"):
+            st.write("""
+            The Dashboard section contains interactive visualizations powered by **Power BI**.
+            Explore trends, income inequality, and other global financial insights.
+            """)
 
     elif st.session_state.page == "📊 Dashboard":
         st.header("📊 Dashboard")
+        st.info("""
+        This page contains an embedded Power BI report showing **global income inequality metrics**.
+        You can interact with the charts, filter data, and analyze trends.
+        """)
         dashboard_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"
         components.html(f"""
-            <iframe title="global income inequality dashboard2" width="100%" height="600" 
+            <iframe title="Global Dashboard" width="100%" height="600" 
             src="{dashboard_url}" frameborder="0" allowFullScreen="true"></iframe>
         """, height=620)
+        if st.button("Dashboard Tips"):
+            st.success("🔹 Tip: Hover over bars and charts to see detailed values.\n🔹 Use filters on the right to customize your view.")
 
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Profile")
-        st.write(f"Username: **{st.session_state.user}**")
-        st.write("Email: user@example.com (dummy)")
-        st.info("You can extend this page with more profile details.")
+        st.write(f"**Username:** {st.session_state.user}")
+        st.write("**Email:** user@example.com (dummy)")
+        st.info("You can extend this page with more profile details such as account settings, preferences, and activity logs.")
+        if st.button("Edit Profile (Demo)"):
+            st.warning("This feature is under development! Coming soon.")
 
     elif st.session_state.page == "💬 Feedback":
         st.header("💬 Feedback")
+        st.info("Your feedback helps us improve the website and dashboard experience.")
         feedback = st.text_area("Write your feedback:")
         if st.button("Submit Feedback"):
-            st.success("✅ Thanks for your feedback!")
+            if feedback.strip():
+                st.success("✅ Thanks for your feedback!")
+            else:
+                st.error("⚠ Please write something before submitting.")
+        if st.button("View Feedback Tips"):
+            st.write("""
+            🔹 Be specific about what you liked or disliked.  
+            🔹 Suggest features or improvements.  
+            🔹 Your input is anonymous and valuable!
+            """)
