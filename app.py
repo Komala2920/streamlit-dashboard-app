@@ -3,6 +3,25 @@ import sqlite3
 import hashlib
 import streamlit.components.v1 as components
 import pandas as pd
+import subprocess
+import sys
+
+# Function to install a package if missing
+def install_package(package):
+    try:
+        __import__(package)
+    except ModuleNotFoundError:
+        st.warning(f"⚠️ {package} not found. Installing now...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+        st.success(f"✅ {package} installed! Please rerun the app.")
+        st.stop()
+
+# Ensure Plotly is installed
+install_package("plotly")
+
+# Now safe to import Plotly
+import plotly.express as px
+
 
 # ---------------------- DATABASE ----------------------
 conn = sqlite3.connect('users.db', check_same_thread=False)
@@ -245,3 +264,4 @@ else:
             st.dataframe(df_feedback)
         else:
             st.info("You haven't submitted any feedback yet.")
+
