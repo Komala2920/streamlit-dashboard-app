@@ -124,7 +124,7 @@ else:
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Profile")
         st.write(f"Username: **{st.session_state.user}**")
-        st.write("Email: user@example.com (dummy)")
+        st.write("Email: talisettikomali@gmail.com")
         st.info("You can extend this page with more profile details.")
 
     elif st.session_state.page == "💬 Feedback":
@@ -132,3 +132,4 @@ else:
         feedback = st.text_area("Write your feedback:")
         if st.button("Submit Feedback"):
             st.success("✅ Thanks for your feedback!")
+
