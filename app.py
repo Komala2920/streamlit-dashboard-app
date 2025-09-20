@@ -209,24 +209,16 @@ else:
                     col_left, col_right = st.columns(2)
 
                     with col_left:
-                        first_name = st.text_input("First Name", "Arthur")
-                        password = st.text_input("Password", "********", type="password")
-                        phone = st.text_input("Phone", "477-046-1827")
-                        nation = st.text_input("Nation", "Colombia")
+                        first_name = st.text_input("First Name")
+                        password = st.text_input("Password", type="password")
                         gender = st.selectbox("Gender", ["Male", "Female", "Other"], index=0)
-                        twitter = st.text_input("Twitter", "twitter.com/envato")
-                        facebook = st.text_input("Facebook", "facebook.com/envato")
+                        linkedin = st.text_input("LinkedIn", "https://www.linkedin.com/in/komala-talisetti")
 
                     with col_right:
-                        last_name = st.text_input("Last Name", "Nancy")
-                        email = st.text_input("Email", "user@example.com")
-                        address = st.text_input("Address", "116 Jaskolski Stravenue Suite 883")
+                        last_name = st.text_input("Last Name")
+                        email = st.text_input("Email")
                         dob = st.date_input("Date of Birth")
-                        language = st.selectbox("Language", ["English", "Spanish", "French"], index=0)
-                        linkedin = st.text_input("LinkedIn", "linkedin.com/envato")
-                        google = st.text_input("Google", "zachary Ruiz")
-
-                    slogan = st.text_input("Slogan", "Land acquisition Specialist")
+                        language = st.selectbox("Language", ["English", "Telugu", "Hindi"], index=0)
 
                     submitted = st.form_submit_button("💾 Save")
                     if submitted:
@@ -237,6 +229,7 @@ else:
         feedback = st.text_area("Write your feedback:")
         if st.button("Submit Feedback"):
             st.success("✅ Thanks for your feedback!")                                                       
+
 
 
 
