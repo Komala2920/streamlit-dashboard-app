@@ -22,45 +22,45 @@ def add_user(username, password):
     conn.commit()
 
 # ---------------------- CSS ----------------------
+# --- Top Navigation (equal-size horizontal buttons) ---
 st.markdown("""
     <style>
-    body {
-        background: #0f172a;
-        font-family: 'Segoe UI', sans-serif;
-        color: white;
+    .nav-container {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 25px;
     }
-    .stButton button {
+    .stButton>button {
         background: #0ea5e9;
         color: white;
         border-radius: 8px;
-        padding: 0.6em 1.2em;
         border: none;
         font-weight: 600;
         transition: all 0.3s ease;
+        width: 150px;   /* 🔹 Fixed width */
+        height: 50px;   /* 🔹 Fixed height */
     }
-    .stButton button:hover {
+    .stButton>button:hover {
         background: #0284c7;
-        transform: scale(1.02);
-    }
-    .logo {
-        font-size: 28px;
-        font-weight: bold;
-        color: #38bdf8;
-        margin-bottom: 15px;
-        text-align: center;
-    }
-    iframe {
-        border-radius: 12px;
-    }
-    /* Sidebar buttons same size */
-    .css-1emrehy.edgvbvh3 button {
-        width: 100% !important;
-        height: 50px !important;
-        margin-bottom: 10px;
-        font-size: 16px;
+        transform: scale(1.05);
     }
     </style>
 """, unsafe_allow_html=True)
+
+nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🚪 Logout"]
+
+st.markdown("<div class='nav-container'>", unsafe_allow_html=True)
+cols = st.columns(len(nav_items))
+for i, item in enumerate(nav_items):
+    if cols[i].button(item, key=f"nav_{item}"):
+        st.session_state.page = item
+        if item == "🚪 Logout":
+            st.session_state.user = None
+            st.success("🚪 You have been logged out.")
+            st.rerun()
+st.markdown("</div>", unsafe_allow_html=True)
+
 
 # ---------------------- SESSION ----------------------
 if "user" not in st.session_state:
@@ -135,3 +135,4 @@ else:
         feedback = st.text_area("Write your feedback:")
         if st.button("Submit Feedback"):
             st.success("✅ Thanks for your feedback!")
+
