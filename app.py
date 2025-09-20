@@ -50,9 +50,15 @@ st.markdown("""
         font-size: 16px;
         cursor: pointer;
         transition: all 0.3s ease;
+        text-decoration: none;
     }
     .sidebar-button:hover {
         background: #0284c7;
+    }
+    .sidebar-button.active {
+        background: #0284c7;
+        color: #ffffff;
+        font-weight: 700;
     }
     iframe {
         border-radius: 12px;
@@ -97,15 +103,18 @@ if st.session_state.user is None:
 else:
     st.markdown("<div class='logo'>Global Balance</div>", unsafe_allow_html=True)
 
-    # --- Sidebar Navigation (Vertical, Same Size Buttons) ---
+    # --- Sidebar Navigation (Vertical, Same Size, Active Highlight) ---
     nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🚪 Logout"]
+
     for item in nav_items:
+        active_class = "active" if st.session_state.page == item else ""
         if st.sidebar.button(item, key=item):
             st.session_state.page = item
             if item == "🚪 Logout":
                 st.session_state.user = None
                 st.success("🚪 You have been logged out.")
                 st.rerun()
+        st.sidebar.markdown(f"<div class='sidebar-button {active_class}'>{item}</div>", unsafe_allow_html=True)
 
     # --- Page Content ---
     if st.session_state.page == "🏠 Home":
@@ -124,7 +133,7 @@ else:
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Profile")
         st.write(f"Username: **{st.session_state.user}**")
-        st.write("Email: talisettikomali@gmail.com")
+        st.write("Email: user@example.com (dummy)")
         st.info("You can extend this page with more profile details.")
 
     elif st.session_state.page == "💬 Feedback":
@@ -132,4 +141,3 @@ else:
         feedback = st.text_area("Write your feedback:")
         if st.button("Submit Feedback"):
             st.success("✅ Thanks for your feedback!")
-
