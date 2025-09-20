@@ -66,6 +66,9 @@ st.markdown("""
     .nav-item:hover {
         background: #0284c7;
     }
+    iframe {
+        border-radius: 12px;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -125,8 +128,16 @@ else:
 
     elif st.session_state.page == "📊 Dashboard":
         st.header("📊 Dashboard")
-        st.write("Your performance chart:")
-        st.line_chart({"Performance": [10, 20, 15, 30, 25, 40]})
+
+        # 👉 Replace with your actual dashboard link
+        dashboard_url = "https://app.powerbi.com/groups/me/reports/4d41c1bc-17bb-491e-8da8-861aaede731f/24434bd2ed4071702132?redirectedFromSignup=1&experience=power-bi"
+
+        st.markdown(
+            f"""
+            <iframe src="{dashboard_url}" width="100%" height="600px"></iframe>
+            """,
+            unsafe_allow_html=True
+        )
 
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Profile")
