@@ -217,7 +217,10 @@ else:
                     with col_right:
                         last_name = st.text_input("Last Name")
                         email = st.text_input("Email")
-                        dob = st.date_input("Date of Birth")
+                        dob = st.date_input(
+                            "Date of Birth",
+                            min_value=pd.to_datetime("2000-01-01"),
+                            max_value=pd.to_datetime("2025-12-31")
 
                     submitted = st.form_submit_button("💾 Save")
                     if submitted:
@@ -228,6 +231,7 @@ else:
         feedback = st.text_area("Write your feedback:")
         if st.button("Submit Feedback"):
             st.success("✅ Thanks for your feedback!")                                                       
+
 
 
 
