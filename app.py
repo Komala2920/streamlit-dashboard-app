@@ -6,7 +6,7 @@ import streamlit.components.v1 as components
 # ---------------------- DATABASE ----------------------
 conn = sqlite3.connect('users.db')
 c = conn.cursor()
-# Added additional columns for profile info
+# Additional columns for profile info
 c.execute('''CREATE TABLE IF NOT EXISTS users(
     username TEXT PRIMARY KEY, 
     password TEXT,
@@ -72,7 +72,18 @@ body {
 iframe {
     border-radius: 12px;
 }
-/* Sidebar buttons all same size */
+.card {
+    background-color: #1e293b;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+.card h3 {
+    color: #38bdf8;
+}
+.card p {
+    color: white;
+}
 .css-1emrehy.edgvbvh3 button {
     width: 100% !important;
     min-width: 100% !important;
@@ -103,7 +114,7 @@ if st.session_state.user is None:
             user = check_user(username, password)
             if user:
                 st.session_state.user = username
-                st.session_state.page = "🏠 Home"  # Redirect to home after login
+                st.session_state.page = "🏠 Home"
                 st.success("✅ Login successful")
             else:
                 st.error("❌ Invalid username or password")
@@ -143,13 +154,6 @@ else:
         **Global Balance** is a comprehensive platform to monitor and analyze global economic and financial data.  
         Access dashboards, manage your profile, and provide feedback in one secure environment.
         """)
-        st.subheader("✨ Features")
-        st.markdown("""
-        - Interactive Dashboards 📊  
-        - Profile Management 👤  
-        - Feedback Portal 💬  
-        - Secure Login & Signup 🔐  
-        """)
 
     elif st.session_state.page == "📊 Dashboard":
         st.header("📊 Dashboard")
@@ -157,12 +161,6 @@ else:
         st.markdown("""
         Explore global economic metrics like income inequality, GDP trends, and other indicators.  
         Use filters to customize views and hover over charts for detailed info.
-        """)
-        st.subheader("📝 How to Use")
-        st.markdown("""
-        - Apply filters and slicers to focus on specific regions or years.  
-        - Hover to see detailed data points.  
-        - Export visuals for reports.
         """)
         dashboard_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"
         components.html(f"""
@@ -180,16 +178,19 @@ else:
         last_name = data[1] if data[1] else ""
         email = data[2] if data[2] else ""
 
-        st.subheader("📝 Personal Information")
-        first_name_input = st.text_input("First Name", value=first_name)
-        last_name_input = st.text_input("Last Name", value=last_name)
-        email_input = st.text_input("Email", value=email)
-
+        # --- Personal Info Card ---
+        st.markdown('<div class="card"><h3>📝 Personal Information</h3></div>', unsafe_allow_html=True)
+        col1, col2 = st.columns(2)
+        with col1:
+            first_name_input = st.text_input("First Name", value=first_name)
+            last_name_input = st.text_input("Last Name", value=last_name)
+        with col2:
+            email_input = st.text_input("Email", value=email)
         if st.button("Update Profile"):
             update_profile(st.session_state.user, first_name_input, last_name_input, email_input)
             st.success("✅ Profile updated successfully.")
 
-        st.subheader("🔒 Change Password")
+        st.markdown('<div class="card"><h3>🔒 Security</h3></div>', unsafe_allow_html=True)
         current_pass = st.text_input("Current Password", type="password")
         new_pass = st.text_input("New Password", type="password")
         confirm_pass = st.text_input("Confirm New Password", type="password")
