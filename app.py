@@ -212,5 +212,6 @@ else:
         st.header("💬 Feedback")
         feedback = st.text_area("Write your feedback:")
         if st.button("Submit Feedback"):
-            st.success("✅ Thanks for your feedback!")                                                       now add in this code and modify it and give me 
+            st.success("✅ Thanks for your feedback!")                                                       
+
 
