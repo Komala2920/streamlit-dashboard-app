@@ -192,7 +192,7 @@ else:
             <iframe title="Global Income Inequality Dashboard" width="100%" height="600" 
             src="{dashboard_url}" frameborder="0" allowFullScreen="true"></iframe>
         """, height=620)
-
+            
     elif st.session_state.page == "👤 Profile":
          st.header("👤 Edit Profile")
 
@@ -236,12 +236,13 @@ else:
                 submitted = st.form_submit_button("💾 Save")
                 if submitted:
                     st.success("✅ Profile updated successfully!")
-
+                    
     elif st.session_state.page == "💬 Feedback":
         st.header("💬 Feedback")
         feedback = st.text_area("Write your feedback:")
         if st.button("Submit Feedback"):
-           st.success("✅ Thanks for your feedback!")                                                   
+           st.success("✅ Thanks for your feedback!")
+                    
 
 
 
