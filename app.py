@@ -193,7 +193,7 @@ else:
             src="{dashboard_url}" frameborder="0" allowFullScreen="true"></iframe>
         """, height=620)
 
-               elif st.session_state.page == "👤 Profile":
+    elif st.session_state.page == "👤 Profile":
         st.header("👤 Edit Profile")
 
         # --- Profile Card ---
@@ -237,6 +237,7 @@ else:
         feedback = st.text_area("Write your feedback:")
         if st.button("Submit Feedback"):
             st.success("✅ Thanks for your feedback!")                                                       
+
 
 
 
