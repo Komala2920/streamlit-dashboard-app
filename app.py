@@ -83,7 +83,7 @@ if st.session_state.user is None:
             user = check_user(username, password)
             if user:
                 st.session_state.user = username
-                st.session_state.page = "🏠 Home"  # Redirect to home after login
+                st.session_state.page = "🏠 Home"
                 st.success("✅ Login successful")
             else:
                 st.error("❌ Invalid username or password")
@@ -114,24 +114,79 @@ else:
             else:
                 st.session_state.page = item
 
-    # --- Page Content ---
+    # --- Home Page ---
     if st.session_state.page == "🏠 Home":
         st.header("🏠 Welcome Home")
         st.write(f"Hello, **{st.session_state.user}** 👋")
+
         st.subheader("🌐 Overview")
         st.markdown("""
         **Global Balance** is a comprehensive platform to monitor and analyze global economic and financial data.  
-        It provides users with real-time dashboards, profile management, and a feedback system — all in one secure and interactive environment.
+        It provides users with real-time dashboards, profile management, and a feedback system — all in one secure and interactive environment.  
+
+        **Why use Global Balance?**
+        - Access up-to-date financial reports and statistics.  
+        - Understand global economic patterns through visualizations.  
+        - Manage your user profile securely and efficiently.  
+        - Share feedback to improve the platform and community engagement.
         """)
 
+        st.subheader("✨ Features")
+        st.markdown("""
+        1. **Interactive Dashboards** 📊  
+           View global financial metrics, trends, and income inequality data using embedded Power BI dashboards.  
+           Provides intuitive charts and tables for better insights.
+
+        2. **Profile Management** 👤  
+           Maintain and update your account information.  
+           Customize settings and monitor your activity securely.
+
+        3. **Feedback Portal** 💬  
+           Share suggestions, report issues, or provide ideas to enhance the platform.  
+           Feedback is acknowledged and valued for continuous improvement.
+
+        4. **Secure Login & Signup** 🔐  
+           Passwords are hashed and securely stored.  
+           Smooth and safe authentication ensures privacy and security.
+
+        5. **Guided Navigation & Tips** 📝  
+           Easily navigate between pages using the sidebar.  
+           Quick tips help you make the most out of the platform.
+        """)
+
+        st.subheader("📌 Quick Tips")
+        st.markdown("""
+        1. Use the sidebar to navigate between Home, Dashboard, Profile, and Feedback pages.  
+        2. Explore the **Dashboard** for interactive visual insights.  
+        3. Keep your profile updated for a personalized experience.  
+        4. Share feedback to help us enhance the platform.  
+        5. Highlights give you quick access to key features.
+        """)
+
+    # --- Dashboard Page ---
     elif st.session_state.page == "📊 Dashboard":
         st.header("📊 Dashboard")
+        st.subheader("🌐 Dashboard Overview")
+        st.markdown("""
+        The dashboard provides an interactive view of **global economic and financial metrics**, including income inequality, GDP trends, and other key financial indicators.  
+        It allows you to explore patterns, compare countries, and analyze trends over time.
+        """)
+
+        st.subheader("📝 How to Use")
+        st.markdown("""
+        - Use filters and slicers in the dashboard to customize your view by region, year, or indicators.  
+        - Hover over charts and maps to see detailed data points.  
+        - Export visuals for reports or presentations.  
+        - Analyze trends to gain insights into global financial patterns.
+        """)
+
         dashboard_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"
         components.html(f"""
             <iframe title="Global Income Inequality Dashboard" width="100%" height="600" 
             src="{dashboard_url}" frameborder="0" allowFullScreen="true"></iframe>
         """, height=620)
 
+    # --- Profile Page ---
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Edit Profile")
         with st.container():
@@ -163,6 +218,7 @@ else:
                     if submitted:
                         st.success("✅ Profile updated successfully!")
 
+    # --- Feedback Page ---
     elif st.session_state.page == "💬 Feedback":
         st.header("💬 Feedback")
         st.markdown("We value your feedback! Please share your thoughts to help us improve **Global Balance**.")
