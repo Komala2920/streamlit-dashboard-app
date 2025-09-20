@@ -194,13 +194,48 @@ else:
         """, height=620)
 
     elif st.session_state.page == "👤 Profile":
-        st.header("👤 Profile")
-        st.write(f"Username: **{st.session_state.user}**")
-        st.write("Email: user@example.com (dummy)")
-        st.info("You can extend this page with more profile details.")
+    st.header("👤 Edit Profile")
+
+    # --- Profile Card ---
+    with st.container():
+        col1, col2 = st.columns([1, 3])
+
+        with col1:
+            st.image("https://via.placeholder.com/120", width=120)  # Profile Picture
+            st.text(st.session_state.user)  # logged-in username
+
+        with col2:
+            with st.form("profile_form"):
+                col_left, col_right = st.columns(2)
+
+                with col_left:
+                    first_name = st.text_input("First Name", "Arthur")
+                    password = st.text_input("Password", "********", type="password")
+                    phone = st.text_input("Phone", "477-046-1827")
+                    nation = st.text_input("Nation", "Colombia")
+                    gender = st.selectbox("Gender", ["Male", "Female", "Other"], index=0)
+                    twitter = st.text_input("Twitter", "twitter.com/envato")
+                    facebook = st.text_input("Facebook", "facebook.com/envato")
+
+                with col_right:
+                    last_name = st.text_input("Last Name", "Nancy")
+                    email = st.text_input("Email", "user@example.com")
+                    address = st.text_input("Address", "116 Jaskolski Stravenue Suite 883")
+                    dob = st.date_input("Date of Birth")
+                    language = st.selectbox("Language", ["English", "Spanish", "French"], index=0)
+                    linkedin = st.text_input("LinkedIn", "linkedin.com/envato")
+                    google = st.text_input("Google", "zachary Ruiz")
+
+                slogan = st.text_input("Slogan", "Land acquisition Specialist")
+
+                submitted = st.form_submit_button("💾 Save")
+                if submitted:
+                    st.success("✅ Profile updated successfully!")
+
 
     elif st.session_state.page == "💬 Feedback":
         st.header("💬 Feedback")
         feedback = st.text_area("Write your feedback:")
         if st.button("Submit Feedback"):
             st.success("✅ Thanks for your feedback!")                                                       
+
