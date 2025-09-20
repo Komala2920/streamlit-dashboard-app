@@ -29,7 +29,7 @@ st.markdown("""
         font-family: 'Segoe UI', sans-serif;
         color: white;
     }
-    .stButton button {
+    .stButton>button {
         background: #0ea5e9;
         color: white;
         border-radius: 8px;
@@ -38,7 +38,7 @@ st.markdown("""
         font-weight: 600;
         transition: all 0.3s ease;
     }
-    .stButton button:hover {
+    .stButton>button:hover {
         background: #0284c7;
         transform: scale(1.05);
     }
@@ -48,24 +48,30 @@ st.markdown("""
         color: #38bdf8;
         margin-bottom: 15px;
     }
-    .navbar {
+    .nav-container {
         display: flex;
         justify-content: center;
         gap: 15px;
         margin-bottom: 25px;
     }
-    .nav-item {
+    .nav-button {
         background: #0ea5e9;
         color: white;
-        padding: 0.5em 1.2em;
         border-radius: 8px;
-        text-decoration: none;
-        font-weight: 500;
-        transition: 0.3s;
+        padding: 0.6em 1.2em;
+        text-align: center;
+        font-weight: 600;
         cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 130px;
+        max-width: 130px;
     }
-    .nav-item:hover {
+    .nav-button:hover {
         background: #0284c7;
+        transform: scale(1.05);
+    }
+    .active {
+        background: #0284c7 !important;
     }
     iframe {
         border-radius: 12px;
@@ -110,16 +116,19 @@ if st.session_state.user is None:
 else:
     st.markdown("<div class='logo'>Global Balance</div>", unsafe_allow_html=True)
 
-    # --- Top Navigation ---
+    # --- Top Navigation (custom buttons same size) ---
     nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🚪 Logout"]
-    nav_cols = st.columns(len(nav_items))
+    st.markdown("<div class='nav-container'>", unsafe_allow_html=True)
+    cols = st.columns(len(nav_items))
     for i, item in enumerate(nav_items):
-        if nav_cols[i].button(item, key=item):
+        btn_class = "nav-button active" if st.session_state.page == item else "nav-button"
+        if cols[i].button(item, key=f"nav_{item}"):
             st.session_state.page = item
             if item == "🚪 Logout":
                 st.session_state.user = None
                 st.success("🚪 You have been logged out.")
                 st.rerun()
+    st.markdown("</div>", unsafe_allow_html=True)
 
     # --- Page Content ---
     if st.session_state.page == "🏠 Home":
@@ -146,6 +155,3 @@ else:
         feedback = st.text_area("Write your feedback:")
         if st.button("Submit Feedback"):
             st.success("✅ Thanks for your feedback!")
-
-
-
