@@ -1,6 +1,7 @@
 import streamlit as st
 import sqlite3
 import hashlib
+import streamlit.components.v1 as components
 
 # ---------------------- DATABASE ----------------------
 conn = sqlite3.connect('users.db')
@@ -128,15 +129,11 @@ else:
 
     elif st.session_state.page == "📊 Dashboard":
         st.header("📊 Dashboard")
-
-<iframe title="global income inequality dashboard2" width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9" frameborder="0" allowFullScreen="true"></iframe>
-
-        st.markdown(
-            f"""
-            <iframe src="{dashboard_url}" width="100%" height="600px"></iframe>
-            """,
-            unsafe_allow_html=True
-        )
+        dashboard_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"
+        components.html(f"""
+            <iframe title="global income inequality dashboard2" width="100%" height="600" 
+            src="{dashboard_url}" frameborder="0" allowFullScreen="true"></iframe>
+        """, height=620)
 
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Profile")
@@ -149,4 +146,3 @@ else:
         feedback = st.text_area("Write your feedback:")
         if st.button("Submit Feedback"):
             st.success("✅ Thanks for your feedback!")
-
