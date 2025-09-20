@@ -83,7 +83,7 @@ if st.session_state.user is None:
             user = check_user(username, password)
             if user:
                 st.session_state.user = username
-                st.session_state.page = "🏠 Home"
+                st.session_state.page = "🏠 Home"  # Redirect to home after login
                 st.success("✅ Login successful")
             else:
                 st.error("❌ Invalid username or password")
@@ -102,14 +102,14 @@ if st.session_state.user is None:
 else:
     st.markdown("<div class='logo'>Global Balance</div>", unsafe_allow_html=True)
 
-    # --- Sidebar Navigation ---
+    # --- Sidebar Navigation (Vertical) ---
     st.sidebar.title("Navigation")
     nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🚪 Logout"]
     for item in nav_items:
         if st.sidebar.button(item, key=item):
             if item == "🚪 Logout":
                 st.session_state.user = None
-                st.session_state.page = "🏠 Home"
+                st.session_state.page = "🏠 Home"  # Reset to login
                 st.success("🚪 You have been logged out.")
             else:
                 st.session_state.page = item
@@ -118,50 +118,52 @@ else:
     if st.session_state.page == "🏠 Home":
         st.header("🏠 Welcome Home")
         st.write(f"Hello, **{st.session_state.user}** 👋")
-        st.info("""
-        Welcome to **Global Balance**, your personal dashboard for monitoring global financial metrics.
-        Navigate using the sidebar to explore data, view your profile, and submit feedback.
+
+        # --- Overview Section ---
+        st.subheader("🌐 Overview")
+        st.markdown("""
+        **Global Balance** is a platform designed to help you monitor and explore global economic and financial data.  
+        Access interactive dashboards, manage your profile, and share feedback — all in one place.
         """)
-        if st.button("Learn More About the Dashboard"):
-            st.write("""
-            The Dashboard section contains interactive visualizations powered by **Power BI**.
-            Explore trends, income inequality, and other global financial insights.
-            """)
+
+        # --- Features Section ---
+        st.subheader("✨ Features")
+        st.markdown("""
+        - **Interactive Dashboards** 📊: Visualize global financial metrics.  
+        - **Profile Management** 👤: Keep your account info up-to-date.  
+        - **Feedback Portal** 💬: Share your suggestions to improve the platform.  
+        - **Secure Login & Signup** 🔐: Your data is safe with hashed passwords.
+        """)
+
+        # --- Quick Tips Section ---
+        st.subheader("📌 Quick Tips")
+        st.markdown("""
+        1. Navigate through the app using the sidebar.  
+        2. Check the **Dashboard** for the latest interactive reports.  
+        3. Update your profile anytime on the **Profile** page.  
+        4. Provide feedback to help us enhance the platform.
+        """)
+
+        # --- Highlights Section ---
+        st.subheader("🌟 Highlights")
+        st.info("Your personalized dashboard is just a click away on the 📊 Dashboard page!")
 
     elif st.session_state.page == "📊 Dashboard":
         st.header("📊 Dashboard")
-        st.info("""
-        This page contains an embedded Power BI report showing **global income inequality metrics**.
-        You can interact with the charts, filter data, and analyze trends.
-        """)
         dashboard_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"
         components.html(f"""
-            <iframe title="Global Dashboard" width="100%" height="600" 
+            <iframe title="global income inequality dashboard2" width="100%" height="600" 
             src="{dashboard_url}" frameborder="0" allowFullScreen="true"></iframe>
         """, height=620)
-        if st.button("Dashboard Tips"):
-            st.success("🔹 Tip: Hover over bars and charts to see detailed values.\n🔹 Use filters on the right to customize your view.")
 
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Profile")
-        st.write(f"**Username:** {st.session_state.user}")
-        st.write("**Email:** user@example.com (dummy)")
-        st.info("You can extend this page with more profile details such as account settings, preferences, and activity logs.")
-        if st.button("Edit Profile (Demo)"):
-            st.warning("This feature is under development! Coming soon.")
+        st.write(f"Username: **{st.session_state.user}**")
+        st.write("Email: user@example.com (dummy)")
+        st.info("You can extend this page with more profile details.")
 
     elif st.session_state.page == "💬 Feedback":
         st.header("💬 Feedback")
-        st.info("Your feedback helps us improve the website and dashboard experience.")
         feedback = st.text_area("Write your feedback:")
         if st.button("Submit Feedback"):
-            if feedback.strip():
-                st.success("✅ Thanks for your feedback!")
-            else:
-                st.error("⚠ Please write something before submitting.")
-        if st.button("View Feedback Tips"):
-            st.write("""
-            🔹 Be specific about what you liked or disliked.  
-            🔹 Suggest features or improvements.  
-            🔹 Your input is anonymous and valuable!
-            """)
+            st.success("✅ Thanks for your feedback!")
