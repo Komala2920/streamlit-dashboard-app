@@ -2,6 +2,11 @@ import streamlit as st
 import base64
 
 # -------------------------
+# PAGE CONFIG (must be first)
+# -------------------------
+st.set_page_config(page_title="Animated Login System", layout="wide")
+
+# -------------------------
 # BACKGROUND IMAGE SETUP
 # -------------------------
 def get_base64_image(image_path):
@@ -13,15 +18,24 @@ def set_background(base64_str):
         f"""
         <style>
         .stApp {{
-            background-image: url("background.jpeg");
+            background: url("data:image/jpeg;base64,{base64_str}");
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
+        }}
+        .login-box {{
+            background: rgba(255, 255, 255, 0.85);
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 400px;
+            margin: 5% auto;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }}
         .login-title {{
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 1rem;
+            text-align: center;
             color: #20c997;
         }}
         .switch-link {{
@@ -36,11 +50,6 @@ def set_background(base64_str):
 # Load and apply background
 bg_image = get_base64_image("background.jpeg")
 set_background(bg_image)
-
-# -------------------------
-# PAGE CONFIG
-# -------------------------
-st.set_page_config(page_title="Animated Login System", layout="wide")
 
 # -------------------------
 # SESSION STATE
@@ -136,13 +145,3 @@ if not st.session_state.logged_in:
     auth_ui()
 else:
     dashboard_ui()
-
-
-
-
-
-
-
-
-
-
