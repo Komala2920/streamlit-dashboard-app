@@ -122,26 +122,48 @@ else:
         # --- Overview Section ---
         st.subheader("🌐 Overview")
         st.markdown("""
-        **Global Balance** is a platform designed to help you monitor and explore global economic and financial data.  
-        Access interactive dashboards, manage your profile, and share feedback — all in one place.
+        **Global Balance** is a comprehensive platform to monitor and analyze global economic and financial data.  
+        It provides users with real-time dashboards, profile management, and a feedback system — all in one secure and interactive environment.  
+
+        **Why use Global Balance?**
+        - Access up-to-date financial reports and statistics.  
+        - Understand global economic patterns through visualizations.  
+        - Manage your user profile securely and efficiently.  
+        - Share feedback to improve the platform and community engagement.
         """)
 
         # --- Features Section ---
         st.subheader("✨ Features")
         st.markdown("""
-        - **Interactive Dashboards** 📊: Visualize global financial metrics.  
-        - **Profile Management** 👤: Keep your account info up-to-date.  
-        - **Feedback Portal** 💬: Share your suggestions to improve the platform.  
-        - **Secure Login & Signup** 🔐: Your data is safe with hashed passwords.
+        1. **Interactive Dashboards** 📊  
+           View global financial metrics, trends, and income inequality data using embedded Power BI dashboards.  
+           Provides intuitive charts and tables for better insights.
+
+        2. **Profile Management** 👤  
+           Maintain and update your account information.  
+           Customize settings and monitor your activity securely.
+
+        3. **Feedback Portal** 💬  
+           Share suggestions, report issues, or provide ideas to enhance the platform.  
+           Feedback is acknowledged and valued for continuous improvement.
+
+        4. **Secure Login & Signup** 🔐  
+           Passwords are hashed and securely stored.  
+           Smooth and safe authentication ensures privacy and security.
+
+        5. **Guided Navigation & Tips** 📝  
+           Easily navigate between pages using the sidebar.  
+           Quick tips help you make the most out of the platform.
         """)
 
         # --- Quick Tips Section ---
         st.subheader("📌 Quick Tips")
         st.markdown("""
-        1. Navigate through the app using the sidebar.  
-        2. Check the **Dashboard** for the latest interactive reports.  
-        3. Update your profile anytime on the **Profile** page.  
-        4. Provide feedback to help us enhance the platform.
+        1. Use the sidebar to navigate between Home, Dashboard, Profile, and Feedback pages.  
+        2. Explore the **Dashboard** for interactive visual insights.  
+        3. Keep your profile updated for a personalized experience.  
+        4. Share feedback to help us enhance the platform.  
+        5. Highlights give you quick access to key features.
         """)
 
         # --- Highlights Section ---
