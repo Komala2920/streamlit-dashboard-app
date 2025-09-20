@@ -166,15 +166,14 @@ else:
         5. Highlights give you quick access to key features.
         """)
 
-
     elif st.session_state.page == "📊 Dashboard":
         st.header("📊 Dashboard")
 
         # --- Dashboard Overview ---
         st.subheader("🌐 Dashboard Overview")
         st.markdown("""
-        The dashboard provides an interactive view of **global economic and financial metrics**, including income inequality, GDP trends, and other key financial indicators.  
-        It allows you to explore patterns, compare countries, and analyze trends over time.
+        The dashboard provides an interactive view of **global economic and financial metrics**, including income inequality, GDP trends, and other key indicators.  
+        Explore patterns, compare countries, and analyze trends over time.
         """)
 
         # --- How to Use Dashboard ---
@@ -195,9 +194,30 @@ else:
 
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Profile")
-        st.write(f"Username: **{st.session_state.user}**")
-        st.write("Email: user@example.com (dummy)")
-        st.info("You can extend this page with more profile details.")
+
+        # --- Profile Overview ---
+        st.subheader("🌐 Profile Overview")
+        st.markdown("""
+        This page allows you to view and manage your account information.  
+        Keep your details updated for a personalized experience.
+        """)
+
+        # --- User Information ---
+        st.subheader("🧑 User Information")
+        st.write(f"**Username:** {st.session_state.user}")
+        st.write("**Email:** user@example.com (dummy)")
+        st.write("**Account Created:** 2025-09-01 (dummy)")
+        st.write("**Last Login:** 2025-09-20 19:00 (dummy)")
+        st.write("**Dashboards Viewed:** 5 (dummy)")
+
+        # --- Profile Tips ---
+        st.subheader("💡 Profile Tips")
+        st.markdown("""
+        - Keep your email and username up-to-date.  
+        - Regularly check your dashboard for insights.  
+        - Provide feedback to improve your experience.  
+        - Log out when finished to ensure security.
+        """)
 
     elif st.session_state.page == "💬 Feedback":
         st.header("💬 Feedback")
