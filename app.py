@@ -237,11 +237,12 @@ else:
                 if submitted:
                     st.success("✅ Profile updated successfully!")
 
-    elif st.session_state.page == "💬 Feedback":
+   elif st.session_state.page == "💬 Feedback":
         st.header("💬 Feedback")
         feedback = st.text_area("Write your feedback:")
         if st.button("Submit Feedback"):
             st.success("✅ Thanks for your feedback!")                                                       
+
 
 
 
