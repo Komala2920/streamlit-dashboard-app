@@ -126,12 +126,22 @@ else:
         st.header("🏠 Welcome Home")
         st.write(f"Hello, **{st.session_state.user}** 👋")
         st.success("This is your Global Balance dashboard.")
+        st.subheader("Overview")
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Total Users", 1234)
+        col2.metric("Feedback Received", 58)
+        col3.metric("Active Dashboards", 5)
+        st.info("Here you can monitor your account and view global financial insights.")
 
     elif st.session_state.page == "📊 Dashboard":
         st.header("📊 Dashboard")
+        st.write("Here you can view the latest income inequality metrics globally.")
+        st.markdown("**Key Insights:**")
+        st.write("- Global income disparity is increasing slowly.")
+        st.write("- Top 10% of the population holds ~70% of total wealth.")
         dashboard_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"
         components.html(f"""
-            <iframe title="global income inequality dashboard2" width="100%" height="600" 
+            <iframe title="global income inequality dashboard" width="100%" height="600" 
             src="{dashboard_url}" frameborder="0" allowFullScreen="true"></iframe>
         """, height=620)
 
@@ -139,10 +149,21 @@ else:
         st.header("👤 Profile")
         st.write(f"Username: **{st.session_state.user}**")
         st.write("Email: user@example.com (dummy)")
-        st.info("You can extend this page with more profile details.")
+        st.subheader("Account Details")
+        st.info("Account type: Standard User")
+        st.write("- Joined: 2025-01-01")
+        st.write("- Last login: 2025-09-20")
+        st.subheader("Financial Summary (Dummy)")
+        col1, col2 = st.columns(2)
+        col1.metric("Global Balance", "$12,450")
+        col2.metric("Monthly Savings", "$1,200")
 
     elif st.session_state.page == "💬 Feedback":
         st.header("💬 Feedback")
         feedback = st.text_area("Write your feedback:")
         if st.button("Submit Feedback"):
             st.success("✅ Thanks for your feedback!")
+        st.subheader("Recent Feedbacks")
+        st.write("- 'Great dashboard, very informative!'")
+        st.write("- 'Please add more charts on income trends.'")
+        st.write("- 'Love the color theme and layout.'")
