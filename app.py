@@ -218,7 +218,11 @@ else:
                         last_name = st.text_input("Last Name")
                         email = st.text_input("Email")
                         dob = st.date_input("Date of Birth")
-                        language = st.selectbox("Language", index=0)
+                       language = st.selectbox(
+                         "Language",
+                          ["English", "Telugu", "Hindi", "French"],  # <-- options
+                          index=0
+    )
 
                     submitted = st.form_submit_button("💾 Save")
                     if submitted:
@@ -229,6 +233,7 @@ else:
         feedback = st.text_area("Write your feedback:")
         if st.button("Submit Feedback"):
             st.success("✅ Thanks for your feedback!")                                                       
+
 
 
 
