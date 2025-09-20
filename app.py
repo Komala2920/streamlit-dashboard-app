@@ -2,11 +2,21 @@ import streamlit as st
 import sqlite3
 import hashlib
 import streamlit.components.v1 as components
+import os
 
 # ---------------------- DATABASE ----------------------
 conn = sqlite3.connect('users.db')
 c = conn.cursor()
-c.execute('CREATE TABLE IF NOT EXISTS users(username TEXT, password TEXT)')
+c.execute('''
+    CREATE TABLE IF NOT EXISTS users(
+        username TEXT,
+        password TEXT,
+        firstname TEXT,
+        lastname TEXT,
+        email TEXT,
+        profile_pic TEXT
+    )
+''')
 conn.commit()
 
 # ---------------------- UTILS -------------------------
@@ -18,7 +28,8 @@ def check_user(username, password):
     return c.fetchone()
 
 def add_user(username, password):
-    c.execute('INSERT INTO users(username, password) VALUES (?, ?)', (username, make_hash(password)))
+    c.execute('INSERT INTO users(username, password, firstname, lastname, email, profile_pic) VALUES (?, ?, ?, ?, ?, ?)',
+              (username, make_hash(password), "", "", "", None))
     conn.commit()
 
 # ---------------------- CSS ----------------------
@@ -119,74 +130,17 @@ else:
         st.header("🏠 Welcome Home")
         st.write(f"Hello, **{st.session_state.user}** 👋")
 
-        # --- Overview Section ---
+        # Overview Section
         st.subheader("🌐 Overview")
         st.markdown("""
         **Global Balance** is a comprehensive platform to monitor and analyze global economic and financial data.  
         It provides users with real-time dashboards, profile management, and a feedback system — all in one secure and interactive environment.  
-
-        **Why use Global Balance?**
-        - Access up-to-date financial reports and statistics.  
-        - Understand global economic patterns through visualizations.  
-        - Manage your user profile securely and efficiently.  
-        - Share feedback to improve the platform and community engagement.
         """)
-
-        # --- Features Section ---
-        st.subheader("✨ Features")
-        st.markdown("""
-        1. **Interactive Dashboards** 📊  
-           View global financial metrics, trends, and income inequality data using embedded Power BI dashboards.  
-           Provides intuitive charts and tables for better insights.
-
-        2. **Profile Management** 👤  
-           Maintain and update your account information.  
-           Customize settings and monitor your activity securely.
-
-        3. **Feedback Portal** 💬  
-           Share suggestions, report issues, or provide ideas to enhance the platform.  
-           Feedback is acknowledged and valued for continuous improvement.
-
-        4. **Secure Login & Signup** 🔐  
-           Passwords are hashed and securely stored.  
-           Smooth and safe authentication ensures privacy and security.
-
-        5. **Guided Navigation & Tips** 📝  
-           Easily navigate between pages using the sidebar.  
-           Quick tips help you make the most out of the platform.
-        """)
-
-        # --- Quick Tips Section ---
-        st.subheader("📌 Quick Tips")
-        st.markdown("""
-        1. Use the sidebar to navigate between Home, Dashboard, Profile, and Feedback pages.  
-        2. Explore the **Dashboard** for interactive visual insights.  
-        3. Keep your profile updated for a personalized experience.  
-        4. Share feedback to help us enhance the platform.  
-        5. Highlights give you quick access to key features.
-        """)
-
 
     elif st.session_state.page == "📊 Dashboard":
         st.header("📊 Dashboard")
-
-        # --- Dashboard Overview ---
         st.subheader("🌐 Dashboard Overview")
-        st.markdown("""
-        The dashboard provides an interactive view of **global economic and financial metrics**, including income inequality, GDP trends, and other key financial indicators.  
-        It allows you to explore patterns, compare countries, and analyze trends over time.
-        """)
-
-        # --- How to Use Dashboard ---
-        st.subheader("📝 How to Use")
-        st.markdown("""
-        - Use filters and slicers in the dashboard to customize your view by region, year, or indicators.  
-        - Hover over charts and maps to see detailed data points.  
-        - Export visuals for reports or presentations.  
-        - Analyze trends to gain insights into global financial patterns.
-        """)
-
-        # --- Dashboard Embed ---
+        st.markdown("Explore interactive financial data with Power BI.")
         dashboard_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"
         components.html(f"""
             <iframe title="Global Income Inequality Dashboard" width="100%" height="600" 
@@ -194,10 +148,80 @@ else:
         """, height=620)
 
     elif st.session_state.page == "👤 Profile":
-        st.header("👤 Profile")
-        st.write(f"Username: **{st.session_state.user}**")
-        st.write("Email: user@example.com (dummy)")
-        st.info("You can extend this page with more profile details.")
+        st.header("👤 Profile Management")
+
+        # Load user info
+        c.execute("SELECT firstname, lastname, email, profile_pic FROM users WHERE username=?", (st.session_state.user,))
+        user_data = c.fetchone()
+        if user_data:
+            first_name, last_name, email, profile_pic = user_data
+        else:
+            first_name, last_name, email, profile_pic = "", "", "", None
+
+        tab1, tab2, tab3 = st.tabs(["Profile Info", "Change Password", "Preferences"])
+
+        # --- Profile Info ---
+        with tab1:
+            if profile_pic and os.path.exists(profile_pic):
+                st.image(profile_pic, width=120, caption="Current Profile Picture")
+                if st.button("🗑️ Remove Profile Picture"):
+                    try:
+                        os.remove(profile_pic)
+                    except:
+                        pass
+                    profile_pic = None
+                    c.execute("UPDATE users SET profile_pic=? WHERE username=?", (None, st.session_state.user))
+                    conn.commit()
+                    st.success("✅ Profile picture removed!")
+            else:
+                st.info("No profile picture uploaded")
+
+            uploaded_pic = st.file_uploader("Upload New Profile Picture", type=["jpg", "jpeg", "png"])
+            if uploaded_pic:
+                os.makedirs("profile_pics", exist_ok=True)
+                pic_path = os.path.join("profile_pics", f"{st.session_state.user}_{uploaded_pic.name}")
+                with open(pic_path, "wb") as f:
+                    f.write(uploaded_pic.getbuffer())
+                profile_pic = pic_path
+                st.image(profile_pic, width=120, caption="Preview")
+
+            new_first = st.text_input("First Name", value=first_name)
+            new_last = st.text_input("Last Name", value=last_name)
+            new_email = st.text_input("Email", value=email)
+
+            if st.button("💾 Save Profile"):
+                c.execute("UPDATE users SET firstname=?, lastname=?, email=?, profile_pic=? WHERE username=?",
+                          (new_first, new_last, new_email, profile_pic, st.session_state.user))
+                conn.commit()
+                st.success("✅ Profile updated successfully!")
+
+        # --- Change Password ---
+        with tab2:
+            current_pass = st.text_input("Current Password", type="password")
+            new_pass = st.text_input("New Password", type="password")
+            confirm_pass = st.text_input("Confirm New Password", type="password")
+
+            if st.button("🔑 Update Password"):
+                c.execute("SELECT password FROM users WHERE username=?", (st.session_state.user,))
+                db_pass = c.fetchone()
+                if db_pass and make_hash(current_pass) == db_pass[0]:
+                    if new_pass == confirm_pass and new_pass.strip() != "":
+                        c.execute("UPDATE users SET password=? WHERE username=?", (make_hash(new_pass), st.session_state.user))
+                        conn.commit()
+                        st.success("✅ Password updated successfully!")
+                    else:
+                        st.error("⚠️ New passwords do not match or empty")
+                else:
+                    st.error("❌ Current password is incorrect")
+
+        # --- Preferences ---
+        with tab3:
+            theme = st.radio("Theme", ["Light", "Dark"], horizontal=True)
+            language = st.selectbox("Language", ["English", "తెలుగు", "हिन्दी"])
+            notifications = st.checkbox("Enable Email Notifications", value=True)
+
+            if st.button("⚙️ Save Preferences"):
+                st.success(f"✅ Preferences saved! (Theme: {theme}, Language: {language}, Notifications: {notifications})")
 
     elif st.session_state.page == "💬 Feedback":
         st.header("💬 Feedback")
