@@ -1,135 +1,159 @@
-import streamlit as st
-import base64
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArBitrage Platform - Login / Signup</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #1f2235;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-# -------------------------
-# PAGE CONFIG (must be first)
-# -------------------------
-st.set_page_config(page_title="Animated Login System", layout="wide")
+    .container {
+      display: flex;
+      width: 900px;
+      height: 550px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      border-radius: 12px;
+      overflow: hidden;
+    }
 
-# -------------------------
-# BACKGROUND IMAGE SETUP
-# -------------------------
-def get_base64_image(image_path):
-    with open(image_path, "rb") as img_file:
-        return base64.b64encode(img_file.read()).decode()
+    .left {
+      flex: 1;
+      background: linear-gradient(135deg, #2c3e91, #3a60d2);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+      text-align: center;
+    }
 
-def set_background(base64_str):
-    st.markdown(
-        f"""
-        <style>
-        .stApp {{
-            background: url("data:image/jpeg;base64,{base64_str}");
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-        }}
-        .login-title {{
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 1rem;
-            text-align: center;
-            color: #003366; /* Dark Blue */
-        }}
-        .switch-link {{
-            color: #007bff;
-            cursor: pointer;
-        }}
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+    .left h1 {
+      font-size: 26px;
+      margin-bottom: 10px;
+    }
 
-# Load and apply background
-bg_image = get_base64_image("background.jpeg")
-set_background(bg_image)
+    .left p {
+      margin-bottom: 20px;
+    }
 
-# -------------------------
-# SESSION STATE
-# -------------------------
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
-if "page" not in st.session_state:
-    st.session_state.page = "Home"
-if "auth_mode" not in st.session_state:
-    st.session_state.auth_mode = "Login"
+    .left button {
+      padding: 12px 30px;
+      background: #00d1ff;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
 
-# -------------------------
-# LOGIN / SIGN UP UI
-# -------------------------
-def auth_ui():
-    if st.session_state.auth_mode == "Login":
-        st.markdown('<div class="login-title">🔐 Sign In</div>', unsafe_allow_html=True)
-        email = st.text_input("Email")
-        password = st.text_input("Password", type="password")
+    .left button:hover {
+      background: #00a8cc;
+    }
 
-        if st.button("Login", use_container_width=True):
-            if email and password:
-                st.session_state.logged_in = True
-                st.success("Login successful!")
-                st.rerun()
-            else:
-                st.error("Please enter email and password")
+    .right {
+      flex: 1;
+      background: #2a2c3a;
+      padding: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: #fff;
+    }
 
-        if st.button("Don't have an account? Sign Up"):
-            st.session_state.auth_mode = "Sign Up"
-            st.rerun()
+    .right h2 {
+      margin-bottom: 30px;
+    }
 
-    else:
-        st.markdown('<div class="login-title">📝 Sign Up</div>', unsafe_allow_html=True)
-        new_email = st.text_input("Email")
-        new_password = st.text_input("Password", type="password")
-        confirm_password = st.text_input("Confirm Password", type="password")
+    .form-group {
+      margin-bottom: 20px;
+    }
 
-        if st.button("Create Account", use_container_width=True):
-            if new_email and new_password and confirm_password:
-                if new_password == confirm_password:
-                    st.success("Account created successfully! Please log in.")
-                    st.session_state.auth_mode = "Login"
-                    st.rerun()
-                else:
-                    st.error("Passwords do not match.")
-            else:
-                st.error("Please fill in all fields.")
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: #ccc;
+    }
 
-        if st.button("Already have an account? Login"):
-            st.session_state.auth_mode = "Login"
-            st.rerun()
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      background: #1c1e2a;
+      color: #fff;
+      font-size: 14px;
+    }
 
-# -------------------------
-# DASHBOARD UI
-# -------------------------
-def dashboard_ui():
-    st.sidebar.title("Navigation")
-    choice = st.sidebar.radio("Go to:", ["Home", "Dashboard", "Profile", "Feedback", "Logout"])
-    st.session_state.page = choice
+    .form-group input:focus {
+      outline: 2px solid #00d1ff;
+    }
 
-    if choice == "Home":
-        st.title("🏠 Home")
-        st.write("Welcome to the Home Page!")
+    .btn {
+      padding: 12px;
+      width: 100%;
+      border: none;
+      border-radius: 6px;
+      background: #00d1ff;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
 
-    elif choice == "Dashboard":
-        st.title("📊 Dashboard")
-        st.write("Your dashboard content goes here.")
+    .btn:hover {
+      background: #00a8cc;
+    }
 
-    elif choice == "Profile":
-        st.title("👤 Profile")
-        st.write("User profile details displayed here.")
+    .small-text {
+      margin-top: 15px;
+      font-size: 12px;
+      color: #aaa;
+    }
 
-    elif choice == "Feedback":
-        st.title("💬 Feedback")
-        feedback = st.text_area("Enter your feedback here:")
-        if st.button("Submit"):
-            st.success("Thanks for your feedback!")
+    .small-text a {
+      color: #00d1ff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Left side (Sign Up) -->
+    <div class="left">
+      <h1>Hello! Welcome to the ArBitrage trading platform</h1>
+      <p>Don’t have an account yet?</p>
+      <button onclick="alert('Redirecting to signup page...')">Sign Up</button>
+    </div>
 
-    elif choice == "Logout":
-        st.session_state.logged_in = False
-        st.session_state.auth_mode = "Login"
-        st.rerun()
-
-# -------------------------
-# MAIN APP
-# -------------------------
-if not st.session_state.logged_in:
-    auth_ui()
-else:
-    dashboard_ui()
+    <!-- Right side (Sign In) -->
+    <div class="right">
+      <h2>Sign In</h2>
+      <form>
+        <div class="form-group">
+          <label for="login">Login or Email</label>
+          <input type="text" id="login" placeholder="Enter your login or email" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter your password" required>
+        </div>
+        <button type="submit" class="btn">Sign In</button>
+      </form>
+      <p class="small-text">
+        By clicking "Sign Up" button, you agree to our <a href="#">Terms & Conditions</a>.
+      </p>
+    </div>
+  </div>
+</body>
+</html>
