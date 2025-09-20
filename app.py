@@ -9,11 +9,13 @@ if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 if "page" not in st.session_state:
     st.session_state.page = "Home"
+if "auth_mode" not in st.session_state:
+    st.session_state.auth_mode = "Login"  # or "Sign Up"
 
 # -------------------------
-# LOGIN PAGE
+# LOGIN / SIGN UP UI
 # -------------------------
-def login_ui():
+def auth_ui():
     st.markdown(
         """
         <style>
@@ -32,24 +34,54 @@ def login_ui():
             margin-bottom: 1rem;
             color: #20c997;
         }
+        .switch-link {
+            color: #007bff;
+            cursor: pointer;
+        }
         </style>
         """,
         unsafe_allow_html=True,
     )
 
     st.markdown('<div class="login-box">', unsafe_allow_html=True)
-    st.markdown('<div class="login-title">🔐 Sign In</div>', unsafe_allow_html=True)
 
-    email = st.text_input("Email")
-    password = st.text_input("Password", type="password")
+    if st.session_state.auth_mode == "Login":
+        st.markdown('<div class="login-title">🔐 Sign In</div>', unsafe_allow_html=True)
+        email = st.text_input("Email")
+        password = st.text_input("Password", type="password")
 
-    if st.button("Login", use_container_width=True):
-        if email and password:   # simple check (replace with DB check later)
-            st.session_state.logged_in = True
-            st.success("Login successful!")
+        if st.button("Login", use_container_width=True):
+            if email and password:
+                st.session_state.logged_in = True
+                st.success("Login successful!")
+                st.rerun()
+            else:
+                st.error("Please enter email and password")
+
+        if st.button("Don't have an account? Sign Up"):
+            st.session_state.auth_mode = "Sign Up"
             st.rerun()
-        else:
-            st.error("Please enter email and password")
+
+    else:  # Sign Up mode
+        st.markdown('<div class="login-title">📝 Sign Up</div>', unsafe_allow_html=True)
+        new_email = st.text_input("Email")
+        new_password = st.text_input("Password", type="password")
+        confirm_password = st.text_input("Confirm Password", type="password")
+
+        if st.button("Create Account", use_container_width=True):
+            if new_email and new_password and confirm_password:
+                if new_password == confirm_password:
+                    st.success("Account created successfully! Please log in.")
+                    st.session_state.auth_mode = "Login"
+                    st.rerun()
+                else:
+                    st.error("Passwords do not match.")
+            else:
+                st.error("Please fill in all fields.")
+
+        if st.button("Already have an account? Login"):
+            st.session_state.auth_mode = "Login"
+            st.rerun()
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -81,12 +113,13 @@ def dashboard_ui():
 
     elif choice == "Logout":
         st.session_state.logged_in = False
+        st.session_state.auth_mode = "Login"
         st.rerun()
 
 # -------------------------
 # MAIN APP
 # -------------------------
 if not st.session_state.logged_in:
-    login_ui()
+    auth_ui()
 else:
     dashboard_ui()
