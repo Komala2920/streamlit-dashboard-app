@@ -167,7 +167,7 @@ else:
         """)
 
 
-   elif st.session_state.page == "📊 Dashboard":
+    elif st.session_state.page == "📊 Dashboard":
         st.header("📊 Dashboard")
 
         # --- Dashboard Overview ---
@@ -269,5 +269,6 @@ else:
                 )
                 conn.commit()
                 st.success("✅ Thank you! Your feedback has been submitted.")
+
 
 
