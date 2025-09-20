@@ -22,45 +22,71 @@ def add_user(username, password):
     c.execute('INSERT INTO users(username, password) VALUES (?, ?)', (username, make_hash(password)))
     conn.commit()
 
-# ---------------------- CSS ----------------------
+# ---------------------- PROFESSIONAL CSS ----------------------
 st.markdown("""
 <style>
+/* Background */
 body {
-    background: #0f172a;
+    background: linear-gradient(to bottom right, #0f172a, #1e293b);
     font-family: 'Segoe UI', sans-serif;
-    color: white;
+    color: #f1f5f9;
 }
-.stButton button {
+
+/* Buttons */
+.stButton>button {
     background: #0ea5e9;
-    color: white;
-    border-radius: 8px;
-    padding: 0.6em 1.2em;
+    color: #fff;
+    border-radius: 12px;
+    padding: 0.7em 1.5em;
     border: none;
     font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     transition: all 0.3s ease;
 }
-.stButton button:hover {
+.stButton>button:hover {
     background: #0284c7;
-    transform: scale(1.02);
+    transform: translateY(-2px);
 }
-.logo {
-    font-size: 28px;
-    font-weight: bold;
-    color: #38bdf8;
-    margin-bottom: 15px;
-    text-align: center;
+
+/* Cards */
+.card {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    margin-bottom: 20px;
 }
-iframe {
-    border-radius: 12px;
+
+/* Headers */
+h1, h2, h3, h4 {
+    color: #f1f5f9;
 }
+
+/* Text */
+.stText, p {
+    color: #e2e8f0;
+}
+
+/* Sidebar Buttons */
 .css-1emrehy.edgvbvh3 button {
     width: 100% !important;
     min-width: 100% !important;
     max-width: 100% !important;
-    height: 50px !important;
-    margin-bottom: 10px;
+    height: 55px !important;
+    margin-bottom: 12px;
     font-size: 16px;
-    display: block;
+    border-radius: 12px;
+    background-color: #0ea5e9;
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+.css-1emrehy.edgvbvh3 button:hover {
+    background-color: #0284c7;
+}
+
+/* Iframe Styling */
+iframe {
+    border-radius: 12px;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -73,7 +99,7 @@ if "page" not in st.session_state:
 
 # ---------------------- LOGIN / SIGNUP ----------------------
 if st.session_state.user is None:
-    st.markdown("<div class='logo'>Global Balance</div>", unsafe_allow_html=True)
+    st.markdown("<div style='text-align:center; font-size:32px; font-weight:bold; color:#38bdf8; margin-bottom:20px'>Global Balance</div>", unsafe_allow_html=True)
     tab1, tab2 = st.tabs(["🔐 Login", "📝 Sign Up"])
 
     with tab1:
@@ -100,7 +126,7 @@ if st.session_state.user is None:
 
 # ---------------------- MAIN APP ----------------------
 else:
-    st.markdown("<div class='logo'>Global Balance</div>", unsafe_allow_html=True)
+    st.markdown("<div style='text-align:center; font-size:32px; font-weight:bold; color:#38bdf8; margin-bottom:20px'>Global Balance</div>", unsafe_allow_html=True)
 
     # --- Sidebar Navigation ---
     st.sidebar.title("Navigation")
@@ -119,36 +145,29 @@ else:
         st.header("🏠 Welcome Home")
         st.write(f"Hello, **{st.session_state.user}** 👋")
 
+        # Overview Card
+        st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("🌐 Overview")
         st.markdown("""
         **Global Balance** is a comprehensive platform to monitor and analyze global economic and financial data.  
-        It provides users with real-time dashboards, profile management, and a feedback system — all in one secure and interactive environment.  
-
-        **Why use Global Balance?**
-        - Access up-to-date financial reports and statistics.  
-        - Understand global economic patterns through visualizations.  
-        - Manage your user profile securely and efficiently.  
-        - Share feedback to improve the platform and community engagement.
+        Real-time dashboards, profile management, and feedback system in a professional, secure environment.
         """)
+        st.markdown('</div>', unsafe_allow_html=True)
 
+        # Features Card
+        st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("✨ Features")
         st.markdown("""
         1. **Interactive Dashboards** 📊  
-           View global financial metrics, trends, and income inequality data using embedded Power BI dashboards.  
-
         2. **Profile Management** 👤  
-           Maintain and update your account information.  
-
         3. **Feedback Portal** 💬  
-           Share suggestions, report issues, or provide ideas to enhance the platform.  
-
         4. **Secure Login & Signup** 🔐  
-           Passwords are hashed and securely stored.  
-
-        5. **Guided Navigation & Tips** 📝  
-           Easily navigate between pages using the sidebar.
+        5. **Guided Navigation & Tips** 📝
         """)
+        st.markdown('</div>', unsafe_allow_html=True)
 
+        # Quick Tips Card
+        st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("📌 Quick Tips")
         st.markdown("""
         1. Use the sidebar to navigate between Home, Dashboard, Profile, and Feedback pages.  
@@ -156,6 +175,7 @@ else:
         3. Keep your profile updated for a personalized experience.  
         4. Share feedback to help us enhance the platform.
         """)
+        st.markdown('</div>', unsafe_allow_html=True)
 
     # --- Dashboard Page ---
     elif st.session_state.page == "📊 Dashboard":
@@ -223,7 +243,6 @@ else:
 
             submitted = st.form_submit_button("Submit Feedback")
             if submitted:
-                # Create feedback table if it doesn't exist
                 c.execute("""
                     CREATE TABLE IF NOT EXISTS feedback(
                         username TEXT, 
