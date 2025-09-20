@@ -3,11 +3,13 @@ import sqlite3
 import hashlib
 import streamlit.components.v1 as components
 import pandas as pd
+import plotly.express as px
 
 # ---------------------- DATABASE ----------------------
 conn = sqlite3.connect('users.db', check_same_thread=False)
 c = conn.cursor()
 c.execute('CREATE TABLE IF NOT EXISTS users(username TEXT, password TEXT)')
+c.execute('CREATE TABLE IF NOT EXISTS feedback(username TEXT, rating INTEGER, usability TEXT, comment TEXT, suggestions TEXT)')
 conn.commit()
 
 # ---------------------- UTILS -------------------------
@@ -22,17 +24,14 @@ def add_user(username, password):
     c.execute('INSERT INTO users(username, password) VALUES (?, ?)', (username, make_hash(password)))
     conn.commit()
 
-# ---------------------- PROFESSIONAL CSS ----------------------
+# ---------------------- STYLING ----------------------
 st.markdown("""
 <style>
-/* Background */
 body {
     background: linear-gradient(to bottom right, #0f172a, #1e293b);
     font-family: 'Segoe UI', sans-serif;
     color: #f1f5f9;
 }
-
-/* Buttons */
 .stButton>button {
     background: #0ea5e9;
     color: #fff;
@@ -47,8 +46,6 @@ body {
     background: #0284c7;
     transform: translateY(-2px);
 }
-
-/* Cards */
 .card {
     background: #1e293b;
     padding: 20px;
@@ -56,18 +53,12 @@ body {
     box-shadow: 0 8px 24px rgba(0,0,0,0.3);
     margin-bottom: 20px;
 }
-
-/* Headers */
 h1, h2, h3, h4 {
     color: #f1f5f9;
 }
-
-/* Text */
 .stText, p {
     color: #e2e8f0;
 }
-
-/* Sidebar Buttons */
 .css-1emrehy.edgvbvh3 button {
     width: 100% !important;
     min-width: 100% !important;
@@ -83,8 +74,6 @@ h1, h2, h3, h4 {
 .css-1emrehy.edgvbvh3 button:hover {
     background-color: #0284c7;
 }
-
-/* Iframe Styling */
 iframe {
     border-radius: 12px;
 }
@@ -95,11 +84,11 @@ iframe {
 if "user" not in st.session_state:
     st.session_state.user = None
 if "page" not in st.session_state:
-    st.session_state.page = "🏠 Home"
+    st.session_state.page = "Home"
 
 # ---------------------- LOGIN / SIGNUP ----------------------
 if st.session_state.user is None:
-    st.markdown("<div style='text-align:center; font-size:32px; font-weight:bold; color:#38bdf8; margin-bottom:20px'>Global Balance</div>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align:center; color:#38bdf8;'>Global Balance</h1>", unsafe_allow_html=True)
     tab1, tab2 = st.tabs(["🔐 Login", "📝 Sign Up"])
 
     with tab1:
@@ -109,7 +98,7 @@ if st.session_state.user is None:
             user = check_user(username, password)
             if user:
                 st.session_state.user = username
-                st.session_state.page = "🏠 Home"
+                st.session_state.page = "Home"
                 st.success("✅ Login successful")
             else:
                 st.error("❌ Invalid username or password")
@@ -124,67 +113,82 @@ if st.session_state.user is None:
             else:
                 st.error("⚠ Please enter valid details.")
 
-# ---------------------- MAIN APP ----------------------
+# ---------------------- DASHBOARD APP ----------------------
 else:
-    st.markdown("<div style='text-align:center; font-size:32px; font-weight:bold; color:#38bdf8; margin-bottom:20px'>Global Balance</div>", unsafe_allow_html=True)
-
     # --- Sidebar Navigation ---
-    st.sidebar.title("Navigation")
+    st.sidebar.title("🌐 Global Balance")
     nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🚪 Logout"]
     for item in nav_items:
-        if st.sidebar.button(item, key=item):
+        if st.sidebar.button(item):
             if item == "🚪 Logout":
                 st.session_state.user = None
-                st.session_state.page = "🏠 Home"
+                st.session_state.page = "Home"
                 st.success("🚪 You have been logged out.")
             else:
                 st.session_state.page = item
 
+    # --- Top Bar ---
+    st.markdown("""
+    <div style='background-color:#0f172a; padding:10px; color:#38bdf8; font-size:22px; font-weight:bold; text-align:center'>
+        Global Balance Dashboard
+    </div>
+    """, unsafe_allow_html=True)
+
     # --- Home Page ---
     if st.session_state.page == "🏠 Home":
-        st.header("🏠 Welcome Home")
-        st.write(f"Hello, **{st.session_state.user}** 👋")
-
-        # Overview Card
+        st.header(f"🏠 Welcome, {st.session_state.user} 👋")
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("🌐 Overview")
         st.markdown("""
-        **Global Balance** is a comprehensive platform to monitor and analyze global economic and financial data.  
-        Real-time dashboards, profile management, and feedback system in a professional, secure environment.
+        Global Balance lets you monitor global economic and financial data.
+        Interactive dashboards, profile management, and feedback all in one professional environment.
         """)
         st.markdown('</div>', unsafe_allow_html=True)
 
-        # Features Card
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("✨ Features")
         st.markdown("""
-        1. **Interactive Dashboards** 📊  
-        2. **Profile Management** 👤  
-        3. **Feedback Portal** 💬  
-        4. **Secure Login & Signup** 🔐  
-        5. **Guided Navigation & Tips** 📝
+        - Interactive Dashboards 📊  
+        - Profile Management 👤  
+        - Feedback Portal 💬  
+        - Secure Login & Signup 🔐  
+        - Quick Navigation Tips 📝
         """)
         st.markdown('</div>', unsafe_allow_html=True)
 
-        # Quick Tips Card
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("📌 Quick Tips")
         st.markdown("""
-        1. Use the sidebar to navigate between Home, Dashboard, Profile, and Feedback pages.  
-        2. Explore the **Dashboard** for interactive visual insights.  
-        3. Keep your profile updated for a personalized experience.  
-        4. Share feedback to help us enhance the platform.
+        Use sidebar to navigate. Explore dashboards for insights. Keep profile updated. Submit feedback for improvements.
         """)
         st.markdown('</div>', unsafe_allow_html=True)
 
     # --- Dashboard Page ---
     elif st.session_state.page == "📊 Dashboard":
         st.header("📊 Dashboard")
-        st.subheader("🌐 Dashboard Overview")
-        st.markdown("""
-        The dashboard provides an interactive view of **global economic and financial metrics**, including income inequality, GDP trends, and other key financial indicators.  
-        """)
 
+        # KPI Cards
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Total GDP", "44 Trillion", "+2.5%")
+        col2.metric("Total Population", "3.8 Billion", "+0.8%")
+        col3.metric("Countries Tracked", 195, "0")
+
+        # Charts
+        df = pd.DataFrame({
+            "Country": ["USA", "India", "China", "Germany", "UK"],
+            "GDP": [21, 2.9, 14, 4.2, 2.8],
+            "Population": [331, 1380, 1441, 83, 68]
+        })
+        st.subheader("GDP by Country")
+        fig = px.bar(df, x="Country", y="GDP", color="Country", text="GDP")
+        st.plotly_chart(fig, use_container_width=True)
+
+        st.subheader("Population Distribution")
+        fig2 = px.pie(df, names="Country", values="Population", color="Country")
+        st.plotly_chart(fig2, use_container_width=True)
+
+        # Embedded Power BI
+        st.subheader("🌐 Income Inequality Dashboard")
         dashboard_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"
         components.html(f"""
             <iframe title="Global Income Inequality Dashboard" width="100%" height="600" 
@@ -194,77 +198,45 @@ else:
     # --- Profile Page ---
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Edit Profile")
-        with st.container():
-            col1, col2 = st.columns([1, 3])
-            with col1:
-                st.image("https://via.placeholder.com/120", width=120)
-                st.text(st.session_state.user)
-            with col2:
-                with st.form("profile_form"):
-                    col_left, col_right = st.columns(2)
-                    with col_left:
-                        first_name = st.text_input("First Name", "Arthur")
-                        password = st.text_input("Password", "********", type="password")
-                        phone = st.text_input("Phone", "477-046-1827")
-                        nation = st.text_input("Nation", "Colombia")
-                        gender = st.selectbox("Gender", ["Male", "Female", "Other"], index=0)
-                        twitter = st.text_input("Twitter", "twitter.com/envato")
-                        facebook = st.text_input("Facebook", "facebook.com/envato")
-                    with col_right:
-                        last_name = st.text_input("Last Name", "Nancy")
-                        email = st.text_input("Email", "user@example.com")
-                        address = st.text_input("Address", "116 Jaskolski Stravenue Suite 883")
-                        dob = st.date_input("Date of Birth", min_value=pd.to_datetime("2000-01-01"), max_value=pd.to_datetime("2025-12-31"))
-                        language = st.selectbox("Language", ["English", "Spanish", "French"], index=0)
-                        linkedin = st.text_input("LinkedIn", "linkedin.com/envato")
-                        google = st.text_input("Google", "zachary Ruiz")
-                    slogan = st.text_input("Slogan", "Land acquisition Specialist")
-                    submitted = st.form_submit_button("💾 Save")
-                    if submitted:
-                        st.success("✅ Profile updated successfully!")
+        col1, col2 = st.columns([1,3])
+        with col1:
+            st.image("https://via.placeholder.com/120", width=120)
+            st.text(st.session_state.user)
+        with col2:
+            with st.form("profile_form"):
+                first_name = st.text_input("First Name", "Arthur")
+                last_name = st.text_input("Last Name", "Nancy")
+                email = st.text_input("Email", "user@example.com")
+                password = st.text_input("Password", "********", type="password")
+                submitted = st.form_submit_button("💾 Save")
+                if submitted:
+                    st.success("✅ Profile updated successfully!")
 
     # --- Feedback Page ---
     elif st.session_state.page == "💬 Feedback":
         st.header("💬 Feedback")
-        st.markdown("We value your feedback! Please share your thoughts to help us improve **Global Balance**.")
-
         with st.form("feedback_form"):
             col1, col2 = st.columns(2)
             with col1:
                 rating = st.slider("Rate your experience", 1, 5, 5)
-                usability = st.selectbox(
-                    "How easy was it to use the platform?", 
-                    ["Very Easy", "Easy", "Neutral", "Difficult", "Very Difficult"], 
-                    index=1
-                )
+                usability = st.selectbox("Ease of use", ["Very Easy", "Easy", "Neutral", "Difficult", "Very Difficult"])
             with col2:
-                comment = st.text_area("Your comments", placeholder="Write your feedback here...")
-                suggestions = st.text_area("Suggestions / Feature Requests", placeholder="Any ideas or features you want?")
-
+                comment = st.text_area("Your comments")
+                suggestions = st.text_area("Suggestions / Feature Requests")
             submitted = st.form_submit_button("Submit Feedback")
             if submitted:
-                c.execute("""
-                    CREATE TABLE IF NOT EXISTS feedback(
-                        username TEXT, 
-                        rating INTEGER, 
-                        usability TEXT, 
-                        comment TEXT, 
-                        suggestions TEXT
-                    )
-                """)
                 c.execute(
                     "INSERT INTO feedback(username, rating, usability, comment, suggestions) VALUES (?, ?, ?, ?, ?)",
                     (st.session_state.user, rating, usability, comment, suggestions)
                 )
                 conn.commit()
-                st.success("✅ Thank you! Your feedback has been submitted.")
+                st.success("✅ Feedback submitted!")
 
-        # Show previous feedback
         st.subheader("📋 Your Previous Feedback")
         c.execute("SELECT rating, usability, comment, suggestions FROM feedback WHERE username=?", (st.session_state.user,))
         rows = c.fetchall()
         if rows:
-            feedback_df = pd.DataFrame(rows, columns=["Rating", "Usability", "Comment", "Suggestions"])
-            st.dataframe(feedback_df)
+            df_feedback = pd.DataFrame(rows, columns=["Rating","Usability","Comment","Suggestions"])
+            st.dataframe(df_feedback)
         else:
             st.info("You haven't submitted any feedback yet.")
