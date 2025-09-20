@@ -3,14 +3,7 @@ import sqlite3
 import hashlib
 import streamlit.components.v1 as components
 import pandas as pd
-
-# ---------------------- SAFE PLOTLY IMPORT ----------------------
-try:
-    import plotly.express as px
-    PLOTLY_AVAILABLE = True
-except ModuleNotFoundError:
-    PLOTLY_AVAILABLE = False
-    st.warning("⚠️ Plotly is not installed. Charts will not be displayed. Install Plotly locally using `pip install plotly`.")
+import plotly.express as px
 
 # ---------------------- DATABASE ----------------------
 conn = sqlite3.connect('users.db', check_same_thread=False)
@@ -31,7 +24,7 @@ def add_user(username, password):
     c.execute('INSERT INTO users(username, password) VALUES (?, ?)', (username, make_hash(password)))
     conn.commit()
 
-# ---------------------- CSS STYLING ----------------------
+# ---------------------- STYLING ----------------------
 st.markdown("""
 <style>
 body {
@@ -141,7 +134,7 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
-    # ---------------------- HOME ----------------------
+    # --- Home Page ---
     if st.session_state.page == "🏠 Home":
         st.header(f"🏠 Welcome, {st.session_state.user} 👋")
         st.markdown('<div class="card">', unsafe_allow_html=True)
@@ -170,7 +163,7 @@ else:
         """)
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # ---------------------- DASHBOARD ----------------------
+    # --- Dashboard Page ---
     elif st.session_state.page == "📊 Dashboard":
         st.header("📊 Dashboard")
 
@@ -180,20 +173,19 @@ else:
         col2.metric("Total Population", "3.8 Billion", "+0.8%")
         col3.metric("Countries Tracked", 195, "0")
 
-        if PLOTLY_AVAILABLE:
-            df = pd.DataFrame({
-                "Country": ["USA", "India", "China", "Germany", "UK"],
-                "GDP": [21, 2.9, 14, 4.2, 2.8],
-                "Population": [331, 1380, 1441, 83, 68]
-            })
+        # Charts
+        df = pd.DataFrame({
+            "Country": ["USA", "India", "China", "Germany", "UK"],
+            "GDP": [21, 2.9, 14, 4.2, 2.8],
+            "Population": [331, 1380, 1441, 83, 68]
+        })
+        st.subheader("GDP by Country")
+        fig = px.bar(df, x="Country", y="GDP", color="Country", text="GDP")
+        st.plotly_chart(fig, use_container_width=True)
 
-            st.subheader("GDP by Country")
-            fig = px.bar(df, x="Country", y="GDP", color="Country", text="GDP")
-            st.plotly_chart(fig, use_container_width=True)
-
-            st.subheader("Population Distribution")
-            fig2 = px.pie(df, names="Country", values="Population", color="Country")
-            st.plotly_chart(fig2, use_container_width=True)
+        st.subheader("Population Distribution")
+        fig2 = px.pie(df, names="Country", values="Population", color="Country")
+        st.plotly_chart(fig2, use_container_width=True)
 
         # Embedded Power BI
         st.subheader("🌐 Income Inequality Dashboard")
@@ -203,7 +195,7 @@ else:
             src="{dashboard_url}" frameborder="0" allowFullScreen="true"></iframe>
         """, height=620)
 
-    # ---------------------- PROFILE ----------------------
+    # --- Profile Page ---
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Edit Profile")
         col1, col2 = st.columns([1,3])
@@ -220,7 +212,7 @@ else:
                 if submitted:
                     st.success("✅ Profile updated successfully!")
 
-    # ---------------------- FEEDBACK ----------------------
+    # --- Feedback Page ---
     elif st.session_state.page == "💬 Feedback":
         st.header("💬 Feedback")
         with st.form("feedback_form"):
@@ -231,4 +223,20 @@ else:
             with col2:
                 comment = st.text_area("Your comments")
                 suggestions = st.text_area("Suggestions / Feature Requests")
-            submitted = st.form_submit_button("Submit Feedback
+            submitted = st.form_submit_button("Submit Feedback")
+            if submitted:
+                c.execute(
+                    "INSERT INTO feedback(username, rating, usability, comment, suggestions) VALUES (?, ?, ?, ?, ?)",
+                    (st.session_state.user, rating, usability, comment, suggestions)
+                )
+                conn.commit()
+                st.success("✅ Feedback submitted!")
+
+        st.subheader("📋 Your Previous Feedback")
+        c.execute("SELECT rating, usability, comment, suggestions FROM feedback WHERE username=?", (st.session_state.user,))
+        rows = c.fetchall()
+        if rows:
+            df_feedback = pd.DataFrame(rows, columns=["Rating","Usability","Comment","Suggestions"])
+            st.dataframe(df_feedback)
+        else:
+            st.info("You haven't submitted any feedback yet.")
