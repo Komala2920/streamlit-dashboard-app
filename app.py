@@ -169,9 +169,27 @@ else:
 
     elif st.session_state.page == "📊 Dashboard":
         st.header("📊 Dashboard")
+
+        # --- Dashboard Overview ---
+        st.subheader("🌐 Dashboard Overview")
+        st.markdown("""
+        The dashboard provides an interactive view of **global economic and financial metrics**, including income inequality, GDP trends, and other key financial indicators.  
+        It allows you to explore patterns, compare countries, and analyze trends over time.
+        """)
+
+        # --- How to Use Dashboard ---
+        st.subheader("📝 How to Use")
+        st.markdown("""
+        - Use filters and slicers in the dashboard to customize your view by region, year, or indicators.  
+        - Hover over charts and maps to see detailed data points.  
+        - Export visuals for reports or presentations.  
+        - Analyze trends to gain insights into global financial patterns.
+        """)
+
+        # --- Dashboard Embed ---
         dashboard_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"
         components.html(f"""
-            <iframe title="global income inequality dashboard2" width="100%" height="600" 
+            <iframe title="Global Income Inequality Dashboard" width="100%" height="600" 
             src="{dashboard_url}" frameborder="0" allowFullScreen="true"></iframe>
         """, height=620)
 
@@ -186,4 +204,3 @@ else:
         feedback = st.text_area("Write your feedback:")
         if st.button("Submit Feedback"):
             st.success("✅ Thanks for your feedback!")
-
