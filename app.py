@@ -37,8 +37,6 @@ st.markdown("""
         border: none;
         font-weight: 600;
         transition: all 0.3s ease;
-        width: 100%;
-        margin-bottom: 5px;
     }
     .stButton button:hover {
         background: #0284c7;
@@ -53,6 +51,13 @@ st.markdown("""
     }
     iframe {
         border-radius: 12px;
+    }
+    /* Sidebar buttons same size */
+    .css-1emrehy.edgvbvh3 button {
+        width: 100% !important;
+        height: 50px !important;
+        margin-bottom: 10px;
+        font-size: 16px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -76,7 +81,7 @@ if st.session_state.user is None:
             if user:
                 st.session_state.user = username
                 st.success("✅ Login successful")
-                st.rerun()
+                st.experimental_rerun()
             else:
                 st.error("❌ Invalid username or password")
 
@@ -103,7 +108,7 @@ else:
             if item == "🚪 Logout":
                 st.session_state.user = None
                 st.success("🚪 You have been logged out.")
-                st.rerun()
+                st.experimental_rerun()
 
     # --- Page Content ---
     if st.session_state.page == "🏠 Home":
