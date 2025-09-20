@@ -29,7 +29,7 @@ st.markdown("""
         font-family: 'Segoe UI', sans-serif;
         color: white;
     }
-    .stButton>button {
+    .stButton button {
         background: #0ea5e9;
         color: white;
         border-radius: 8px;
@@ -38,43 +38,26 @@ st.markdown("""
         font-weight: 600;
         transition: all 0.3s ease;
     }
-    .stButton>button:hover {
+    .stButton button:hover {
         background: #0284c7;
-        transform: scale(1.05);
+        transform: scale(1.02);
     }
     .logo {
         font-size: 28px;
         font-weight: bold;
         color: #38bdf8;
         margin-bottom: 15px;
-    }
-    .nav-container {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin-bottom: 25px;
-    }
-    .nav-button {
-        background: #0ea5e9;
-        color: white;
-        border-radius: 8px;
-        padding: 0.6em 1.2em;
         text-align: center;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        min-width: 130px;
-        max-width: 130px;
-    }
-    .nav-button:hover {
-        background: #0284c7;
-        transform: scale(1.05);
-    }
-    .active {
-        background: #0284c7 !important;
     }
     iframe {
         border-radius: 12px;
+    }
+    /* Sidebar buttons same size */
+    .css-1emrehy.edgvbvh3 button {
+        width: 100% !important;
+        height: 50px !important;
+        margin-bottom: 10px;
+        font-size: 16px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -98,7 +81,7 @@ if st.session_state.user is None:
             if user:
                 st.session_state.user = username
                 st.success("✅ Login successful")
-                st.rerun()
+                st.experimental_rerun()
             else:
                 st.error("❌ Invalid username or password")
 
@@ -116,19 +99,16 @@ if st.session_state.user is None:
 else:
     st.markdown("<div class='logo'>Global Balance</div>", unsafe_allow_html=True)
 
-    # --- Top Navigation (custom buttons same size) ---
+    # --- Sidebar Navigation (Vertical) ---
+    st.sidebar.title("Navigation")
     nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🚪 Logout"]
-    st.markdown("<div class='nav-container'>", unsafe_allow_html=True)
-    cols = st.columns(len(nav_items))
-    for i, item in enumerate(nav_items):
-        btn_class = "nav-button active" if st.session_state.page == item else "nav-button"
-        if cols[i].button(item, key=f"nav_{item}"):
+    for item in nav_items:
+        if st.sidebar.button(item, key=item):
             st.session_state.page = item
             if item == "🚪 Logout":
                 st.session_state.user = None
                 st.success("🚪 You have been logged out.")
-                st.rerun()
-    st.markdown("</div>", unsafe_allow_html=True)
+                st.experimental_rerun()
 
     # --- Page Content ---
     if st.session_state.page == "🏠 Home":
