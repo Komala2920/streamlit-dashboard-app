@@ -3,7 +3,6 @@ import sqlite3
 import hashlib
 import streamlit.components.v1 as components
 import pandas as pd
-import plotly.express as px
 
 # ---------------------- DATABASE ----------------------
 conn = sqlite3.connect('users.db', check_same_thread=False)
@@ -24,7 +23,7 @@ def add_user(username, password):
     c.execute('INSERT INTO users(username, password) VALUES (?, ?)', (username, make_hash(password)))
     conn.commit()
 
-# ---------------------- STYLING ----------------------
+# ---------------------- CSS STYLING ----------------------
 st.markdown("""
 <style>
 body {
@@ -134,7 +133,7 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
-    # --- Home Page ---
+    # ---------------------- HOME ----------------------
     if st.session_state.page == "🏠 Home":
         st.header(f"🏠 Welcome, {st.session_state.user} 👋")
         st.markdown('<div class="card">', unsafe_allow_html=True)
@@ -163,36 +162,35 @@ else:
         """)
         st.markdown('</div>', unsafe_allow_html=True)
 
-# --- Dashboard Page ---
-elif st.session_state.page == "📊 Dashboard":
-    st.header("📊 Dashboard")
+    # ---------------------- DASHBOARD ----------------------
+    elif st.session_state.page == "📊 Dashboard":
+        st.header("📊 Dashboard")
 
-    # KPI Cards
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Total GDP", "44 Trillion", "+2.5%")
-    col2.metric("Total Population", "3.8 Billion", "+0.8%")
-    col3.metric("Countries Tracked", 195, "0")
+        # KPI Cards
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Total GDP", "44 Trillion", "+2.5%")
+        col2.metric("Total Population", "3.8 Billion", "+0.8%")
+        col3.metric("Countries Tracked", 195, "0")
 
-    # Charts
-    try:
-        import plotly.express as px
+        # Charts with Plotly fallback
+        try:
+            import plotly.express as px
+            df = pd.DataFrame({
+                "Country": ["USA", "India", "China", "Germany", "UK"],
+                "GDP": [21, 2.9, 14, 4.2, 2.8],
+                "Population": [331, 1380, 1441, 83, 68]
+            })
 
-        df = pd.DataFrame({
-            "Country": ["USA", "India", "China", "Germany", "UK"],
-            "GDP": [21, 2.9, 14, 4.2, 2.8],
-            "Population": [331, 1380, 1441, 83, 68]
-        })
+            st.subheader("GDP by Country")
+            fig = px.bar(df, x="Country", y="GDP", color="Country", text="GDP")
+            st.plotly_chart(fig, use_container_width=True)
 
-        st.subheader("GDP by Country")
-        fig = px.bar(df, x="Country", y="GDP", color="Country", text="GDP")
-        st.plotly_chart(fig, use_container_width=True)
+            st.subheader("Population Distribution")
+            fig2 = px.pie(df, names="Country", values="Population", color="Country")
+            st.plotly_chart(fig2, use_container_width=True)
 
-        st.subheader("Population Distribution")
-        fig2 = px.pie(df, names="Country", values="Population", color="Country")
-        st.plotly_chart(fig2, use_container_width=True)
-
-    except ModuleNotFoundError:
-        st.warning("⚠️ Plotly is not installed. Install Plotly to see interactive charts.")
+        except ModuleNotFoundError:
+            st.warning("⚠️ Plotly is not installed. Install Plotly to see interactive charts.")
 
         # Embedded Power BI
         st.subheader("🌐 Income Inequality Dashboard")
@@ -202,7 +200,7 @@ elif st.session_state.page == "📊 Dashboard":
             src="{dashboard_url}" frameborder="0" allowFullScreen="true"></iframe>
         """, height=620)
 
-    # --- Profile Page ---
+    # ---------------------- PROFILE ----------------------
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Edit Profile")
         col1, col2 = st.columns([1,3])
@@ -219,7 +217,7 @@ elif st.session_state.page == "📊 Dashboard":
                 if submitted:
                     st.success("✅ Profile updated successfully!")
 
-    # --- Feedback Page ---
+    # ---------------------- FEEDBACK ----------------------
     elif st.session_state.page == "💬 Feedback":
         st.header("💬 Feedback")
         with st.form("feedback_form"):
@@ -247,4 +245,3 @@ elif st.session_state.page == "📊 Dashboard":
             st.dataframe(df_feedback)
         else:
             st.info("You haven't submitted any feedback yet.")
-
