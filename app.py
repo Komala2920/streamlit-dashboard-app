@@ -29,36 +29,27 @@ st.markdown("""
         font-family: 'Segoe UI', sans-serif;
         color: white;
     }
+    .stButton button {
+        background: #0ea5e9;
+        color: white;
+        border-radius: 8px;
+        padding: 0.6em 1.2em;
+        border: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    .stButton button:hover {
+        background: #0284c7;
+        transform: scale(1.02);
+    }
     .logo {
         font-size: 28px;
         font-weight: bold;
         color: #38bdf8;
         margin-bottom: 15px;
         text-align: center;
-    }
-    .sidebar-button {
-        display: block;
-        background: #0ea5e9;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 0.8em 1em;
-        width: 100%;
-        text-align: left;
-        margin-bottom: 10px;
-        font-weight: 600;
-        font-size: 16px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-    }
-    .sidebar-button:hover {
-        background: #0284c7;
-    }
-    .sidebar-button.active {
-        background: #0284c7;
-        color: #ffffff;
-        font-weight: 700;
     }
     iframe {
         border-radius: 12px;
@@ -103,18 +94,16 @@ if st.session_state.user is None:
 else:
     st.markdown("<div class='logo'>Global Balance</div>", unsafe_allow_html=True)
 
-    # --- Sidebar Navigation (Vertical, Same Size, Active Highlight) ---
+    # --- Sidebar Navigation (Vertical) ---
+    st.sidebar.title("Navigation")
     nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🚪 Logout"]
-
     for item in nav_items:
-        active_class = "active" if st.session_state.page == item else ""
         if st.sidebar.button(item, key=item):
             st.session_state.page = item
             if item == "🚪 Logout":
                 st.session_state.user = None
                 st.success("🚪 You have been logged out.")
                 st.rerun()
-        st.sidebar.markdown(f"<div class='sidebar-button {active_class}'>{item}</div>", unsafe_allow_html=True)
 
     # --- Page Content ---
     if st.session_state.page == "🏠 Home":
