@@ -263,3 +263,4 @@ else:
             st.write(f"- ⭐ Rating: {rating}/5")
             st.write(f"- 📂 Category: {category}")
             st.write(f"- 📝 Comment: {feedback_text if feedback_text else 'No comment'}")
+
