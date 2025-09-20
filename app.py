@@ -20,7 +20,7 @@ def add_user(username, password):
     c.execute('INSERT INTO users(username, password) VALUES (?, ?)', (username, make_hash(password)))
     conn.commit()
 
-# ---------------------- CSS (Theme like your pic) ----------------------
+# ---------------------- CSS ----------------------
 st.markdown("""
     <style>
     body {
@@ -78,7 +78,7 @@ if "user" not in st.session_state:
 
 # ---------------------- PAGES ----------------------
 def login_page():
-    st.markdown("<div class='logo'>ArBitrage</div>", unsafe_allow_html=True)
+    st.markdown("<div class='logo'>Global Balance</div>", unsafe_allow_html=True)
     st.subheader("🔐 Sign In")
     username = st.text_input("Login / Email")
     password = st.text_input("Password", type="password")
@@ -94,7 +94,7 @@ def login_page():
         st.session_state.page = "signup"
 
 def signup_page():
-    st.markdown("<div class='logo'>ArBitrage</div>", unsafe_allow_html=True)
+    st.markdown("<div class='logo'>Global Balance</div>", unsafe_allow_html=True)
     st.subheader("📝 Create Account")
     username = st.text_input("Choose Username")
     password = st.text_input("Choose Password", type="password")
@@ -123,21 +123,21 @@ def nav_bar():
     )
 
 def home_page():
-    st.markdown("<div class='logo'>ArBitrage</div>", unsafe_allow_html=True)
+    st.markdown("<div class='logo'>Global Balance</div>", unsafe_allow_html=True)
     nav_bar()
     st.header("🏠 Welcome to Dashboard")
     st.write(f"Hello, **{st.session_state.user}** 👋")
     st.success("This is your trading dashboard style UI.")
 
 def dashboard_page():
-    st.markdown("<div class='logo'>ArBitrage</div>", unsafe_allow_html=True)
+    st.markdown("<div class='logo'>Global Balance</div>", unsafe_allow_html=True)
     nav_bar()
     st.header("📊 Dashboard")
     st.write("Your stats / graphs will be here.")
     st.line_chart({"Performance": [10, 20, 15, 30, 25, 40]})
 
 def profile_page():
-    st.markdown("<div class='logo'>ArBitrage</div>", unsafe_allow_html=True)
+    st.markdown("<div class='logo'>Global Balance</div>", unsafe_allow_html=True)
     nav_bar()
     st.header("👤 Profile")
     st.write(f"Username: **{st.session_state.user}**")
@@ -145,7 +145,7 @@ def profile_page():
     st.info("You can extend this page with more details.")
 
 def feedback_page():
-    st.markdown("<div class='logo'>ArBitrage</div>", unsafe_allow_html=True)
+    st.markdown("<div class='logo'>Global Balance</div>", unsafe_allow_html=True)
     nav_bar()
     st.header("💬 Feedback")
     feedback = st.text_area("Write your feedback:")
