@@ -19,15 +19,7 @@ def auth_ui():
     st.markdown(
         """
         <style>
-        .login-box {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            max-width: 400px;
-            margin: auto;
-            text-align: center;
-        }
+        
         .login-title {
             font-size: 24px;
             font-weight: bold;
@@ -123,3 +115,4 @@ if not st.session_state.logged_in:
     auth_ui()
 else:
     dashboard_ui()
+
