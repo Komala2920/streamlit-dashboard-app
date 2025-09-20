@@ -52,12 +52,15 @@ st.markdown("""
     iframe {
         border-radius: 12px;
     }
-    /* Sidebar buttons same size */
+    /* Sidebar buttons all same size */
     .css-1emrehy.edgvbvh3 button {
         width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
         height: 50px !important;
         margin-bottom: 10px;
         font-size: 16px;
+        display: block;
     }
     </style>
 """, unsafe_allow_html=True)
