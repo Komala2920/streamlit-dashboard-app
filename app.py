@@ -13,7 +13,7 @@ def set_background(base64_str):
         f"""
         <style>
         .stApp {{
-            background-image: url("C:\Users\91995\Downloads\background.jpeg.jpeg");
+            background-image: url(r"C:\Users\91995\Downloads\background.jpeg.jpeg");
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
@@ -136,6 +136,7 @@ if not st.session_state.logged_in:
     auth_ui()
 else:
     dashboard_ui()
+
 
 
 
