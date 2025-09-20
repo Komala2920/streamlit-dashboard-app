@@ -29,7 +29,7 @@ def set_background(base64_str):
             cursor: pointer;
         }}
         </style>
-        """,
+        """
         unsafe_allow_html=True
     )
 
@@ -136,6 +136,7 @@ if not st.session_state.logged_in:
     auth_ui()
 else:
     dashboard_ui()
+
 
 
 
