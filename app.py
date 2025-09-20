@@ -1,5 +1,45 @@
 import streamlit as st
+import base64
 
+# -------------------------
+# BACKGROUND IMAGE SETUP
+# -------------------------
+def get_base64_image(image_path):
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
+
+def set_background(base64_str):
+    st.markdown(
+        f"""
+        <style>
+        .stApp {{
+            background-image: url("data:image/jpeg;base64,{base64_str}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }}
+        .login-title {{
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #20c997;
+        }}
+        .switch-link {{
+            color: #007bff;
+            cursor: pointer;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+# Load and apply background
+bg_image = get_base64_image("background.jpeg")
+set_background(bg_image)
+
+# -------------------------
+# PAGE CONFIG
+# -------------------------
 st.set_page_config(page_title="Animated Login System", layout="wide")
 
 # -------------------------
@@ -10,31 +50,12 @@ if "logged_in" not in st.session_state:
 if "page" not in st.session_state:
     st.session_state.page = "Home"
 if "auth_mode" not in st.session_state:
-    st.session_state.auth_mode = "Login"  # or "Sign Up"
+    st.session_state.auth_mode = "Login"
 
 # -------------------------
 # LOGIN / SIGN UP UI
 # -------------------------
 def auth_ui():
-    st.markdown(
-        """
-        <style>
-        
-        .login-title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 1rem;
-            color: #20c997;
-        }
-        .switch-link {
-            color: #007bff;
-            cursor: pointer;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-
     st.markdown('<div class="login-box">', unsafe_allow_html=True)
 
     if st.session_state.auth_mode == "Login":
@@ -54,7 +75,7 @@ def auth_ui():
             st.session_state.auth_mode = "Sign Up"
             st.rerun()
 
-    else:  # Sign Up mode
+    else:
         st.markdown('<div class="login-title">📝 Sign Up</div>', unsafe_allow_html=True)
         new_email = st.text_input("Email")
         new_password = st.text_input("Password", type="password")
@@ -115,4 +136,3 @@ if not st.session_state.logged_in:
     auth_ui()
 else:
     dashboard_ui()
-
