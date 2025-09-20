@@ -23,16 +23,8 @@ def set_background(base64_str):
             background-repeat: no-repeat;
             background-attachment: fixed;
         }}
-        .login-box {{
-            background: rgba(255, 255, 255, 0.85);
-            padding: 2rem;
-            border-radius: 12px;
-            max-width: 400px;
-            margin: 5% auto;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        }}
         .login-title {{
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
             margin-bottom: 1rem;
             text-align: center;
@@ -65,8 +57,6 @@ if "auth_mode" not in st.session_state:
 # LOGIN / SIGN UP UI
 # -------------------------
 def auth_ui():
-    st.markdown('<div class="login-box">', unsafe_allow_html=True)
-
     if st.session_state.auth_mode == "Login":
         st.markdown('<div class="login-title">🔐 Sign In</div>', unsafe_allow_html=True)
         email = st.text_input("Email")
@@ -104,8 +94,6 @@ def auth_ui():
         if st.button("Already have an account? Login"):
             st.session_state.auth_mode = "Login"
             st.rerun()
-
-    st.markdown('</div>', unsafe_allow_html=True)
 
 # -------------------------
 # DASHBOARD UI
