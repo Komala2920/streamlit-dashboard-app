@@ -52,15 +52,22 @@ st.markdown("""
     iframe {
         border-radius: 12px;
     }
-    /* Sidebar buttons all same size */
-    .css-1emrehy.edgvbvh3 button {
-        width: 100% !important;
-        min-width: 100% !important;
-        max-width: 100% !important;
-        height: 50px !important;
-        margin-bottom: 10px;
-        font-size: 16px;
-        display: block;
+
+    /* ---------------- Sidebar Navigation Buttons ---------------- */
+    .sidebar .stButton>button {
+        width: 200px;   /* Fixed width */
+        height: 50px;   /* Fixed height */
+        background-color: #0ea5e9;
+        color: white;
+        font-weight: 600;
+        border-radius: 10px;
+        border: none;
+        margin: 5px 0;
+        transition: all 0.3s ease;
+    }
+    .sidebar .stButton>button:hover {
+        background-color: #0284c7;
+        transform: scale(1.05);
     }
     </style>
 """, unsafe_allow_html=True)
