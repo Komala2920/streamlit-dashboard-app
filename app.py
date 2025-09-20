@@ -29,31 +29,27 @@ st.markdown("""
         font-family: 'Segoe UI', sans-serif;
         color: white;
     }
-    .stButton>button {
+    .stButton button {
         background: #0ea5e9;
         color: white;
         border-radius: 8px;
+        padding: 0.6em 1.2em;
         border: none;
         font-weight: 600;
         transition: all 0.3s ease;
-        width: 150px;     /* 🔹 All buttons same width */
-        height: 45px;     /* 🔹 All buttons same height */
+        width: 100%;
+        margin-bottom: 5px;
     }
-    .stButton>button:hover {
+    .stButton button:hover {
         background: #0284c7;
-        transform: scale(1.05);
+        transform: scale(1.02);
     }
     .logo {
         font-size: 28px;
         font-weight: bold;
         color: #38bdf8;
         margin-bottom: 15px;
-    }
-    .nav-container {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin-bottom: 25px;
+        text-align: center;
     }
     iframe {
         border-radius: 12px;
@@ -98,17 +94,16 @@ if st.session_state.user is None:
 else:
     st.markdown("<div class='logo'>Global Balance</div>", unsafe_allow_html=True)
 
-    # --- Top Navigation (equal-size buttons) ---
+    # --- Sidebar Navigation (Vertical) ---
+    st.sidebar.title("Navigation")
     nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🚪 Logout"]
-    st.markdown("<div class='nav-container'>", unsafe_allow_html=True)
     for item in nav_items:
-        if st.button(item, key=f"nav_{item}"):
+        if st.sidebar.button(item, key=item):
             st.session_state.page = item
             if item == "🚪 Logout":
                 st.session_state.user = None
                 st.success("🚪 You have been logged out.")
                 st.rerun()
-    st.markdown("</div>", unsafe_allow_html=True)
 
     # --- Page Content ---
     if st.session_state.page == "🏠 Home":
