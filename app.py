@@ -129,8 +129,7 @@ else:
     elif st.session_state.page == "📊 Dashboard":
         st.header("📊 Dashboard")
 
-        # 👉 Replace with your actual dashboard link
-        dashboard_url = "https://app.powerbi.com/groups/me/reports/4d41c1bc-17bb-491e-8da8-861aaede731f/24434bd2ed4071702132?redirectedFromSignup=1&experience=power-bi"
+<iframe title="global income inequality dashboard2" width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9" frameborder="0" allowFullScreen="true"></iframe>
 
         st.markdown(
             f"""
@@ -150,3 +149,4 @@ else:
         feedback = st.text_area("Write your feedback:")
         if st.button("Submit Feedback"):
             st.success("✅ Thanks for your feedback!")
+
