@@ -28,7 +28,7 @@ def set_background(base64_str):
             font-weight: bold;
             margin-bottom: 1rem;
             text-align: center;
-            color: #20c997;
+            color: #003366; /* Dark Blue */
         }}
         .switch-link {{
             color: #007bff;
