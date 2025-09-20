@@ -166,9 +166,6 @@ else:
         5. Highlights give you quick access to key features.
         """)
 
-        # --- Highlights Section ---
-        st.subheader("🌟 Highlights")
-        st.info("Your personalized dashboard is just a click away on the 📊 Dashboard page!")
 
     elif st.session_state.page == "📊 Dashboard":
         st.header("📊 Dashboard")
@@ -189,3 +186,4 @@ else:
         feedback = st.text_area("Write your feedback:")
         if st.button("Submit Feedback"):
             st.success("✅ Thanks for your feedback!")
+
