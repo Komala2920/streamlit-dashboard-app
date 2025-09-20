@@ -5,7 +5,7 @@ import base64
 # BACKGROUND IMAGE SETUP
 # -------------------------
 def get_base64_image(image_path):
-    with open(image_path, "background.jpeg") as img_file:
+    with open(image_path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode()
 
 def set_background(base64_str):
@@ -136,4 +136,5 @@ if not st.session_state.logged_in:
     auth_ui()
 else:
     dashboard_ui()
+
 
