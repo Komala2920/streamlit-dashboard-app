@@ -238,25 +238,28 @@ else:
                     st.success("✅ Profile updated successfully!")
                     
     elif st.session_state.page == "💬 Feedback":
-        st.header("💬 Feedback")
-        feedback = st.text_area("Write your feedback:")
-        if st.button("Submit Feedback"):
-           st.success("✅ Thanks for your feedback!")
-                    
+        st.header("💬 Share Your Feedback")
 
+        st.markdown("We value your feedback! Please rate your experience and leave a comment to help us improve 🚀")
 
+    with st.form("feedback_form"):
+        # Feedback Rating
+        rating = st.slider("⭐ Rate your experience:", 1, 5, 3)
 
+        # Feedback Type
+        category = st.selectbox(
+            "📂 Feedback Type:",
+            ["Bug Report", "Feature Request", "General Feedback"]
+        )
 
+        # Feedback Message
+        feedback_text = st.text_area("📝 Your Feedback:")
 
+        submitted = st.form_submit_button("📨 Submit Feedback")
 
-
-
-
-
-
-
-
-
-
-
-
+        if submitted:
+            st.success("✅ Thanks for your feedback! We’ll review it shortly.")
+            st.write("**Your Response:**")
+            st.write(f"- ⭐ Rating: {rating}/5")
+            st.write(f"- 📂 Category: {category}")
+            st.write(f"- 📝 Comment: {feedback_text if feedback_text else 'No comment'}")
