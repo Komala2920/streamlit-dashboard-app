@@ -4,7 +4,7 @@ import hashlib
 import streamlit.components.v1 as components
 import pandas as pd
 import random
-from streamlit_lottie import st_lottie
+import streamlit.components.v1 as components
 import requests
 
 # ---------------------- DATABASE ----------------------
@@ -39,16 +39,13 @@ def send_otp(email, otp):
     return True
 
 # ---------------------- LOTTIE HELPER ----------------------
-def load_lottie(url: str):
-    r = requests.get(url)
-    if r.status_code != 200:
-        return None
-    return r.json()
-
-# Lottie Animations
-lottie_home = load_lottie("https://assets2.lottiefiles.com/packages/lf20_jcikwtux.json")
-lottie_dashboard = load_lottie("https://assets9.lottiefiles.com/packages/lf20_hdy0htc1.json")
-lottie_profile = load_lottie("https://assets3.lottiefiles.com/packages/lf20_iwmd6pyr.json")
+def st_lottie_url(url: str, height: int = 300, key: str = None):
+    lottie_html = f"""
+    <lottie-player src="{url}"  background="transparent"  speed="1"
+                   style="width:100%; height:{height}px;" loop autoplay></lottie-player>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    """
+    components.html(lottie_html, height=height + 50)
 
 # ---------------------- GLOBAL CSS ----------------------
 st.markdown("""
@@ -220,8 +217,7 @@ elif st.session_state.user is not None:
         st.write(f"Hello, {st.session_state.user} 👋")
 
         # --- Lottie Animation ---
-        lottie_home = load_lottie("https://assets2.lottiefiles.com/packages/lf20_jcikwtux.json")
-        st_lottie(lottie_home, height=200, key="home_animation")
+        st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_jcikwtux.json", height=200)
 
         # Overview Card
         st.markdown('<div class="card">', unsafe_allow_html=True)
@@ -262,8 +258,7 @@ elif st.session_state.user is not None:
     elif st.session_state.page == "📊 Dashboard":
         st.header("📊 Global Economic Dashboard")
          # --- Lottie Animation ---
-        lottie_dashboard = load_lottie("https://assets9.lottiefiles.com/packages/lf20_hdy0htc1.json")
-        st_lottie(lottie_dashboard, height=200, key="dashboard_animation")
+        st_lottie_url("https://assets9.lottiefiles.com/packages/lf20_hdy0htc1.json", height=200)
 
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("🌍 Real-Time Insights")
@@ -306,8 +301,7 @@ elif st.session_state.user is not None:
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Edit Profile")
          # --- Lottie Animation ---
-        lottie_profile = load_lottie("https://assets3.lottiefiles.com/packages/lf20_iwmd6pyr.json")
-        st_lottie(lottie_profile, height=200, key="profile_animation")
+        st_lottie_url("https://assets3.lottiefiles.com/packages/lf20_iwmd6pyr.json", height=200)
         
         # Profile Card
         st.markdown('<div class="card">', unsafe_allow_html=True)
@@ -347,9 +341,8 @@ elif st.session_state.user is not None:
     # --- Feedback Page ---
     elif st.session_state.page == "💬 Feedback":
         st.header("💬 Feedback")
-        lottie_feedback = load_lottie("https://assets2.lottiefiles.com/packages/lf20_qp1q7mct.json")
-        st_lottie(lottie_feedback, height=200, key="feedback_animation")
-        
+        st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_qp1q7mct.json", height=200)
+
         with st.form("feedback_form"):
             rating = st.slider("Rate your experience", 1, 5, 5)
             usability = st.selectbox("How easy was it to use the platform?", 
@@ -383,6 +376,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
