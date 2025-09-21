@@ -217,7 +217,7 @@ elif st.session_state.user is not None:
         st.write(f"Hello, {st.session_state.user} 👋")
 
         # --- Lottie Animation ---
-        st_lottie_url("https://assets3.lottiefiles.com/packages/lf20_nh0k5h0k.json", height=200)
+        st_lottie_url("https://assets4.lottiefiles.com/packages/lf20_yc39s7z9.json", height=200)
 
         # Overview Card
         st.markdown('<div class="card">', unsafe_allow_html=True)
@@ -375,6 +375,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
