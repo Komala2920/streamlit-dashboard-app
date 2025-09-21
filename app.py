@@ -217,12 +217,12 @@ elif st.session_state.user is not None:
     nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🤖 Chatbot", "🚪 Logout"]
     for item in nav_items:
         if st.sidebar.button(item, key=item):
-           if item == "🚪 Logout":
-              st.session_state.user = None
-              st.session_state.page = "🏠 Home"
-              st.success("🚪 You have been logged out.")
-          else:
-              st.session_state.page = item
+            if item == "🚪 Logout":
+               st.session_state.user = None
+               st.session_state.page = "🏠 Home"
+               st.success("🚪 You have been logged out.")
+           else:
+               st.session_state.page = item
 
 
     # --- Home Page ---
@@ -439,6 +439,7 @@ elif st.session_state.user is not None:
             st.rerun()
 
        
+
 
 
 
