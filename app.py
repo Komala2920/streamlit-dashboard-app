@@ -449,14 +449,14 @@ elif st.session_state.user is not None:
         st.write("Check out our latest vlogs and tutorials!")
 
     # Example 1: YouTube embedded video
-    vlog_url1 = "https://www.youtube.com/embed/dQw4w9WgXcQ"  # Replace with your own vlog link
+    vlog_url1 = "https://www.youtube.com/watch?v=i3AR0gt9SHA"  # Replace with your own vlog link
     st.markdown(f"""
         <iframe width="100%" height="400" src="{vlog_url1}" 
         title="Vlog Video 1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     """, unsafe_allow_html=True)
 
     # Example 2: Another video
-    vlog_url2 = "https://www.youtube.com/embed/3JZ_D3ELwOQ"  # Replace
+    vlog_url2 = "https://www.youtube.com/watch?v=J1g_NbRfIX4&t=101s"  # Replace
     st.markdown(f"""
         <iframe width="100%" height="400" src="{vlog_url2}" 
         title="Vlog Video 2" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
