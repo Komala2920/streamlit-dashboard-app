@@ -395,7 +395,7 @@ elif st.session_state.user is not None:
         st.header("🤖 Chatbot")
 
         # Lottie Animation: Man and Robot
-        st_lottie_url("https://assets10.lottiefiles.com/packages/lf20_QnbODCGAFt.json", height=250)
+       st_lottie_url("https://assets10.lottiefiles.com/packages/lf20_QnbODCGAFt.json", height=250)
        
         # Initialize chat history if not exists
         if "chat_history" not in st.session_state:
