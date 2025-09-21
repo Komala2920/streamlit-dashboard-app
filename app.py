@@ -6,9 +6,10 @@ import pandas as pd
 import random
 import streamlit.components.v1 as components
 import requests
-# Optional: OpenAI for Chatbot
+import os
 import openai
-openai.api_key = "YOUR_OPENAI_API_KEY"
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
 
 # ---------------------- DATABASE ----------------------
 conn = sqlite3.connect('users.db', check_same_thread=False)
@@ -402,6 +403,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
