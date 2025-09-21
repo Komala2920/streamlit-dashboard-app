@@ -177,20 +177,21 @@ if st.session_state.user is None and st.session_state.page not in ["forgot_passw
     # --- Lottie Animation: Person Logging In ---
     st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_ta8z3psv.json", height=200)
 
-        username = st.text_input("Username", key="login_user")
-        password = st.text_input("Password", type="password", key="login_pass")
-        if st.button("Sign In"):
-            user = check_user(username, password)
-            if user:
-                st.session_state.user = username
-                st.session_state.page = "🏠 Home"
-                st.success("✅ Login successful")
-            else:
-                st.error("❌ Invalid username or password")
+    username = st.text_input("Username", key="login_user")
+    password = st.text_input("Password", type="password", key="login_pass")
+    if st.button("Sign In"):
+        user = check_user(username, password)
+        if user:
+            st.session_state.user = username
+            st.session_state.page = "🏠 Home"
+            st.success("✅ Login successful")
+        else:
+            st.error("❌ Invalid username or password")
 
         if st.button("Forgot Password?"):
             st.session_state.page = "forgot_password"
             st.experimental_rerun()
+        st.markdown("</div></div>", unsafe_allow_html=True)
 
     with tab2:
         new_user = st.text_input("Choose Username", key="signup_user")
@@ -417,6 +418,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
