@@ -101,6 +101,28 @@ if "otp" not in st.session_state:
 if "reset_email" not in st.session_state:
     st.session_state.reset_email = None
 
+# ---------------------- PAGE BACKGROUND ----------------------
+def set_page_bg_color(page):
+    colors = {
+        "🏠 Home": "#1e293b",         # Dark Slate Blue
+        "📊 Dashboard": "#0f172a",    # Navy-ish
+        "👤 Profile": "#334155",      # Soft Gray-Blue
+        "💬 Feedback": "#475569",     # Muted Blue Gray
+        "forgot_password": "#1e293b"  # Same as Home for uniformity
+    }
+    color = colors.get(page, "#1e293b")
+    
+    st.markdown(f"""
+        <style>
+        .reportview-container, .main {{
+            background-color: {color};
+        }}
+        </style>
+    """, unsafe_allow_html=True)
+
+# Call the background function
+set_page_bg_color(st.session_state.page)
+
 # ---------------------- LOGIN / SIGNUP ----------------------
 if st.session_state.user is None and st.session_state.page not in ["forgot_password"]:
     st.markdown("<div style='text-align:center; font-size:32px; font-weight:bold; color:#38bdf8; margin-bottom:20px'>Global Balance</div>", unsafe_allow_html=True)
@@ -340,3 +362,4 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
