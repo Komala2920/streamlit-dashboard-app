@@ -4,7 +4,7 @@ import hashlib
 import streamlit.components.v1 as components
 import pandas as pd
 import random
-from streamlit_lottie import st_lottie
+from streamlit_lottie 
 import requests
 
 # ---------------------- DATABASE ----------------------
@@ -379,6 +379,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
