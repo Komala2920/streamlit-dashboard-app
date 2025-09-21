@@ -256,9 +256,9 @@ elif st.session_state.user is not None:
 
     # --- Dashboard Page ---
     elif st.session_state.page == "📊 Dashboard":
-        st.header("📊 Global Economic Dashboard")
-         # --- Lottie Animation ---
-       st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_49rdyysj.json", height=200)
+        st.title("📊 Dashboard")
+        st.write("This is your dashboard with analytics and reports.")
+        st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_49rdyysj.json", height=200)
 
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("🌍 Real-Time Insights")
@@ -376,6 +376,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
