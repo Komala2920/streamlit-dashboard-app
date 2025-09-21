@@ -6,6 +6,9 @@ import pandas as pd
 import random
 import streamlit.components.v1 as components
 import requests
+# Optional: OpenAI for Chatbot
+import openai
+openai.api_key = "YOUR_OPENAI_API_KEY"
 
 # ---------------------- DATABASE ----------------------
 conn = sqlite3.connect('users.db', check_same_thread=False)
@@ -127,6 +130,8 @@ if "otp" not in st.session_state:
     st.session_state.otp = None
 if "reset_email" not in st.session_state:
     st.session_state.reset_email = None
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
 
 # ---------------------- LOGIN / SIGNUP ----------------------
 if st.session_state.user is None and st.session_state.page not in ["forgot_password"]:
@@ -201,7 +206,7 @@ elif st.session_state.user is not None:
 
     # --- Sidebar Navigation ---
     st.sidebar.title("Navigation")
-    nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🚪 Logout"]
+    nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🤖 Chatbot", "🚪 Logout"]
     for item in nav_items:
         if st.sidebar.button(item, key=item):
             if item == "🚪 Logout":
@@ -335,6 +340,29 @@ elif st.session_state.user is not None:
                     conn.commit()
                     st.success("✅ Password updated successfully!")
 
+    # --- Chatbot Page ---
+    elif st.session_state.page == "🤖 Chatbot":
+        st.header("🤖 Chatbot")
+        # Display chat history
+        for chat in st.session_state.chat_history:
+            if chat["role"] == "user":
+                st.markdown(f"**You:** {chat['content']}")
+            else:
+                st.markdown(f"**Bot:** {chat['content']}")
+        # User input
+        user_input = st.text_input("Type your message here:", key="chat_input")
+        if st.button("Send"):
+            if user_input:
+                st.session_state.chat_history.append({"role": "user", "content": user_input})
+                # OpenAI GPT response
+                response = openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",
+                    messages=st.session_state.chat_history
+                )
+                bot_reply = response.choices[0].message["content"]
+                st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
+                st.rerun()
+
     # --- Feedback Page ---
     elif st.session_state.page == "💬 Feedback":
         st.header("💬 Feedback")
@@ -374,6 +402,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
