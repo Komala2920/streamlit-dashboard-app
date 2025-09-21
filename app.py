@@ -393,8 +393,8 @@ elif st.session_state.user is not None:
     elif st.session_state.page == "🤖 Chatbot":
         st.header("🤖 Chatbot")
 
-        # --- Lottie Animation for Chatbot ---
-        st_lottie_url("https://assets4.lottiefiles.com/packages/lf20_jtbfg2nb.json", height=250)
+        # --- Robot Lottie 1 ---
+        st_lottie_url("https://assets9.lottiefiles.com/packages/lf20_9wpyhdzo.json", height=200)
 
 
         # Initialize chat history if not exists
@@ -441,7 +441,3 @@ elif st.session_state.user is not None:
 
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()
-
-
-
-
