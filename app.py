@@ -392,12 +392,15 @@ elif st.session_state.user is not None:
     elif st.session_state.page == "🤖 Chatbot":
         st.header("🤖 Chatbot")
 
-    # --- Clear chat button ---
-    if st.button("🗑️ Clear Chat"):
-        st.session_state.chat_history = []
-        st.rerun()  # refresh the page
+        # Clear chat button
+        if st.button("🗑️ Clear Chat"):
+            st.session_state.chat_history = []
+            st.rerun()
 
     # Display chat history
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = []
+
     for chat in st.session_state.chat_history:
         if chat["role"] == "user":
             st.markdown(f"**You:** {chat['content']}")
@@ -410,7 +413,7 @@ elif st.session_state.user is not None:
         if user_input:
             st.session_state.chat_history.append({"role": "user", "content": user_input})
 
-            # ---- Chatbot logic ----
+            # Demo chatbot reply (or OpenAI if available)
             if OPENAI_AVAILABLE:
                 try:
                     response = openai.ChatCompletion.create(
@@ -421,63 +424,16 @@ elif st.session_state.user is not None:
                 except Exception as e:
                     bot_reply = f"(Error calling OpenAI API: {str(e)})"
             else:
-                # ---- Demo chatbot logic ----
+                # Simple demo logic
                 msg = user_input.lower()
                 if "hello" in msg or "hi" in msg:
                     bot_reply = "Hello! How can I help you today?"
                 elif "how are you" in msg:
                     bot_reply = "I'm just a bot, but I'm doing great! 😄"
-                elif "help" in msg:
-                    bot_reply = "Sure! You can ask me about Global Balance or app features."
-                elif "dashboard" in msg:
-                    bot_reply = "The Dashboard shows analytics and real-time insights."
-                elif "profile" in msg:
-                    bot_reply = "In the Profile page, you can update your personal information."
-                elif "feedback" in msg:
-                    bot_reply = "You can submit feedback in the Feedback page."
                 else:
                     bot_reply = "I'm not sure about that, but I'm learning every day! 🤖"
 
-            # Save bot reply and refresh
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()
-            
-    # --- Feedback Page ---
-    elif st.session_state.page == "💬 Feedback":
-        st.header("💬 Feedback")
-        # Person leaving a review
-        st_lottie_url("https://assets7.lottiefiles.com/packages/lf20_touohxv0.json", height=200)
+       
 
-        with st.form("feedback_form"):
-            rating = st.slider("Rate your experience", 1, 5, 5)
-            usability = st.selectbox("How easy was it to use the platform?", 
-                                    ["Very Easy", "Easy", "Neutral", "Difficult", "Very Difficult"], index=1)
-            comment = st.text_area("Your comments")
-            suggestions = st.text_area("Suggestions / Feature Requests")
-
-            submitted = st.form_submit_button("Submit Feedback")
-            if submitted:
-                c.execute("""
-                    CREATE TABLE IF NOT EXISTS feedback(
-                        username TEXT, 
-                        rating INTEGER, 
-                        usability TEXT, 
-                        comment TEXT, 
-                        suggestions TEXT
-                    )
-                """)
-                c.execute(
-                    "INSERT INTO feedback(username, rating, usability, comment, suggestions) VALUES (?, ?, ?, ?, ?)",
-                    (st.session_state.user, rating, usability, comment, suggestions)
-                )
-                conn.commit()
-                st.success("✅ Thank you! Your feedback has been submitted.")
-
-        st.subheader("📋 Your Previous Feedback")
-        c.execute("SELECT rating, usability, comment, suggestions FROM feedback WHERE username=?", (st.session_state.user,))
-        rows = c.fetchall()
-        if rows:
-            feedback_df = pd.DataFrame(rows, columns=["Rating", "Usability", "Comment", "Suggestions"])
-            st.dataframe(feedback_df)
-        else:
-            st.info("You haven't submitted any feedback yet.")        
