@@ -217,7 +217,7 @@ elif st.session_state.user is not None:
         st.write(f"Hello, {st.session_state.user} 👋")
 
         # --- Lottie Animation ---
-        st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_usmfx6bp.json", height=200)
+        st_lottie_url("https://assets7.lottiefiles.com/packages/lf20_kdx6cani.json", height=200)
 
         # Overview Card
         st.markdown('<div class="card">', unsafe_allow_html=True)
@@ -300,7 +300,7 @@ elif st.session_state.user is not None:
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Edit Profile")
          # --- Lottie Animation ---
-        st_lottie_url("https://assets1.lottiefiles.com/packages/lf20_rr7upw7o.json", height=200)
+        st_lottie_url("https://assets1.lottiefiles.com/packages/lf20_u4yrau.json", height=200)
         
         # Profile Card
         st.markdown('<div class="card">', unsafe_allow_html=True)
@@ -340,7 +340,7 @@ elif st.session_state.user is not None:
     # --- Feedback Page ---
     elif st.session_state.page == "💬 Feedback":
         st.header("💬 Feedback")
-        st_lottie_url("https://assets5.lottiefiles.com/packages/lf20_cvx0pqrz.json", height=200)
+        st_lottie_url("https://assets8.lottiefiles.com/packages/lf20_9rgmlokp.json", height=200)
 
         with st.form("feedback_form"):
             rating = st.slider("Rate your experience", 1, 5, 5)
@@ -375,6 +375,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
