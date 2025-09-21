@@ -444,7 +444,6 @@ elif st.session_state.user is not None:
     # --------- VLOG Page ------------
     elif st.session_state.page == "📹 Vlog":
         st.header("📹 Vlog")
-        st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_1pxqjqps.json", height=200)
         st.write("Check out our latest vlogs and tutorials!")
 
     # Example 1: YouTube embedded video
@@ -469,5 +468,3 @@ elif st.session_state.user is not None:
     Stay updated with our latest content every week!
     """)
     st.markdown('</div>', unsafe_allow_html=True)
-
-
