@@ -4,14 +4,6 @@ import hashlib
 import streamlit.components.v1 as components
 import pandas as pd
 
-# ---------------------- SAFE PLOTLY IMPORT ----------------------
-try:
-    import plotly.express as px
-    PLOTLY_AVAILABLE = True
-except ModuleNotFoundError:
-    PLOTLY_AVAILABLE = False
-    st.warning("⚠️ Plotly is not installed. Charts will not be displayed. Install Plotly locally using `pip install plotly`.")
-
 # ---------------------- DATABASE ----------------------
 conn = sqlite3.connect('users.db', check_same_thread=False)
 c = conn.cursor()
@@ -232,4 +224,5 @@ else:
                 comment = st.text_area("Your comments")
                 suggestions = st.text_area("Suggestions / Feature Requests")
             submitted = st.form_submit_button("Submit Feedback")
+
 
