@@ -444,8 +444,8 @@ elif st.session_state.user is not None:
     # --------- VLOG Page ------------
     elif st.session_state.page == "📹 Vlog":
         st.header("📹 Vlog")
-        # --- Camera Recording Lottie 3 (Video Recording Symbol) ---
-        st_lottie_url("https://assets5.lottiefiles.com/packages/lf20_ktwnwv5m.json", height=200)
+        # 🎥 Vlog Lottie Animation
+        st_lottie_url("https://assets10.lottiefiles.com/packages/lf20_xlkxtmul.json", height=200)
         st.write("Check out our latest vlogs and tutorials!")
 
     # Example 1: YouTube embedded video
@@ -470,4 +470,3 @@ elif st.session_state.user is not None:
     Stay updated with our latest content every week!
     """)
     st.markdown('</div>', unsafe_allow_html=True)
-
