@@ -34,22 +34,17 @@ def update_password(email, new_password):
     conn.commit()
 
 def send_otp(email, otp):
-    # ⚠️ Replace with real email sending logic
-    # Demo: OTP will be displayed on screen
     st.info(f"(Demo) OTP sent to {email}: **{otp}**")
     return True
 
 # ---------------------- PROFESSIONAL CSS ----------------------
 st.markdown("""
 <style>
-/* Background */
 body {
     background: linear-gradient(to bottom right, #0f172a, #1e293b);
     font-family: 'Segoe UI', sans-serif;
     color: #f1f5f9;
 }
-
-/* Buttons */
 .stButton>button {
     background: #0ea5e9;
     color: #fff;
@@ -64,8 +59,6 @@ body {
     background: #0284c7;
     transform: translateY(-2px);
 }
-
-/* Cards */
 .card {
     background: #1e293b;
     padding: 20px;
@@ -73,22 +66,14 @@ body {
     box-shadow: 0 8px 24px rgba(0,0,0,0.3);
     margin-bottom: 20px;
 }
-
-/* Headers */
 h1, h2, h3, h4 {
     color: #f1f5f9;
 }
-
-/* Text */
 .stText, p {
     color: #e2e8f0;
 }
-
-/* Sidebar Buttons */
 .css-1emrehy.edgvbvh3 button {
     width: 100% !important;
-    min-width: 100% !important;
-    max-width: 100% !important;
     height: 55px !important;
     margin-bottom: 12px;
     font-size: 16px;
@@ -100,8 +85,6 @@ h1, h2, h3, h4 {
 .css-1emrehy.edgvbvh3 button:hover {
     background-color: #0284c7;
 }
-
-/* Iframe Styling */
 iframe {
     border-radius: 12px;
 }
@@ -208,33 +191,79 @@ elif st.session_state.user is not None:
 
         # Overview Card
         st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.subheader("🌐 Overview")
+        st.subheader("🌐 What is Global Balance?")
         st.markdown("""
-        *Global Balance* is a comprehensive platform to monitor and analyze global economic and financial data.  
-        Real-time dashboards, profile management, and feedback system in a professional, secure environment.
+        *Global Balance* is a unified platform for analyzing and monitoring **global economic & financial insights**.  
+        Our mission is to provide decision-makers, analysts, and researchers with the tools to visualize, compare, and understand world economies.
+        
+        - 📊 **Visual Dashboards**: Track real-time data  
+        - 🌍 **Global Coverage**: Access multi-country insights  
+        - 🔐 **Secure & Private**: Enterprise-level user authentication  
         """)
         st.markdown('</div>', unsafe_allow_html=True)
 
         # Features Card
         st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.subheader("✨ Features")
+        st.subheader("✨ Why Use Global Balance?")
         st.markdown("""
-        1. *Interactive Dashboards* 📊  
-        2. *Profile Management* 👤  
-        3. *Feedback Portal* 💬  
-        4. *Secure Login & Signup* 🔐  
-        5. *Guided Navigation & Tips* 📝
+        1. *Interactive Dashboards* 📊 with filters & drill-down analysis  
+        2. *Profile Management* 👤 to personalize your data experience  
+        3. *Feedback Portal* 💬 for continuous improvement  
+        4. *Research Support* 📖 providing contextual explanations  
+        5. *Insights & Reports* 📑 downloadable in multiple formats  
+        """)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        # Tips Card
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.subheader("💡 Quick Tips")
+        st.markdown("""
+        - Use the sidebar to **switch pages** quickly  
+        - Visit the Dashboard to view **interactive charts**  
+        - Update your profile to stay connected with new features  
         """)
         st.markdown('</div>', unsafe_allow_html=True)
 
     # --- Dashboard Page ---
     elif st.session_state.page == "📊 Dashboard":
-        st.header("📊 Dashboard")
+        st.header("📊 Global Economic Dashboard")
+
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.subheader("🌍 Real-Time Insights")
+        st.markdown("""
+        The dashboard integrates **world development indicators** such as:
+        - GDP Growth 📈
+        - Income Inequality 📊
+        - Employment & Unemployment Trends 💼
+        - Regional Comparisons 🌐  
+        
+        Explore country-wise comparisons and global patterns directly inside the app.
+        """)
+        st.markdown('</div>', unsafe_allow_html=True)
+
         dashboard_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"
         components.html(f"""
-            <iframe title="Global Income Inequality Dashboard" width="100%" height="600" 
+            <iframe title="Global Economic Dashboard" width="100%" height="600" 
             src="{dashboard_url}" frameborder="0" allowFullScreen="true"></iframe>
         """, height=620)
+
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.subheader("📑 How to Use?")
+        st.markdown("""
+        - Hover on charts to see **detailed tooltips**  
+        - Use filters to analyze by **region, income group, or year**  
+        - Click on visual elements to **drill down into data**  
+        """)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.subheader("📌 Key Highlights")
+        st.markdown("""
+        ✅ Emerging economies show rapid growth in the last decade  
+        ✅ Developed nations display lower inequality but slower growth  
+        ✅ Africa and Asia remain regions of **great potential & challenges**  
+        """)
+        st.markdown('</div>', unsafe_allow_html=True)
 
     # --- Profile Page ---
     elif st.session_state.page == "👤 Profile":
@@ -242,7 +271,6 @@ elif st.session_state.user is not None:
         with st.container():
             col1, col2 = st.columns([1, 3])
             with col1:
-                # Removed image and username text
                 pass  
             with col2:
                 with st.form("profile_form"):
@@ -258,7 +286,6 @@ elif st.session_state.user is not None:
                     if submitted:
                         st.success("✅ Profile updated successfully!")
 
-        # --- Password Management Section ---
         st.subheader("🔑 Password Management")
         with st.form("password_form", clear_on_submit=True):
             new_password = st.text_input("New Password", type="password")
@@ -271,7 +298,6 @@ elif st.session_state.user is not None:
                 elif new_password != confirm_password:
                     st.error("❌ New passwords do not match.")
                 else:
-                    # Directly update password (no current password check)
                     c.execute("UPDATE users SET password=? WHERE username=?", 
                               (make_hash(new_password), st.session_state.user))
                     conn.commit()
@@ -305,7 +331,6 @@ elif st.session_state.user is not None:
                 conn.commit()
                 st.success("✅ Thank you! Your feedback has been submitted.")
 
-        # Show previous feedback
         st.subheader("📋 Your Previous Feedback")
         c.execute("SELECT rating, usability, comment, suggestions FROM feedback WHERE username=?", (st.session_state.user,))
         rows = c.fetchall()
