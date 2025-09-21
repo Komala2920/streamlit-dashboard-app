@@ -230,9 +230,6 @@ elif st.session_state.user is not None:
         st.header("🏠 Welcome Home")
         st.write(f"Hello, {st.session_state.user} 👋")
 
-        # --- Lottie Animation ---
-        st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_1pxqjqps.json", height=200)
-
         # Overview Card
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("🌐 What is Global Balance?")
@@ -393,8 +390,8 @@ elif st.session_state.user is not None:
     elif st.session_state.page == "🤖 Chatbot":
         st.header("🤖 Chatbot")
 
-        # --- Robot Lottie 1 ---
-        st_lottie_url("https://assets9.lottiefiles.com/packages/lf20_9wpyhdzo.json", height=200)
+        # --- Lottie Animation ---
+        st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_1pxqjqps.json", height=200)
        
         # Initialize chat history if not exists
         if "chat_history" not in st.session_state:
@@ -441,3 +438,4 @@ elif st.session_state.user is not None:
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()
             
+
