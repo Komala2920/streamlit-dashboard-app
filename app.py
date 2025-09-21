@@ -180,7 +180,7 @@ else:
     # --- Dashboard Page ---
     elif st.session_state.page == "📊 Dashboard":
         st.header("📊 Dashboard")
-        st.subheader("🌐 Dashboard Overview")
+        st.subheader("🌐 Overview")
         st.markdown("""
         The dashboard provides an interactive view of *global economic and financial metrics*, including income inequality, GDP trends, and other key financial indicators.  
         """)
@@ -262,4 +262,5 @@ else:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")                  
+
 
