@@ -268,24 +268,24 @@ elif st.session_state.user is not None:
     # --- Profile Page ---
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Edit Profile")
-        with st.container():
-            col1, col2 = st.columns([1, 2])
-            with col1:
-                pass  
-            with col2:
-                with st.form("profile_form"):
-                    col_left, col_right = st.columns(2)
-                    with col_left:
-                        first_name = st.text_input("First Name")
-                        gender = st.selectbox("Gender", ["Select a Option","Male", "Female", "Other"], index=0)
-                    with col_right:
-                        last_name = st.text_input("Last Name")
-                        email = st.text_input("Email")
-                        linkedin = st.text_input("LinkedIn")
-                    submitted = st.form_submit_button("💾 Save")
-                    if submitted:
-                        st.success("✅ Profile updated successfully!")
-
+        
+       # Profile Card
+        st.markdown('<div class="card" style="width:80%; margin:auto;">', unsafe_allow_html=True)
+        with st.form("profile_form"):
+            col_left, col_right = st.columns(2)
+            with col_left:
+                first_name = st.text_input("First Name", placeholder="Enter first name")
+                gender = st.selectbox("Gender", ["Select a Option","Male", "Female", "Other"], index=0)
+            with col_right:
+                last_name = st.text_input("Last Name", placeholder="Enter last name")
+                email = st.text_input("Email", placeholder="Enter email")
+                linkedin = st.text_input("LinkedIn", placeholder="Enter LinkedIn URL")
+            submitted = st.form_submit_button("💾 Save")
+            if submitted:
+                st.success("✅ Profile updated successfully!")
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        # Password Management Card
         st.subheader("🔑 Password Management")
         with st.form("password_form", clear_on_submit=True):
             new_password = st.text_input("New Password", type="password")
@@ -339,3 +339,4 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")         
+
