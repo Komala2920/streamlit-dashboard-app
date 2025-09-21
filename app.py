@@ -192,30 +192,30 @@ else:
         """, height=620)
 
     # --- Profile Page ---
-elif st.session_state.page == "👤 Profile":
-    st.header("👤 Edit Profile")
-    with st.container():
-        col1, col2 = st.columns([1, 3])
-        with col1:
-            st.image("https://via.placeholder.com/120", width=120)
-            st.text(st.session_state.user)
-        with col2:
-            with st.form("profile_form"):
-                col_left, col_right = st.columns(2)
-                with col_left:
-                    first_name = st.text_input("First Name")
-                    password = st.text_input("Password", type="password")
-                    gender = st.selectbox("Gender", ["Male", "Female", "Other", "Select a Option"], index=0)
-                with col_right:
-                    last_name = st.text_input("Last Name")
-                    email = st.text_input("Email")
-                    address = st.text_input("Address")
-                    dob = st.date_input("Date of Birth", min_value=pd.to_datetime("2000-01-01"), max_value=pd.to_datetime("2025-12-31"))
-                    language = st.selectbox("Language", ["English", "Spanish", "French", "Select a Option"], index=0)
-                    linkedin = st.text_input("LinkedIn")
-                submitted = st.form_submit_button("💾 Save")
-                if submitted:
-                    st.success("✅ Profile updated successfully!")
+    elif st.session_state.page == "👤 Profile":
+        st.header("👤 Edit Profile")
+        with st.container():
+            col1, col2 = st.columns([1, 3])
+         with col1:
+             st.image("https://via.placeholder.com/120", width=120)
+             st.text(st.session_state.user)
+         with col2:
+             with st.form("profile_form"):
+                 col_left, col_right = st.columns(2)
+                 with col_left:
+                     first_name = st.text_input("First Name")
+                     password = st.text_input("Password", type="password")
+                     gender = st.selectbox("Gender", ["Male", "Female", "Other", "Select a Option"], index=0)
+                 with col_right:
+                     last_name = st.text_input("Last Name")
+                     email = st.text_input("Email")
+                     address = st.text_input("Address")
+                     dob = st.date_input("Date of Birth", min_value=pd.to_datetime("2000-01-01"), max_value=pd.to_datetime("2025-12-31"))
+                     language = st.selectbox("Language", ["English", "Spanish", "French", "Select a Option"], index=0)
+                     linkedin = st.text_input("LinkedIn")
+                 submitted = st.form_submit_button("💾 Save")
+                 if submitted:
+                     st.success("✅ Profile updated successfully!")
 
     st.markdown("---")
     st.subheader("🔒 Reset Password")
@@ -287,6 +287,7 @@ elif st.session_state.page == "👤 Profile":
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")
+
 
 
 
