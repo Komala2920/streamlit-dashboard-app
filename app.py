@@ -134,40 +134,20 @@ if st.session_state.user is None and st.session_state.page not in ["forgot_passw
     tab1, tab2 = st.tabs(["🔐 Login", "📝 Sign Up"])
    
     with tab1:
-        # ---------- Background image (uploaded) ----------
-        login_bg = "/mnt/data/Content Creation Video.jpeg"
-        st.markdown(
-            f"""
-            <style>
-            .login-bg {{
-                background-image: url("file://{login_bg}");
-                background-size: cover;
-                background-position: center;
-                padding: 30px;
-                border-radius: 16px;
-                box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-            }}
-            </style>
-            """,
-            unsafe_allow_html=True
-        )
-        st.markdown('<div class="login-bg">', unsafe_allow_html=True)
-        
         username = st.text_input("Username", key="login_user")
         password = st.text_input("Password", type="password", key="login_pass")
         if st.button("Sign In"):
-          user = check_user(username, password)
-          if user:
-              st.session_state.user = username
-              st.session_state.page = "🏠 Home"
-              st.success("✅ Login successful")
-         else:
-             st.error("❌ Invalid username or password")
+            user = check_user(username, password)
+            if user:
+                st.session_state.user = username
+                st.session_state.page = "🏠 Home"
+                st.success("✅ Login successful")
+            else:
+                st.error("❌ Invalid username or password")
 
         if st.button("Forgot Password?"):
             st.session_state.page = "forgot_password"
             st.experimental_rerun()
-        st.markdown("</div></div>", unsafe_allow_html=True)
 
     with tab2:
         new_user = st.text_input("Choose Username", key="signup_user")
@@ -394,11 +374,6 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
-
-
-
-
-
 
 
 
