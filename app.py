@@ -61,17 +61,32 @@ body {
 }
 .card {
     background: #1e293b;
-    padding: 30px;
-    border-radius: 20px;
+    padding: 20px;
+    border-radius: 16px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-    margin: 0 auto;
-    width: 80%;
-    max-width: 900px;
+    margin-bottom: 20px;
 }
-.big-input input, .big-input select, .big-input textarea {
-    height: 50px !important;
-    font-size: 16px !important;
-    border-radius: 10px !important;
+h1, h2, h3, h4 {
+    color: #f1f5f9;
+}
+.stText, p {
+    color: #e2e8f0;
+}
+.css-1emrehy.edgvbvh3 button {
+    width: 100% !important;
+    height: 55px !important;
+    margin-bottom: 12px;
+    font-size: 16px;
+    border-radius: 12px;
+    background-color: #0ea5e9;
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+.css-1emrehy.edgvbvh3 button:hover {
+    background-color: #0284c7;
+}
+iframe {
+    border-radius: 12px;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -169,23 +184,107 @@ elif st.session_state.user is not None:
             else:
                 st.session_state.page = item
 
-    # --- Profile Page ---
-    if st.session_state.page == "👤 Profile":
-        st.header("👤 Edit Profile")
+    # --- Home Page ---
+    if st.session_state.page == "🏠 Home":
+        st.header("🏠 Welcome Home")
+        st.write(f"Hello, {st.session_state.user} 👋")
+
+        # Overview Card
         st.markdown('<div class="card">', unsafe_allow_html=True)
-        with st.form("profile_form"):
-            col_left, col_right = st.columns(2)
-            with col_left:
-                first_name = st.text_input("First Name", key="first", placeholder="Enter first name")
-                gender = st.selectbox("Gender", ["Select a Option","Male", "Female", "Other"], index=0, key="gender")
-            with col_right:
-                last_name = st.text_input("Last Name", key="last", placeholder="Enter last name")
-                email = st.text_input("Email", key="email", placeholder="Enter email")
-                linkedin = st.text_input("LinkedIn", key="linkedin", placeholder="Enter LinkedIn URL")
-            submitted = st.form_submit_button("💾 Save")
-            if submitted:
-                st.success("✅ Profile updated successfully!")
+        st.subheader("🌐 What is Global Balance?")
+        st.markdown("""
+        Global Balance is a unified platform for analyzing and monitoring *global economic & financial insights*.  
+        Our mission is to provide decision-makers, analysts, and researchers with the tools to visualize, compare, and understand world economies.
+        
+        - 📊 *Visual Dashboards*: Track real-time data  
+        - 🌍 *Global Coverage*: Access multi-country insights  
+        - 🔐 *Secure & Private*: Enterprise-level user authentication  
+        """)
         st.markdown('</div>', unsafe_allow_html=True)
+
+        # Features Card
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.subheader("✨ Why Use Global Balance?")
+        st.markdown("""
+        1. Interactive Dashboards 📊 with filters & drill-down analysis  
+        2. Profile Management 👤 to personalize your data experience  
+        3. Feedback Portal 💬 for continuous improvement  
+        4. Research Support 📖 providing contextual explanations  
+        5. Insights & Reports 📑 downloadable in multiple formats  
+        """)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        # Tips Card
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.subheader("💡 Quick Tips")
+        st.markdown("""
+        - Use the sidebar to *switch pages* quickly  
+        - Visit the Dashboard to view *interactive charts*  
+        - Update your profile to stay connected with new features  
+        """)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # --- Dashboard Page ---
+    elif st.session_state.page == "📊 Dashboard":
+        st.header("📊 Global Economic Dashboard")
+
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.subheader("🌍 Real-Time Insights")
+        st.markdown("""
+        The dashboard integrates *world development indicators* such as:
+        - GDP Growth 📈
+        - Income Inequality 📊
+        - Employment & Unemployment Trends 💼
+        - Regional Comparisons 🌐  
+        
+        Explore country-wise comparisons and global patterns directly inside the app.
+        """)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        dashboard_url = "https://app.powerbi.com/view?r=eyJrIjoiNGVmZDc0YzYtYWUwOS00OWFiLWI2NDgtNzllZDViY2NlMjZhIiwidCI6IjA3NjQ5ZjlhLTA3ZGMtNGZkOS05MjQ5LTZmMmVmZWFjNTI3MyJ9"
+        components.html(f"""
+            <iframe title="Global Economic Dashboard" width="100%" height="600" 
+            src="{dashboard_url}" frameborder="0" allowFullScreen="true"></iframe>
+        """, height=620)
+
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.subheader("📑 How to Use?")
+        st.markdown("""
+        - Hover on charts to see *detailed tooltips*  
+        - Use filters to analyze by *region, income group, or year*  
+        - Click on visual elements to *drill down into data*  
+        """)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.subheader("📌 Key Highlights")
+        st.markdown("""
+        ✅ Emerging economies show rapid growth in the last decade  
+        ✅ Developed nations display lower inequality but slower growth  
+        ✅ Africa and Asia remain regions of *great potential & challenges*  
+        """)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # --- Profile Page ---
+    elif st.session_state.page == "👤 Profile":
+        st.header("👤 Edit Profile")
+        with st.container():
+            col1, col2 = st.columns([1, 2])
+            with col1:
+                pass  
+            with col2:
+                with st.form("profile_form"):
+                    col_left, col_right = st.columns(2)
+                    with col_left:
+                        first_name = st.text_input("First Name")
+                        gender = st.selectbox("Gender", ["Select a Option","Male", "Female", "Other"], index=0)
+                    with col_right:
+                        last_name = st.text_input("Last Name")
+                        email = st.text_input("Email")
+                        linkedin = st.text_input("LinkedIn")
+                    submitted = st.form_submit_button("💾 Save")
+                    if submitted:
+                        st.success("✅ Profile updated successfully!")
 
         st.subheader("🔑 Password Management")
         with st.form("password_form", clear_on_submit=True):
@@ -203,3 +302,40 @@ elif st.session_state.user is not None:
                               (make_hash(new_password), st.session_state.user))
                     conn.commit()
                     st.success("✅ Password updated successfully!")
+
+    # --- Feedback Page ---
+    elif st.session_state.page == "💬 Feedback":
+        st.header("💬 Feedback")
+        with st.form("feedback_form"):
+            rating = st.slider("Rate your experience", 1, 5, 5)
+            usability = st.selectbox("How easy was it to use the platform?", 
+                                    ["Very Easy", "Easy", "Neutral", "Difficult", "Very Difficult"], index=1)
+            comment = st.text_area("Your comments")
+            suggestions = st.text_area("Suggestions / Feature Requests")
+
+            submitted = st.form_submit_button("Submit Feedback")
+            if submitted:
+                c.execute("""
+                    CREATE TABLE IF NOT EXISTS feedback(
+                        username TEXT, 
+                        rating INTEGER, 
+                        usability TEXT, 
+                        comment TEXT, 
+                        suggestions TEXT
+                    )
+                """)
+                c.execute(
+                    "INSERT INTO feedback(username, rating, usability, comment, suggestions) VALUES (?, ?, ?, ?, ?)",
+                    (st.session_state.user, rating, usability, comment, suggestions)
+                )
+                conn.commit()
+                st.success("✅ Thank you! Your feedback has been submitted.")
+
+        st.subheader("📋 Your Previous Feedback")
+        c.execute("SELECT rating, usability, comment, suggestions FROM feedback WHERE username=?", (st.session_state.user,))
+        rows = c.fetchall()
+        if rows:
+            feedback_df = pd.DataFrame(rows, columns=["Rating", "Usability", "Comment", "Suggestions"])
+            st.dataframe(feedback_df)
+        else:
+            st.info("You haven't submitted any feedback yet.")         
