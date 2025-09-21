@@ -352,8 +352,8 @@ elif st.session_state.user is not None:
     # --- Feedback Page ---
     elif st.session_state.page == "💬 Feedback":
         st.header("💬 Feedback")
-        # Person leaving a review
-        st_lottie_url("https://assets7.lottiefiles.com/packages/lf20_touohxv0.json", height=200)
+        # --- Robot Lottie 1 ---
+        st_lottie_url("https://assets9.lottiefiles.com/packages/lf20_9wpyhdzo.json", height=200)
 
         with st.form("feedback_form"):
             rating = st.slider("Rate your experience", 1, 5, 5)
@@ -441,4 +441,3 @@ elif st.session_state.user is not None:
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()
             
-
