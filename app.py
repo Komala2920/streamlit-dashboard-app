@@ -7,8 +7,15 @@ import random
 import streamlit.components.v1 as components
 import requests
 import os
-import openai
-openai.api_key = os.getenv("OPENAI_API_KEY")
+
+# ---------------------- OPTIONAL CHATBOT ----------------------
+try:
+    import openai
+    OPENAI_AVAILABLE = True
+    # For real deployment, set your API key here or via environment variable
+    # openai.api_key = "YOUR_OPENAI_API_KEY"
+except ModuleNotFoundError:
+    OPENAI_AVAILABLE = False
 
 
 # ---------------------- DATABASE ----------------------
@@ -413,6 +420,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
