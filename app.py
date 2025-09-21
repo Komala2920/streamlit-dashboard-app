@@ -212,17 +212,18 @@ elif st.session_state.page == "forgot_password":
 elif st.session_state.user is not None:
     st.markdown("<div style='text-align:center; font-size:32px; font-weight:bold; color:#38bdf8; margin-bottom:20px'>Global Balance</div>", unsafe_allow_html=True)
 
-    # --- Sidebar Navigation ---
-    st.sidebar.title("Navigation")
-    nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🤖 Chatbot", "🚪 Logout"]
-    for item in nav_items:
-        if st.sidebar.button(item, key=item):
+    # ------------------- Sidebar Navigation -------------------
+     st.sidebar.title("Navigation")
+     nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🤖 Chatbot", "🚪 Logout"]
+     for item in nav_items:
+         if st.sidebar.button(item, key=item):
             if item == "🚪 Logout":
-                st.session_state.user = None
-                st.session_state.page = "🏠 Home"
-                st.success("🚪 You have been logged out.")
-            else:
-                st.session_state.page = item
+               st.session_state.user = None
+               st.session_state.page = "🏠 Home"
+               st.success("🚪 You have been logged out.")
+          else:
+              st.session_state.page = item
+
 
     # --- Home Page ---
     if st.session_state.page == "🏠 Home":
@@ -392,28 +393,29 @@ elif st.session_state.user is not None:
     elif st.session_state.page == "🤖 Chatbot":
         st.header("🤖 Chatbot")
 
-        # Clear chat button
-        if st.button("🗑️ Clear Chat"):
+        # Initialize chat history if not exists
+        if "chat_history" not in st.session_state:
             st.session_state.chat_history = []
-            st.rerun()
+
+    # Clear chat button
+    if st.button("🗑️ Clear Chat"):
+        st.session_state.chat_history = []
+        st.experimental_rerun()
 
     # Display chat history
-    if "chat_history" not in st.session_state:
-        st.session_state.chat_history = []
-
     for chat in st.session_state.chat_history:
         if chat["role"] == "user":
             st.markdown(f"**You:** {chat['content']}")
         else:
             st.markdown(f"**Bot:** {chat['content']}")
 
-    # User input
+    # User input only on Chatbot page
     user_input = st.text_input("Type your message here:", key="chat_input")
     if st.button("Send"):
         if user_input:
             st.session_state.chat_history.append({"role": "user", "content": user_input})
 
-            # Demo chatbot reply (or OpenAI if available)
+            # Demo or OpenAI bot reply
             if OPENAI_AVAILABLE:
                 try:
                     response = openai.ChatCompletion.create(
@@ -424,7 +426,7 @@ elif st.session_state.user is not None:
                 except Exception as e:
                     bot_reply = f"(Error calling OpenAI API: {str(e)})"
             else:
-                # Simple demo logic
+                # Demo chatbot responses
                 msg = user_input.lower()
                 if "hello" in msg or "hi" in msg:
                     bot_reply = "Hello! How can I help you today?"
@@ -435,5 +437,7 @@ elif st.session_state.user is not None:
 
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()
+
        
+
 
