@@ -341,29 +341,47 @@ elif st.session_state.user is not None:
                     conn.commit()
                     st.success("✅ Password updated successfully!")
 
-    # --- Chatbot Page ---
-    elif st.session_state.page == "🤖 Chatbot":
-        st.header("🤖 Chatbot")
-        # Display chat history
-        for chat in st.session_state.chat_history:
-            if chat["role"] == "user":
-                st.markdown(f"**You:** {chat['content']}")
-            else:
-                st.markdown(f"**Bot:** {chat['content']}")
-        # User input
-        user_input = st.text_input("Type your message here:", key="chat_input")
-        if st.button("Send"):
-            if user_input:
-                st.session_state.chat_history.append({"role": "user", "content": user_input})
-                # OpenAI GPT response
-                response = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo",
-                    messages=st.session_state.chat_history
-                )
-                bot_reply = response.choices[0].message["content"]
-                st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
-                st.rerun()
+    try:
+    import openai
+    OPENAI_AVAILABLE = True
+    # For real deployment, set your API key:
+    # openai.api_key = "YOUR_OPENAI_API_KEY"
+except ModuleNotFoundError:
+    OPENAI_AVAILABLE = False
 
+# --- Chatbot Page ---
+elif st.session_state.page == "🤖 Chatbot":
+    st.header("🤖 Chatbot")
+    
+    # Display chat history
+    for chat in st.session_state.chat_history:
+        if chat["role"] == "user":
+            st.markdown(f"**You:** {chat['content']}")
+        else:
+            st.markdown(f"**Bot:** {chat['content']}")
+    
+    # User input
+    user_input = st.text_input("Type your message here:", key="chat_input")
+    if st.button("Send"):
+        if user_input:
+            st.session_state.chat_history.append({"role": "user", "content": user_input})
+            
+            if OPENAI_AVAILABLE:
+                try:
+                    response = openai.ChatCompletion.create(
+                        model="gpt-3.5-turbo",
+                        messages=st.session_state.chat_history
+                    )
+                    bot_reply = response.choices[0].message["content"]
+                except Exception as e:
+                    bot_reply = f"(Error calling OpenAI API: {str(e)})"
+            else:
+                # Demo fallback response
+                bot_reply = f"(Demo Bot) You said: {user_input}"
+            
+            st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
+            st.rerun()
+            
     # --- Feedback Page ---
     elif st.session_state.page == "💬 Feedback":
         st.header("💬 Feedback")
@@ -403,6 +421,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
