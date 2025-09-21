@@ -4,14 +4,6 @@ import hashlib
 import streamlit.components.v1 as components
 import pandas as pd
 
-# ---------------------- SAFE PLOTLY IMPORT ----------------------
-try:
-    import plotly.express as px
-    PLOTLY_AVAILABLE = True
-except ModuleNotFoundError:
-    PLOTLY_AVAILABLE = False
-    st.warning("⚠️ Plotly is not installed. Charts will not be displayed. Install Plotly locally using `pip install plotly`.")
-
 # ---------------------- DATABASE ----------------------
 conn = sqlite3.connect('users.db', check_same_thread=False)
 c = conn.cursor()
@@ -180,7 +172,9 @@ else:
         col2.metric("Total Population", "3.8 Billion", "+0.8%")
         col3.metric("Countries Tracked", 195, "0")
 
-        if PLOTLY_AVAILABLE:
+        # Charts with Plotly fallback
+        try:
+            import plotly.express as px
             df = pd.DataFrame({
                 "Country": ["USA", "India", "China", "Germany", "UK"],
                 "GDP": [21, 2.9, 14, 4.2, 2.8],
@@ -194,6 +188,9 @@ else:
             st.subheader("Population Distribution")
             fig2 = px.pie(df, names="Country", values="Population", color="Country")
             st.plotly_chart(fig2, use_container_width=True)
+
+        except ModuleNotFoundError:
+            st.warning("⚠️ Plotly is not installed. Install Plotly to see interactive charts.")
 
         # Embedded Power BI
         st.subheader("🌐 Income Inequality Dashboard")
@@ -231,4 +228,20 @@ else:
             with col2:
                 comment = st.text_area("Your comments")
                 suggestions = st.text_area("Suggestions / Feature Requests")
-            submitted = st.form_submit_button("Submit Feedback
+            submitted = st.form_submit_button("Submit Feedback")
+            if submitted:
+                c.execute(
+                    "INSERT INTO feedback(username, rating, usability, comment, suggestions) VALUES (?, ?, ?, ?, ?)",
+                    (st.session_state.user, rating, usability, comment, suggestions)
+                )
+                conn.commit()
+                st.success("✅ Feedback submitted!")
+
+        st.subheader("📋 Your Previous Feedback")
+        c.execute("SELECT rating, usability, comment, suggestions FROM feedback WHERE username=?", (st.session_state.user,))
+        rows = c.fetchall()
+        if rows:
+            df_feedback = pd.DataFrame(rows, columns=["Rating","Usability","Comment","Suggestions"])
+            st.dataframe(df_feedback)
+        else:
+            st.info("You haven't submitted any feedback yet.")
