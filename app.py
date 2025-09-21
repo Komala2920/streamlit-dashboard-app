@@ -4,8 +4,8 @@ import hashlib
 import streamlit.components.v1 as components
 import pandas as pd
 import random
-from streamlit_lottie import st_lottie
 import requests
+from streamlit_lottie import st_lottie
 
 # ---------------------- DATABASE ----------------------
 conn = sqlite3.connect('users.db', check_same_thread=False)
@@ -44,6 +44,11 @@ def load_lottie(url: str):
     if r.status_code != 200:
         return None
     return r.json()
+
+# Lottie Animations
+lottie_home = load_lottie("https://assets2.lottiefiles.com/packages/lf20_jcikwtux.json")
+lottie_dashboard = load_lottie("https://assets9.lottiefiles.com/packages/lf20_hdy0htc1.json")
+lottie_profile = load_lottie("https://assets3.lottiefiles.com/packages/lf20_iwmd6pyr.json")
 
 # ---------------------- GLOBAL CSS ----------------------
 st.markdown("""
@@ -374,6 +379,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
