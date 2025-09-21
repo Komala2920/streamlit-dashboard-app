@@ -355,7 +355,7 @@ elif st.session_state.user is not None:
     # --- Clear chat button ---
     if st.button("🗑️ Clear Chat"):
         st.session_state.chat_history = []
-        st.experimental_rerun()  # refresh the page
+        st.rerun()  # refresh the page
 
     # Display chat history
     for chat in st.session_state.chat_history:
@@ -441,6 +441,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
