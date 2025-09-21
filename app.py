@@ -205,13 +205,13 @@ else:
                     with col_left:
                         first_name = st.text_input("First Name")
                         password = st.text_input("Password",type="password")
-                        gender = st.selectbox("Gender", ["Male", "Female", "Other"], index=0)
+                        gender = st.selectbox("Gender", ["Male", "Female", "Other","Select a Option"], index=0)
                     with col_right:
                         last_name = st.text_input("Last Name")
                         email = st.text_input("Email")
                         address = st.text_input("Address")
-                        dob = st.date_input("Date of Birth", min_value=pd.to_datetime("2000-01-01"), max_value=pd.to_datetime("2025-12-31"))
-                        language = st.selectbox("Language", ["English", "Spanish", "French"], index=0)
+                        dob = st.date_input("Date of Birth", min_value=pd.to_datetime("2000-01-01"), max_value=pd.to_datetime("2025-12-31"), "Select a Option")
+                        language = st.selectbox("Language", ["English", "Spanish", "French","Select a Option"], index=0)
                         linkedin = st.text_input("LinkedIn")
                     submitted = st.form_submit_button("💾 Save")
                     if submitted:
@@ -262,4 +262,5 @@ else:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")
+
 
