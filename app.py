@@ -212,17 +212,20 @@ elif st.session_state.page == "forgot_password":
 elif st.session_state.user is not None:
     st.markdown("<div style='text-align:center; font-size:32px; font-weight:bold; color:#38bdf8; margin-bottom:20px'>Global Balance</div>", unsafe_allow_html=True)
 
-   # --- Sidebar Navigation ---
+   # --------Sidebar Navigation ---------
     st.sidebar.title("Navigation")
-    nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🚪 Logout"]
-    for item in nav_items:
+    top_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🤖 Chatbot" ]
+    for item in top_items:
         if st.sidebar.button(item, key=item):
-            if item == "🚪 Logout":
-                st.session_state.user = None
-                st.session_state.page = "🏠 Home"
-                st.success("🚪 You have been logged out.")
-            else:
-                st.session_state.page = item
+            st.session_state.page = item
+    # Add a spacer to push Logout to the bottom
+    st.sidebar.markdown("<br><br><br><br><br><br>", unsafe_allow_html=True)
+
+    # Bottom section (Logout)
+    if st.sidebar.button("🚪 Logout", key="logout_sidebar"):
+        st.session_state.user = None
+        st.session_state.page = "🏠 Home"
+        st.success("🚪 You have been logged out.")
 
     # --- Home Page ---
     if st.session_state.page == "🏠 Home":
@@ -437,6 +440,7 @@ elif st.session_state.user is not None:
 
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()
+
 
 
 
