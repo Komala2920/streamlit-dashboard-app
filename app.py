@@ -48,7 +48,7 @@ def st_lottie_url(url: str, height: int = 300, key: str = None):
     components.html(lottie_html, height=height + 50)
 
 # ---------------------- GLOBAL CSS ----------------------
-st.markdown("""
+st.markdown(r"""
 <style>
 /* Apply background everywhere */
 .stApp { 
@@ -383,6 +383,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
