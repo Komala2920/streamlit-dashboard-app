@@ -42,6 +42,8 @@ def send_otp(email, otp):
 def st_lottie_url(url: str, height: int = 300, key: str = None):
     lottie_html = f"""
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <lottie-player src="{url}" background="transparent" speed="1" style="width: 100%; height: 300px;" loop autoplay></lottie-player>
     <lottie-player src="{url}"  background="transparent"  speed="1"
                    style="width:100%; height:{height}px;" loop autoplay></lottie-player>
     """
@@ -300,7 +302,7 @@ elif st.session_state.user is not None:
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Edit Profile")
          # --- Lottie Animation ---
-        st_lottie_url("https://assets6.lottiefiles.com/packages/lf20_3vbOcw.json", height=200)
+        st_lottie_url("https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js", height=200)
         
         # Profile Card
         st.markdown('<div class="card">', unsafe_allow_html=True)
@@ -375,6 +377,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
