@@ -221,7 +221,7 @@ elif st.session_state.user is not None:
               st.session_state.user = None
               st.session_state.page = "🏠 Home"
               st.success("🚪 You have been logged out.")
-         else:
+          else:
               st.session_state.page = item
 
 
@@ -439,6 +439,7 @@ elif st.session_state.user is not None:
             st.rerun()
 
        
+
 
 
 
