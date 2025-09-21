@@ -441,11 +441,11 @@ elif st.session_state.user is not None:
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()
             
-    # --- VLOG Page ---
+    # --------- VLOG Page ------------
     elif st.session_state.page == "📹 Vlog":
         st.header("📹 Vlog")
-        # Robot / video animation
-        st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_kdx6cani.json", height=200)
+        # --- Vlog Lottie 4 (Film/Video Editing) ---
+        st_lottie_url("https://assets10.lottiefiles.com/packages/lf20_xlkxtmul.json", height=200)
         st.write("Check out our latest vlogs and tutorials!")
 
     # Example 1: YouTube embedded video
