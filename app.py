@@ -301,7 +301,7 @@ elif st.session_state.user is not None:
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Edit Profile")
          # --- Lottie Animation ---
-        lottie_profile = load_lottie("https://assets3.lottiefiles.com/packages/lf20_iwmd6
+        lottie_profile = load_lottie("https://assets3.lottiefiles.com/packages/lf20_iwmd6pyr.json")
         
         # Profile Card
         st.markdown('<div class="card">', unsafe_allow_html=True)
@@ -374,6 +374,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
