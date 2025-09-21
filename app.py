@@ -192,30 +192,55 @@ else:
         """, height=620)
 
     # --- Profile Page ---
-    elif st.session_state.page == "👤 Profile":
-        st.header("👤 Edit Profile")
-        with st.container():
-            col1, col2 = st.columns([1, 3])
-            with col1:
-                st.image("https://via.placeholder.com/120", width=120)
-                st.text(st.session_state.user)
-            with col2:
-                with st.form("profile_form"):
-                    col_left, col_right = st.columns(2)
-                    with col_left:
-                        first_name = st.text_input("First Name")
-                        password = st.text_input("Password",type="password")
-                        gender = st.selectbox("Gender", ["Male", "Female", "Other","Select a Option"], index=0)
-                    with col_right:
-                        last_name = st.text_input("Last Name")
-                        email = st.text_input("Email")
-                        address = st.text_input("Address")
-                        dob = st.date_input("Date of Birth", min_value=pd.to_datetime("2000-01-01"), max_value=pd.to_datetime("2025-12-31"))
-                        language = st.selectbox("Language", ["English", "Spanish", "French","Select a Option"], index=0)
-                        linkedin = st.text_input("LinkedIn")
-                    submitted = st.form_submit_button("💾 Save")
-                    if submitted:
-                        st.success("✅ Profile updated successfully!")
+elif st.session_state.page == "👤 Profile":
+    st.header("👤 Edit Profile")
+    with st.container():
+        col1, col2 = st.columns([1, 3])
+        with col1:
+            st.image("https://via.placeholder.com/120", width=120)
+            st.text(st.session_state.user)
+        with col2:
+            with st.form("profile_form"):
+                col_left, col_right = st.columns(2)
+                with col_left:
+                    first_name = st.text_input("First Name")
+                    password = st.text_input("Password", type="password")
+                    gender = st.selectbox("Gender", ["Male", "Female", "Other", "Select a Option"], index=0)
+                with col_right:
+                    last_name = st.text_input("Last Name")
+                    email = st.text_input("Email")
+                    address = st.text_input("Address")
+                    dob = st.date_input("Date of Birth", min_value=pd.to_datetime("2000-01-01"), max_value=pd.to_datetime("2025-12-31"))
+                    language = st.selectbox("Language", ["English", "Spanish", "French", "Select a Option"], index=0)
+                    linkedin = st.text_input("LinkedIn")
+                submitted = st.form_submit_button("💾 Save")
+                if submitted:
+                    st.success("✅ Profile updated successfully!")
+
+    st.markdown("---")
+    st.subheader("🔒 Reset Password")
+
+    with st.form("reset_password_form"):
+        current_pass = st.text_input("Current Password", type="password")
+        new_pass = st.text_input("New Password", type="password")
+        confirm_pass = st.text_input("Confirm New Password", type="password")
+
+        reset_submitted = st.form_submit_button("🔑 Update Password")
+        if reset_submitted:
+            if not current_pass or not new_pass or not confirm_pass:
+                st.error("⚠ Please fill in all fields.")
+            else:
+                # Verify current password
+                user = check_user(st.session_state.user, current_pass)
+                if not user:
+                    st.error("❌ Current password is incorrect.")
+                elif new_pass != confirm_pass:
+                    st.error("❌ New passwords do not match.")
+                else:
+                    # Update password in DB
+                    c.execute("UPDATE users SET password=? WHERE username=?", (make_hash(new_pass), st.session_state.user))
+                    conn.commit()
+                    st.success("✅ Password updated successfully!")
 
     # --- Feedback Page ---
     elif st.session_state.page == "💬 Feedback":
@@ -262,6 +287,7 @@ else:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")
+
 
 
 
