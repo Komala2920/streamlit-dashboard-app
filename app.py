@@ -266,27 +266,29 @@ elif st.session_state.user is not None:
         st.markdown('</div>', unsafe_allow_html=True)
 
     # --- Profile Page ---
-    elif st.session_state.page == "👤 Profile":
-        st.header("👤 Edit Profile")
-        with st.container():
-            col1, col2 = st.columns([1, 2])
-            with col1:
-                pass  
-            with col2:
-                with st.form("profile_form"):
-                    col_left, col_right = st.columns(2)
-                    with col_left:
-                        first_name = st.text_input("First Name")
-                        gender = st.selectbox("Gender", ["Select a Option","Male", "Female", "Other"], index=0)
-                    with col_right:
-                        last_name = st.text_input("Last Name")
-                        email = st.text_input("Email")
-                        linkedin = st.text_input("LinkedIn")
-                    submitted = st.form_submit_button("💾 Save")
-                    if submitted:
-                        st.success("✅ Profile updated successfully!")
+   elif st.session_state.page == "👤 Profile":
+       st.header("👤 Edit Profile")
 
-        st.subheader("🔑 Password Management")
+       # Center the form
+       col_empty, col_center, col_empty2 = st.columns([1, 2, 1])
+       with col_center:
+           with st.form("profile_form"):
+               col_left, col_right = st.columns(2)
+               with col_left:
+                   first_name = st.text_input("First Name")
+                   gender = st.selectbox("Gender", ["Select a Option","Male", "Female", "Other"], index=0)
+               with col_right:
+                   last_name = st.text_input("Last Name")
+                   email = st.text_input("Email")
+                   linkedin = st.text_input("LinkedIn")
+                submitted = st.form_submit_button("💾 Save")
+                if submitted:
+                    st.success("✅ Profile updated successfully!")
+
+    # --- Password Management Section ---
+    st.subheader("🔑 Password Management")
+    col_empty, col_center, col_empty2 = st.columns([1, 2, 1])
+    with col_center:
         with st.form("password_form", clear_on_submit=True):
             new_password = st.text_input("New Password", type="password")
             confirm_password = st.text_input("Confirm New Password", type="password")
@@ -298,6 +300,7 @@ elif st.session_state.user is not None:
                 elif new_password != confirm_password:
                     st.error("❌ New passwords do not match.")
                 else:
+                    # Directly update password (no current password check)
                     c.execute("UPDATE users SET password=? WHERE username=?", 
                               (make_hash(new_password), st.session_state.user))
                     conn.commit()
@@ -339,6 +342,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")
+
 
 
 
