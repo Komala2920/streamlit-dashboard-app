@@ -34,7 +34,7 @@ def update_password(email, new_password):
     conn.commit()
 
 def send_otp(email, otp):
-    st.info(f"(Demo) OTP sent to {email}: **{otp}**")
+    st.info(f"(Demo) OTP sent to {email}: *{otp}*")
     return True
 
 # ---------------------- PROFESSIONAL CSS ----------------------
@@ -187,18 +187,18 @@ elif st.session_state.user is not None:
     # --- Home Page ---
     if st.session_state.page == "🏠 Home":
         st.header("🏠 Welcome Home")
-        st.write(f"Hello, *{st.session_state.user}* 👋")
+        st.write(f"Hello, {st.session_state.user} 👋")
 
         # Overview Card
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("🌐 What is Global Balance?")
         st.markdown("""
-        *Global Balance* is a unified platform for analyzing and monitoring **global economic & financial insights**.  
+        Global Balance is a unified platform for analyzing and monitoring *global economic & financial insights*.  
         Our mission is to provide decision-makers, analysts, and researchers with the tools to visualize, compare, and understand world economies.
         
-        - 📊 **Visual Dashboards**: Track real-time data  
-        - 🌍 **Global Coverage**: Access multi-country insights  
-        - 🔐 **Secure & Private**: Enterprise-level user authentication  
+        - 📊 *Visual Dashboards*: Track real-time data  
+        - 🌍 *Global Coverage*: Access multi-country insights  
+        - 🔐 *Secure & Private*: Enterprise-level user authentication  
         """)
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -206,11 +206,11 @@ elif st.session_state.user is not None:
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("✨ Why Use Global Balance?")
         st.markdown("""
-        1. *Interactive Dashboards* 📊 with filters & drill-down analysis  
-        2. *Profile Management* 👤 to personalize your data experience  
-        3. *Feedback Portal* 💬 for continuous improvement  
-        4. *Research Support* 📖 providing contextual explanations  
-        5. *Insights & Reports* 📑 downloadable in multiple formats  
+        1. Interactive Dashboards 📊 with filters & drill-down analysis  
+        2. Profile Management 👤 to personalize your data experience  
+        3. Feedback Portal 💬 for continuous improvement  
+        4. Research Support 📖 providing contextual explanations  
+        5. Insights & Reports 📑 downloadable in multiple formats  
         """)
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -218,8 +218,8 @@ elif st.session_state.user is not None:
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("💡 Quick Tips")
         st.markdown("""
-        - Use the sidebar to **switch pages** quickly  
-        - Visit the Dashboard to view **interactive charts**  
+        - Use the sidebar to *switch pages* quickly  
+        - Visit the Dashboard to view *interactive charts*  
         - Update your profile to stay connected with new features  
         """)
         st.markdown('</div>', unsafe_allow_html=True)
@@ -231,7 +231,7 @@ elif st.session_state.user is not None:
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("🌍 Real-Time Insights")
         st.markdown("""
-        The dashboard integrates **world development indicators** such as:
+        The dashboard integrates *world development indicators* such as:
         - GDP Growth 📈
         - Income Inequality 📊
         - Employment & Unemployment Trends 💼
@@ -250,9 +250,9 @@ elif st.session_state.user is not None:
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("📑 How to Use?")
         st.markdown("""
-        - Hover on charts to see **detailed tooltips**  
-        - Use filters to analyze by **region, income group, or year**  
-        - Click on visual elements to **drill down into data**  
+        - Hover on charts to see *detailed tooltips*  
+        - Use filters to analyze by *region, income group, or year*  
+        - Click on visual elements to *drill down into data*  
         """)
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -261,34 +261,32 @@ elif st.session_state.user is not None:
         st.markdown("""
         ✅ Emerging economies show rapid growth in the last decade  
         ✅ Developed nations display lower inequality but slower growth  
-        ✅ Africa and Asia remain regions of **great potential & challenges**  
+        ✅ Africa and Asia remain regions of *great potential & challenges*  
         """)
         st.markdown('</div>', unsafe_allow_html=True)
 
     # --- Profile Page ---
-   elif st.session_state.page == "👤 Profile":
-       st.header("👤 Edit Profile")
+    elif st.session_state.page == "👤 Profile":
+        st.header("👤 Edit Profile")
+        with st.container():
+            col1, col2 = st.columns([1, 2])
+            with col1:
+                pass  
+            with col2:
+                with st.form("profile_form"):
+                    col_left, col_right = st.columns(2)
+                    with col_left:
+                        first_name = st.text_input("First Name")
+                        gender = st.selectbox("Gender", ["Select a Option","Male", "Female", "Other"], index=0)
+                    with col_right:
+                        last_name = st.text_input("Last Name")
+                        email = st.text_input("Email")
+                        linkedin = st.text_input("LinkedIn")
+                    submitted = st.form_submit_button("💾 Save")
+                    if submitted:
+                        st.success("✅ Profile updated successfully!")
 
-       # Center the form
-       col_empty, col_center, col_empty2 = st.columns([1, 2, 1])
-       with col_center:
-           with st.form("profile_form"):
-               col_left, col_right = st.columns(2)
-               with col_left:
-                   first_name = st.text_input("First Name")
-                   gender = st.selectbox("Gender", ["Select a Option","Male", "Female", "Other"], index=0)
-               with col_right:
-                   last_name = st.text_input("Last Name")
-                   email = st.text_input("Email")
-                   linkedin = st.text_input("LinkedIn")
-                submitted = st.form_submit_button("💾 Save")
-                if submitted:
-                    st.success("✅ Profile updated successfully!")
-
-    # --- Password Management Section ---
-    st.subheader("🔑 Password Management")
-    col_empty, col_center, col_empty2 = st.columns([1, 2, 1])
-    with col_center:
+        st.subheader("🔑 Password Management")
         with st.form("password_form", clear_on_submit=True):
             new_password = st.text_input("New Password", type="password")
             confirm_password = st.text_input("Confirm New Password", type="password")
@@ -300,7 +298,6 @@ elif st.session_state.user is not None:
                 elif new_password != confirm_password:
                     st.error("❌ New passwords do not match.")
                 else:
-                    # Directly update password (no current password check)
                     c.execute("UPDATE users SET password=? WHERE username=?", 
                               (make_hash(new_password), st.session_state.user))
                     conn.commit()
@@ -342,9 +339,3 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")
-
-
-
-
-
-
