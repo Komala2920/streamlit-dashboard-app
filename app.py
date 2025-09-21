@@ -134,8 +134,6 @@ if st.session_state.user is None and st.session_state.page not in ["forgot_passw
     tab1, tab2 = st.tabs(["🔐 Login", "📝 Sign Up"])
    
     with tab1:
-    # --- Lottie Animation on Sign In Page ---
-        st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_ta8z3psv.json", height=220)
         username = st.text_input("Username", key="login_user")
         username = st.text_input("Username", key="login_user")
         password = st.text_input("Password", type="password", key="login_pass")
@@ -377,6 +375,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
