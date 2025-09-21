@@ -213,15 +213,15 @@ elif st.session_state.user is not None:
     st.markdown("<div style='text-align:center; font-size:32px; font-weight:bold; color:#38bdf8; margin-bottom:20px'>Global Balance</div>", unsafe_allow_html=True)
 
     # ------------------- Sidebar Navigation -------------------
-     st.sidebar.title("Navigation")
-     nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🤖 Chatbot", "🚪 Logout"]
-     for item in nav_items:
-         if st.sidebar.button(item, key=item):
-            if item == "🚪 Logout":
-               st.session_state.user = None
-               st.session_state.page = "🏠 Home"
-               st.success("🚪 You have been logged out.")
-          else:
+    st.sidebar.title("Navigation")
+    nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🤖 Chatbot", "🚪 Logout"]
+    for item in nav_items:
+        if st.sidebar.button(item, key=item):
+           if item == "🚪 Logout":
+              st.session_state.user = None
+              st.session_state.page = "🏠 Home"
+              st.success("🚪 You have been logged out.")
+         else:
               st.session_state.page = item
 
 
@@ -439,5 +439,6 @@ elif st.session_state.user is not None:
             st.rerun()
 
        
+
 
 
