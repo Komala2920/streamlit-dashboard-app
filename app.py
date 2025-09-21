@@ -274,7 +274,7 @@ elif st.session_state.user is not None:
         with st.form("profile_form"):
             col_left, col_right = st.columns(2)
             with col_left:
-                username = st.text_input("Username", value=st.session_state.user, disabled=False)
+                username = st.text_input("Username", placeholder="Enter user name")
                 first_name = st.text_input("First Name", placeholder="Enter first name")
                 gender = st.selectbox("Gender", ["Select a Option","Male", "Female", "Other"], index=0)
             with col_right:
@@ -340,6 +340,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")         
+
 
 
 
