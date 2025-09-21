@@ -40,8 +40,8 @@ def send_otp(email, otp):
 st.markdown("""
 <style>
 /* Apply background everywhere */
-.stApp {
-    background: linear-gradient(to bottom right, #0f172a, #1e293b) !important;
+.stApp { 
+    background: linear-gradient(to bottom right, #cce5f0, #a8c8d8);
     font-family: 'Segoe UI', sans-serif;
     color: #f1f5f9;
 }
@@ -356,3 +356,4 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
