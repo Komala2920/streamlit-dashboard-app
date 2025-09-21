@@ -393,21 +393,21 @@ elif st.session_state.user is not None:
     elif st.session_state.page == "🤖 Chatbot":
         st.header("🤖 Chatbot")
 
-       # Initialize chat history if not exists
-       if "chat_history" not in st.session_state:
-           st.session_state.chat_history = []
+        # Initialize chat history if not exists
+        if "chat_history" not in st.session_state:
+            st.session_state.chat_history = []
 
-       # Clear chat button
-       if st.button("🗑️ Clear Chat"):
-           st.session_state.chat_history = []
-           st.rerun()
+        # Clear chat button
+        if st.button("🗑️ Clear Chat"):
+            st.session_state.chat_history = []
+            st.rerun()
 
-       # Display chat history
-       for chat in st.session_state.chat_history:
-          if chat["role"] == "user":
-            st.markdown(f"**You:** {chat['content']}")
-        else:
-            st.markdown(f"**Bot:** {chat['content']}")
+        # Display chat history
+        for chat in st.session_state.chat_history:
+            if chat["role"] == "user":
+                st.markdown(f"**You:** {chat['content']}")
+            else:
+                st.markdown(f"**Bot:** {chat['content']}")
 
     # User input only on Chatbot page
     user_input = st.text_input("Type your message here:", key="chat_input")
@@ -437,3 +437,4 @@ elif st.session_state.user is not None:
 
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()
+
