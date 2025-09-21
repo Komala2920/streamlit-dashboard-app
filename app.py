@@ -419,18 +419,19 @@ elif st.session_state.user is not None:
             st.session_state.chat_history.append({"role": "user", "content": user_input})
 
             # OpenAI GPT Response
-                if OPENAI_AVAILABLE and openai.api_key:
-                    try:
-                        response = openai.ChatCompletion.create(
-                            model="gpt-3.5-turbo",  # or "gpt-4" if you have access
-                            messages=st.session_state.chat_history
-                        )
-                        bot_reply = response.choices[0].message["content"]
-                    except Exception as e:
-                        bot_reply = f"(Error calling OpenAI API: {str(e)})"
-                else:
-                    bot_reply = "Demo mode: OpenAI API key not set. Install 'openai' package and set API key to get full responses."
+            if OPENAI_AVAILABLE and openai.api_key:
+                try:
+                    response = openai.ChatCompletion.create(
+                        model="gpt-3.5-turbo",  # or "gpt-4" if you have access
+                        messages=st.session_state.chat_history
+                    )
+                    bot_reply = response.choices[0].message["content"]
+                except Exception as e:
+                    bot_reply = f"(Error calling OpenAI API: {str(e)})"
+            else:
+                bot_reply = "Demo mode: OpenAI API key not set. Install 'openai' package and set API key to get full responses."
 
-                st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
-                st.rerun()
+            st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
+            st.rerun()
+
 
