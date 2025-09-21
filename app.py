@@ -269,7 +269,7 @@ elif st.session_state.user is not None:
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Edit Profile")
         with st.container():
-            col1, col2 = st.columns([1, 3])
+            col1, col2 = st.columns([2, 3])
             with col1:
                 pass  
             with col2:
@@ -339,3 +339,4 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")
+
