@@ -214,7 +214,7 @@ elif st.session_state.user is not None:
 
     # ------------------- Sidebar Navigation -------------------
     st.sidebar.title("Navigation")
-    nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🤖 Chatbot", "📹 Vlog", "🚪 Logout"]
+    nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🤖 Chatbot", "🚪 Logout"]
     for item in nav_items:
         if st.sidebar.button(item, key=item):
             if item == "🚪 Logout":
@@ -441,3 +441,4 @@ elif st.session_state.user is not None:
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()
             
+
