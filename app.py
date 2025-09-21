@@ -132,9 +132,7 @@ if "reset_email" not in st.session_state:
 if st.session_state.user is None and st.session_state.page not in ["forgot_password"]:
     st.markdown("<div style='text-align:center; font-size:32px; font-weight:bold; color:#38bdf8; margin-bottom:20px'>Global Balance</div>", unsafe_allow_html=True)
     tab1, tab2 = st.tabs(["🔐 Login", "📝 Sign Up"])
-    # --- Lottie Animation ---
-        st_lottie_url("https://lottiefiles.com/free-animation/login-0BOX9ErHY2", height=200)
-
+   
     with tab1:
         username = st.text_input("Username", key="login_user")
         password = st.text_input("Password", type="password", key="login_pass")
@@ -378,6 +376,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
