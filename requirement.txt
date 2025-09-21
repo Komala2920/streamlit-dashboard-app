@@ -2,3 +2,4 @@ streamlit
 streamlit-lottie
 pandas
 requests
+st_lottie
