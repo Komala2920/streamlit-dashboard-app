@@ -303,9 +303,9 @@ elif st.session_state.user is not None:
         st.header("👤 Edit Profile")
          lottie_html = """
          <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-         <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_ee8bd41c.json"  background="transparent" speed="1" style="width: 100%; height: 300px;" loop autoplay></lottie-player>
+         <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_ee8bd41c.json"  background="transparent" speed="1" style="width: 100%; height: 300px;" loop autopla></lottie-player>
 """
-components.html(lottie_html, height=350)
+        components.html(lottie_html, height=200)
         # Profile Card
         st.markdown('<div class="card">', unsafe_allow_html=True)
         with st.form("profile_form"):
@@ -379,6 +379,7 @@ components.html(lottie_html, height=350)
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
