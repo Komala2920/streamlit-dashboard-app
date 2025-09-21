@@ -134,6 +134,49 @@ if st.session_state.user is None and st.session_state.page not in ["forgot_passw
     tab1, tab2 = st.tabs(["🔐 Login", "📝 Sign Up"])
    
     with tab1:
+        # ---------- Background image (uploaded) ----------
+        login_video = "/mnt/data/Content Creation Video.jpeg" 
+        st.markdown(
+        f"""
+        <style>
+        .login-container {{
+            position: relative;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }}
+        .login-container video {{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            opacity: 0.5;
+            border-radius: 16px;
+        }}
+        .login-content {{
+            position: relative;
+            z-index: 1;
+            padding: 30px;
+        }}
+        </style>
+
+        <div class="login-container">
+            <video autoplay loop muted playsinline>
+                <source src="file://{login_video}" type="video/mp4">
+            </video>
+            <div class="login-content">
+        """,
+        unsafe_allow_html=True
+    )
+
+    # --- Lottie Animation: Person Logging In ---
+    st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_ta8z3psv.json", height=200)
+
         username = st.text_input("Username", key="login_user")
         password = st.text_input("Password", type="password", key="login_pass")
         if st.button("Sign In"):
@@ -374,6 +417,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
