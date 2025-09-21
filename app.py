@@ -439,10 +439,11 @@ elif st.session_state.user is not None:
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()
 
-       # --- Logout Button at the bottom ---
-       st.markdown("---")  # horizontal line for separation
-       if st.button("🚪 Logout", key="logout_chatbot"):
-         st.session_state.user = None
-         st.session_state.page = "🏠 Home"
-         st.success("🚪 You have been logged out.")
-         st.rerun()
+            # --- Logout Button at the bottom ---
+            st.markdown("---")  # horizontal line for separation
+            if st.button("🚪 Logout", key="logout_chatbot"):
+               st.session_state.user = None
+               st.session_state.page = "🏠 Home"
+               st.success("🚪 You have been logged out.")
+               st.rerun()
+
