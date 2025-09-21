@@ -231,4 +231,5 @@ else:
             with col2:
                 comment = st.text_area("Your comments")
                 suggestions = st.text_area("Suggestions / Feature Requests")
-            submitted = st.form_submit_button("Submit Feedback
+            submitted = st.form_submit_button("Submit Feedback")
+
