@@ -242,8 +242,8 @@ elif st.session_state.user is not None:
         with st.container():
             col1, col2 = st.columns([1, 3])
             with col1:
-                st.image("https://via.placeholder.com/120", width=120)
-                st.text(st.session_state.user)
+                # Removed image and username text
+                pass  
             with col2:
                 with st.form("profile_form"):
                     col_left, col_right = st.columns(2)
@@ -314,4 +314,3 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")
-
