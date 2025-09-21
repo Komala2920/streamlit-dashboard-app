@@ -14,6 +14,7 @@ try:
     OPENAI_AVAILABLE = True
     # For real deployment, set your API key here or via environment variable
     # openai.api_key = "YOUR_OPENAI_API_KEY"
+    openai.api_key = os.getenv("OPENAI_API_KEY")
 except ModuleNotFoundError:
     OPENAI_AVAILABLE = False
 
@@ -389,8 +390,8 @@ elif st.session_state.user is not None:
             st.info("You haven't submitted any feedback yet.")        
 
    # ---------------------- Chatbot Page ----------------------
-    elif st.session_state.page == "🤖 Chatbot":
-        st.header("🤖 Chatbot")
+   if st.session_state.page == "🤖 Chatbot":
+       st.header("🤖 Chatbot")
 
         # --- Lottie Animation ---
         st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_1pxqjqps.json", height=200)
@@ -417,27 +418,18 @@ elif st.session_state.user is not None:
         if user_input:
             st.session_state.chat_history.append({"role": "user", "content": user_input})
 
-            # Demo or OpenAI bot reply
-            if OPENAI_AVAILABLE:
-                try:
-                    response = openai.ChatCompletion.create(
-                        model="gpt-3.5-turbo",
-                        messages=st.session_state.chat_history
-                    )
-                    bot_reply = response.choices[0].message["content"]
-                except Exception as e:
-                    bot_reply = f"(Error calling OpenAI API: {str(e)})"
-            else:
-                # Demo chatbot responses
-                msg = user_input.lower()
-                if "hello" in msg or "hi" in msg:
-                    bot_reply = "Hello! How can I help you today?"
-                elif "how are you" in msg:
-                    bot_reply = "I'm just a bot, but I'm doing great! 😄"
+            # OpenAI GPT Response
+                if OPENAI_AVAILABLE and openai.api_key:
+                    try:
+                        response = openai.ChatCompletion.create(
+                            model="gpt-3.5-turbo",  # or "gpt-4" if you have access
+                            messages=st.session_state.chat_history
+                        )
+                        bot_reply = response.choices[0].message["content"]
+                    except Exception as e:
+                        bot_reply = f"(Error calling OpenAI API: {str(e)})"
                 else:
-                    bot_reply = "I'm not sure about that, but I'm learning every day! 🤖"
+                    bot_reply = "Demo mode: OpenAI API key not set. Install 'openai' package and set API key to get full responses."
 
-            st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
-            st.rerun()
-
-
+                st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
+                st.rerun()
