@@ -441,30 +441,3 @@ elif st.session_state.user is not None:
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()
             
-    # --------- VLOG Page ------------
-    elif st.session_state.page == "📹 Vlog":
-        st.header("📹 Vlog")
-        st.write("Check out our latest vlogs and tutorials!")
-
-    # Example 1: YouTube embedded video
-    vlog_url1 = "https://www.youtube.com/watch?v=i3AR0gt9SHA"  # Replace with your own vlog link
-    st.markdown(f"""
-        <iframe width="100%" height="400" src="{vlog_url1}" 
-        title="Vlog Video 1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    """, unsafe_allow_html=True)
-
-    # Example 2: Another video
-    vlog_url2 = "https://www.youtube.com/watch?v=J1g_NbRfIX4&t=101s"  # Replace
-    st.markdown(f"""
-        <iframe width="100%" height="400" src="{vlog_url2}" 
-        title="Vlog Video 2" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    """, unsafe_allow_html=True)
-
-    # Optional description
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.subheader("About Our Vlogs")
-    st.markdown("""
-    Here you can watch tutorials, insights, and tips about *Global Balance* and other finance topics.  
-    Stay updated with our latest content every week!
-    """)
-    st.markdown('</div>', unsafe_allow_html=True)
