@@ -341,17 +341,9 @@ elif st.session_state.user is not None:
                     conn.commit()
                     st.success("✅ Password updated successfully!")
 
-    try:
-    import openai
-    OPENAI_AVAILABLE = True
-    # For real deployment, set your API key:
-    # openai.api_key = "YOUR_OPENAI_API_KEY"
-except ModuleNotFoundError:
-    OPENAI_AVAILABLE = False
-
-# --- Chatbot Page ---
-elif st.session_state.page == "🤖 Chatbot":
-    st.header("🤖 Chatbot")
+    # --- Chatbot Page ---
+    elif st.session_state.page == "🤖 Chatbot":
+        st.header("🤖 Chatbot")
     
     # Display chat history
     for chat in st.session_state.chat_history:
@@ -421,6 +413,7 @@ elif st.session_state.page == "🤖 Chatbot":
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
