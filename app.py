@@ -444,8 +444,8 @@ elif st.session_state.user is not None:
     # --------- VLOG Page ------------
     elif st.session_state.page == "📹 Vlog":
         st.header("📹 Vlog")
-        # --- Camera Recording Lottie 4 (Movie Camera Reel) ---
-        st_lottie_url("https://assets6.lottiefiles.com/packages/lf20_9wpyhdzo.json", height=200)
+        # --- Vlog / Camera Recording Lottie ---
+        st_lottie_url("https://assets7.lottiefiles.com/packages/lf20_3LTesOTwck.json", height=200)
         st.write("Check out our latest vlogs and tutorials!")
 
     # Example 1: YouTube embedded video
