@@ -214,7 +214,7 @@ elif st.session_state.user is not None:
 
     # --- Sidebar Navigation ---
     st.sidebar.title("Navigation")
-    nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🤖 Chatbot", "🚪 Logout"]
+    nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "🤖 Chatbot", "💬 Feedback", "🚪 Logout"]
     for item in nav_items:
         if st.sidebar.button(item, key=item):
             if item == "🚪 Logout":
@@ -349,8 +349,8 @@ elif st.session_state.user is not None:
                     st.success("✅ Password updated successfully!")
 
    # ---------------------- Chatbot Page ----------------------
-elif st.session_state.page == "🤖 Chatbot":
-    st.header("🤖 Chatbot")
+   elif st.session_state.page == "🤖 Chatbot":
+       st.header("🤖 Chatbot")
 
     # Display chat history
     for chat in st.session_state.chat_history:
@@ -436,6 +436,7 @@ elif st.session_state.page == "🤖 Chatbot":
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
