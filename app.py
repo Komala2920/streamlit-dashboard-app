@@ -3,7 +3,6 @@ import sqlite3
 import hashlib
 import streamlit.components.v1 as components
 import pandas as pd
-import smtplib
 import random
 
 # ---------------------- DATABASE ----------------------
@@ -37,14 +36,17 @@ def send_otp(email, otp):
     st.info(f"(Demo) OTP sent to {email}: *{otp}*")
     return True
 
-# ---------------------- PROFESSIONAL CSS ----------------------
+# ---------------------- GLOBAL CSS ----------------------
 st.markdown("""
 <style>
-body {
-    background: linear-gradient(to bottom right, #0f172a, #1e293b);
+/* Apply background everywhere */
+.stApp {
+    background: linear-gradient(to bottom right, #0f172a, #1e293b) !important;
     font-family: 'Segoe UI', sans-serif;
     color: #f1f5f9;
 }
+
+/* Button styling */
 .stButton>button {
     background: #0ea5e9;
     color: #fff;
@@ -59,6 +61,8 @@ body {
     background: #0284c7;
     transform: translateY(-2px);
 }
+
+/* Card design */
 .card {
     background: #1e293b;
     padding: 20px;
@@ -66,12 +70,22 @@ body {
     box-shadow: 0 8px 24px rgba(0,0,0,0.3);
     margin-bottom: 20px;
 }
-h1, h2, h3, h4 {
-    color: #f1f5f9;
+
+/* Headings and text */
+h1, h2, h3, h4, label {
+    color: #f1f5f9 !important;
 }
-.stText, p {
-    color: #e2e8f0;
+p, .stText, .stMarkdown {
+    color: #e2e8f0 !important;
 }
+
+/* Input fields */
+input, textarea, select {
+    border-radius: 10px !important;
+    padding: 8px !important;
+}
+
+/* Tabs */
 .css-1emrehy.edgvbvh3 button {
     width: 100% !important;
     height: 55px !important;
@@ -85,6 +99,8 @@ h1, h2, h3, h4 {
 .css-1emrehy.edgvbvh3 button:hover {
     background-color: #0284c7;
 }
+
+/* Iframes */
 iframe {
     border-radius: 12px;
 }
@@ -100,28 +116,6 @@ if "otp" not in st.session_state:
     st.session_state.otp = None
 if "reset_email" not in st.session_state:
     st.session_state.reset_email = None
-
-# ---------------------- PAGE BACKGROUND ----------------------
-def set_page_bg_color(page):
-    colors = {
-        "🏠 Home": "#1e293b",         # Dark Slate Blue
-        "📊 Dashboard": "#0f172a",    # Navy-ish
-        "👤 Profile": "#334155",      # Soft Gray-Blue
-        "💬 Feedback": "#475569",     # Muted Blue Gray
-        "forgot_password": "#1e293b"  # Same as Home for uniformity
-    }
-    color = colors.get(page, "#1e293b")
-    
-    st.markdown(f"""
-        <style>
-        .reportview-container, .main {{
-            background-color: {color};
-        }}
-        </style>
-    """, unsafe_allow_html=True)
-
-# Call the background function
-set_page_bg_color(st.session_state.page)
 
 # ---------------------- LOGIN / SIGNUP ----------------------
 if st.session_state.user is None and st.session_state.page not in ["forgot_password"]:
@@ -291,7 +285,7 @@ elif st.session_state.user is not None:
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Edit Profile")
         
-       # Profile Card
+        # Profile Card
         st.markdown('<div class="card">', unsafe_allow_html=True)
         with st.form("profile_form"):
             col_left, col_right = st.columns(2)
@@ -362,4 +356,3 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
-
