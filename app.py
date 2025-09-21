@@ -338,7 +338,7 @@ elif st.session_state.user is not None:
     # --- Feedback Page ---
     elif st.session_state.page == "💬 Feedback":
         st.header("💬 Feedback")
-        st_lottie_url("https://assets5.lottiefiles.com/packages/lf20_3a2d8f.json", height=200)
+        st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_touohxv0.json", height=200)
 
         with st.form("feedback_form"):
             rating = st.slider("Rate your experience", 1, 5, 5)
@@ -373,4 +373,5 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
