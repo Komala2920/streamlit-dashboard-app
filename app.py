@@ -214,7 +214,7 @@ elif st.session_state.user is not None:
 
     # --- Sidebar Navigation ---
     st.sidebar.title("Navigation")
-    nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "🤖 Chatbot", "💬 Feedback", "🚪 Logout"]
+    nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🤖 Chatbot", "🚪 Logout"]
     for item in nav_items:
         if st.sidebar.button(item, key=item):
             if item == "🚪 Logout":
@@ -348,6 +348,46 @@ elif st.session_state.user is not None:
                     conn.commit()
                     st.success("✅ Password updated successfully!")
 
+    # --- Feedback Page ---
+    elif st.session_state.page == "💬 Feedback":
+        st.header("💬 Feedback")
+        # Person leaving a review
+        st_lottie_url("https://assets7.lottiefiles.com/packages/lf20_touohxv0.json", height=200)
+
+        with st.form("feedback_form"):
+            rating = st.slider("Rate your experience", 1, 5, 5)
+            usability = st.selectbox("How easy was it to use the platform?", 
+                                    ["Very Easy", "Easy", "Neutral", "Difficult", "Very Difficult"], index=1)
+            comment = st.text_area("Your comments")
+            suggestions = st.text_area("Suggestions / Feature Requests")
+
+            submitted = st.form_submit_button("Submit Feedback")
+            if submitted:
+                c.execute("""
+                    CREATE TABLE IF NOT EXISTS feedback(
+                        username TEXT, 
+                        rating INTEGER, 
+                        usability TEXT, 
+                        comment TEXT, 
+                        suggestions TEXT
+                    )
+                """)
+                c.execute(
+                    "INSERT INTO feedback(username, rating, usability, comment, suggestions) VALUES (?, ?, ?, ?, ?)",
+                    (st.session_state.user, rating, usability, comment, suggestions)
+                )
+                conn.commit()
+                st.success("✅ Thank you! Your feedback has been submitted.")
+
+        st.subheader("📋 Your Previous Feedback")
+        c.execute("SELECT rating, usability, comment, suggestions FROM feedback WHERE username=?", (st.session_state.user,))
+        rows = c.fetchall()
+        if rows:
+            feedback_df = pd.DataFrame(rows, columns=["Rating", "Usability", "Comment", "Suggestions"])
+            st.dataframe(feedback_df)
+        else:
+            st.info("You haven't submitted any feedback yet.")        
+
    # ---------------------- Chatbot Page ----------------------
     elif st.session_state.page == "🤖 Chatbot":
         st.header("🤖 Chatbot")
@@ -441,20 +481,3 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
