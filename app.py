@@ -348,23 +348,24 @@ elif st.session_state.user is not None:
                     conn.commit()
                     st.success("✅ Password updated successfully!")
 
-    # --- Chatbot Page ---
-    elif st.session_state.page == "🤖 Chatbot":
-        st.header("🤖 Chatbot")
-    
+   # ---------------------- Chatbot Page ----------------------
+elif st.session_state.page == "🤖 Chatbot":
+    st.header("🤖 Chatbot")
+
     # Display chat history
     for chat in st.session_state.chat_history:
         if chat["role"] == "user":
             st.markdown(f"**You:** {chat['content']}")
         else:
             st.markdown(f"**Bot:** {chat['content']}")
-    
+
     # User input
     user_input = st.text_input("Type your message here:", key="chat_input")
     if st.button("Send"):
         if user_input:
             st.session_state.chat_history.append({"role": "user", "content": user_input})
-            
+
+            # ---- Chatbot logic ----
             if OPENAI_AVAILABLE:
                 try:
                     response = openai.ChatCompletion.create(
@@ -375,9 +376,24 @@ elif st.session_state.user is not None:
                 except Exception as e:
                     bot_reply = f"(Error calling OpenAI API: {str(e)})"
             else:
-                # Demo fallback response
-                bot_reply = f"(Demo Bot) You said: {user_input}"
-            
+                # ---- Demo chatbot logic ----
+                msg = user_input.lower()
+                if "hello" in msg or "hi" in msg:
+                    bot_reply = "Hello! How can I help you today?"
+                elif "how are you" in msg:
+                    bot_reply = "I'm just a bot, but I'm doing great! 😄"
+                elif "help" in msg:
+                    bot_reply = "Sure! You can ask me about Global Balance or app features."
+                elif "dashboard" in msg:
+                    bot_reply = "The Dashboard shows analytics and real-time insights."
+                elif "profile" in msg:
+                    bot_reply = "In the Profile page, you can update your personal information."
+                elif "feedback" in msg:
+                    bot_reply = "You can submit feedback in the Feedback page."
+                else:
+                    bot_reply = "I'm not sure about that, but I'm learning every day! 🤖"
+
+            # Save bot reply and refresh
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()
             
@@ -420,6 +436,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
