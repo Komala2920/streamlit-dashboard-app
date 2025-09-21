@@ -115,6 +115,15 @@ input, textarea, select {
 iframe {
     border-radius: 12px;
 }
+/* 🔑 Sign In background */
+.signin-container {
+    background: url("C:\Users\91995\Downloads\Content Creation Video.jpeg") no-repeat center center/cover;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    max-width: 500px;
+    margin: 40px auto;
+    color: white;
 </style>
 """, unsafe_allow_html=True)
 
@@ -374,6 +383,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
