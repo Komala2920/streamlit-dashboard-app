@@ -41,9 +41,9 @@ def send_otp(email, otp):
 # ---------------------- LOTTIE HELPER ----------------------
 def st_lottie_url(url: str, height: int = 300, key: str = None):
     lottie_html = f"""
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     <lottie-player src="{url}"  background="transparent"  speed="1"
                    style="width:100%; height:{height}px;" loop autoplay></lottie-player>
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     """
     components.html(lottie_html, height=height + 50)
 
@@ -217,7 +217,7 @@ elif st.session_state.user is not None:
         st.write(f"Hello, {st.session_state.user} 👋")
 
         # --- Lottie Animation ---
-        st_lottie_url("https://lottie.host/6b6b8d3a-5f85-4f3b-a6e8-f5fdbf7ff1d4/pe2oUl8v0M.json", height=200)
+        st_lottie_url("https://assets7.lottiefiles.com/packages/lf20_touohxv0.json", height=200)
 
         # Overview Card
         st.markdown('<div class="card">', unsafe_allow_html=True)
@@ -258,7 +258,7 @@ elif st.session_state.user is not None:
     elif st.session_state.page == "📊 Dashboard":
         st.header("📊 Global Economic Dashboard")
          # --- Lottie Animation ---
-        st_lottie_url("https://lottie.host/efdf331a-9df5-47ad-8f9b-21965ee49cbb/H8KXKX8n3q.json", height=200)
+       st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_49rdyysj.json", height=200)
 
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("🌍 Real-Time Insights")
@@ -301,7 +301,7 @@ elif st.session_state.user is not None:
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Edit Profile")
          # --- Lottie Animation ---
-        st_lottie_url("https://lottie.host/b7a8a23f-bdf2-46ec-aaa5-2c6d92e1b2a2/1M3zUkc09p.json", height=200)
+        st_lottie_url("https://assets4.lottiefiles.com/packages/lf20_jcikwtux.json", height=200)
         
         # Profile Card
         st.markdown('<div class="card">', unsafe_allow_html=True)
@@ -341,7 +341,7 @@ elif st.session_state.user is not None:
     # --- Feedback Page ---
     elif st.session_state.page == "💬 Feedback":
         st.header("💬 Feedback")
-        st_lottie_url("https://lottie.host/f8eaa9f2-4d07-49a4-a5df-68097bb7c8d5/n6K9m4pz3n.json", height=200)
+        st_lottie_url("https://assets10.lottiefiles.com/packages/lf20_qp1q7mct.json", height=200)
 
         with st.form("feedback_form"):
             rating = st.slider("Rate your experience", 1, 5, 5)
@@ -376,6 +376,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
