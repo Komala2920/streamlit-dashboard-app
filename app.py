@@ -269,12 +269,12 @@ elif st.session_state.user is not None:
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Edit Profile")
         with st.container():
-            col1, col2 = st.columns([1,2])
+            col1, col2 = st.columns([1, 2])
             with col1:
                 pass  
             with col2:
                 with st.form("profile_form"):
-                    col_left, col_right = st.columns(3)
+                    col_left, col_right = st.columns(2)
                     with col_left:
                         first_name = st.text_input("First Name")
                         gender = st.selectbox("Gender", ["Select a Option","Male", "Female", "Other"], index=0)
@@ -339,6 +339,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")
+
 
 
 
