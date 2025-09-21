@@ -340,8 +340,3 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
-
-
-
-
-tell me where to add the background code in this code
