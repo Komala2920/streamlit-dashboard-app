@@ -270,7 +270,7 @@ elif st.session_state.user is not None:
         st.header("👤 Edit Profile")
         
        # Profile Card
-        st.markdown('<div class="card" style="width:60%; margin:auto;">', unsafe_allow_html=True)
+        st.markdown('<div class="card">', unsafe_allow_html=True)
         with st.form("profile_form"):
             col_left, col_right = st.columns(2)
             with col_left:
@@ -339,5 +339,6 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")         
+
 
 
