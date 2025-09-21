@@ -1,4 +1,4 @@
 streamlit
-streamlit-lottie
+pip install streamlit-lottie
 pandas
 requests
