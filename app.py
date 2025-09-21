@@ -258,8 +258,7 @@ elif st.session_state.user is not None:
     elif st.session_state.page == "📊 Dashboard":
         st.title("📊 Dashboard")
         st.write("This is your dashboard with analytics and reports.")
-        lottie_animation = load_lottieurl("https://assets2.lottiefiles.com/packages/lf20_rSQ1Cjs8wv.json", height=200)
-
+        st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_49rdyysj.json", height=200)
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("🌍 Real-Time Insights")
         st.markdown("""
