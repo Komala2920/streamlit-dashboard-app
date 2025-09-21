@@ -261,26 +261,21 @@ elif st.session_state.user is not None:
         # --- Password Management Section ---
         st.subheader("🔑 Password Management")
         with st.form("password_form", clear_on_submit=True):
-            current_password = st.text_input("Current Password", type="password")
             new_password = st.text_input("New Password", type="password")
             confirm_password = st.text_input("Confirm New Password", type="password")
             reset_submitted = st.form_submit_button("Update Password")
 
             if reset_submitted:
-                if not current_password or not new_password or not confirm_password:
+                if not new_password or not confirm_password:
                     st.error("⚠ Please fill out all fields.")
                 elif new_password != confirm_password:
                     st.error("❌ New passwords do not match.")
                 else:
-                    # Check current password
-                    user = check_user(st.session_state.user, current_password)
-                    if user:
-                        c.execute("UPDATE users SET password=? WHERE username=?", 
-                                  (make_hash(new_password), st.session_state.user))
-                        conn.commit()
-                        st.success("✅ Password updated successfully!")
-                    else:
-                        st.error("❌ Current password is incorrect.")
+                    # Directly update password (no current password check)
+                    c.execute("UPDATE users SET password=? WHERE username=?", 
+                              (make_hash(new_password), st.session_state.user))
+                    conn.commit()
+                    st.success("✅ Password updated successfully!")
 
     # --- Feedback Page ---
     elif st.session_state.page == "💬 Feedback":
@@ -319,3 +314,4 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")
+
