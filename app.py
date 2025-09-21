@@ -301,9 +301,11 @@ elif st.session_state.user is not None:
     # --- Profile Page ---
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Edit Profile")
-         # --- Lottie Animation ---
-        st_lottie_url("https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js", height=200)
-        
+         lottie_html = """
+         <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+         <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_ee8bd41c.json"  background="transparent" speed="1" style="width: 100%; height: 300px;" loop autoplay></lottie-player>
+"""
+components.html(lottie_html, height=350)
         # Profile Card
         st.markdown('<div class="card">', unsafe_allow_html=True)
         with st.form("profile_form"):
@@ -377,6 +379,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
