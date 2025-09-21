@@ -135,7 +135,6 @@ if st.session_state.user is None and st.session_state.page not in ["forgot_passw
    
     with tab1:
         username = st.text_input("Username", key="login_user")
-        username = st.text_input("Username", key="login_user")
         password = st.text_input("Password", type="password", key="login_pass")
         if st.button("Sign In"):
             user = check_user(username, password)
