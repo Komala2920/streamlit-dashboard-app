@@ -203,22 +203,16 @@ else:
                 with st.form("profile_form"):
                     col_left, col_right = st.columns(2)
                     with col_left:
-                        first_name = st.text_input("First Name", "Arthur")
-                        password = st.text_input("Password", "", type="password")
-                        phone = st.text_input("Phone", "477-046-1827")
-                        nation = st.text_input("Nation", "Colombia")
+                        first_name = st.text_input("First Name")
+                        password = st.text_input("Password",type="password")
                         gender = st.selectbox("Gender", ["Male", "Female", "Other"], index=0)
-                        twitter = st.text_input("Twitter", "twitter.com/envato")
-                        facebook = st.text_input("Facebook", "facebook.com/envato")
                     with col_right:
-                        last_name = st.text_input("Last Name", "Nancy")
-                        email = st.text_input("Email", "user@example.com")
-                        address = st.text_input("Address", "116 Jaskolski Stravenue Suite 883")
+                        last_name = st.text_input("Last Name")
+                        email = st.text_input("Email")
+                        address = st.text_input("Address")
                         dob = st.date_input("Date of Birth", min_value=pd.to_datetime("2000-01-01"), max_value=pd.to_datetime("2025-12-31"))
                         language = st.selectbox("Language", ["English", "Spanish", "French"], index=0)
-                        linkedin = st.text_input("LinkedIn", "linkedin.com/envato")
-                        google = st.text_input("Google", "zachary Ruiz")
-                    slogan = st.text_input("Slogan", "Land acquisition Specialist")
+                        linkedin = st.text_input("LinkedIn")
                     submitted = st.form_submit_button("💾 Save")
                     if submitted:
                         st.success("✅ Profile updated successfully!")
@@ -268,3 +262,4 @@ else:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")
+
