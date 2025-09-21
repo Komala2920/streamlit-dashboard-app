@@ -4,6 +4,7 @@ import hashlib
 import streamlit.components.v1 as components
 import pandas as pd
 import random
+import streamlit_lottie
 import streamlit.components.v1 as components
 import requests
 import os
@@ -439,5 +440,6 @@ elif st.session_state.user is not None:
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()
             
+
 
 
