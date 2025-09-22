@@ -67,19 +67,25 @@ st.markdown("""
     font-family: 'Segoe UI', sans-serif;
     color: #f1f5f9;
 }
-
-/* Button styling */
-.stButton>button {
+.stButton>button, .css-1emrehy.edgvbvh3 button {
     background: #0ea5e9;
     color: #fff;
     border-radius: 12px;
-    padding: 0.7em 1.5em;
     border: none;
     font-weight: 600;
+    font-size: 16px;
+
+    /* 🔹 Set fixed size */
+    width: 180px !important;
+    height: 55px !important;
+
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     transition: all 0.3s ease;
+    text-align: center;
 }
-.stButton>button:hover {
+
+/* Hover Effect */
+.stButton>button:hover, .css-1emrehy.edgvbvh3 button:hover {
     background: #0284c7;
     transform: translateY(-2px);
 }
@@ -442,4 +448,5 @@ elif st.session_state.user is not None:
 
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()                           
+
 
