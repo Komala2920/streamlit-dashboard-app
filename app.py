@@ -48,7 +48,7 @@ body {
 
 /* Background for login/signup */
 .login-signup-bg {
-    background-image: url("background.jpeg");
+    background-image: url("C:\Users\91995\Downloads\Content Creation Video.jpeg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -331,3 +331,4 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")
+
