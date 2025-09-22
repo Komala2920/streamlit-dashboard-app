@@ -8,15 +8,7 @@ import streamlit.components.v1 as components
 import requests
 import os
 
-# ---------------------- OPTIONAL CHATBOT ----------------------
-try:
-    import openai
-    OPENAI_AVAILABLE = True
-    # For real deployment, set your API key here or via environment variable
-    # openai.api_key = "YOUR_OPENAI_API_KEY"
-except ModuleNotFoundError:
-    OPENAI_AVAILABLE = False
-
+openai.api_key = os.getenv("OPENAI_API_KEY")  # Ensure this is set in environment or Streamlit Secrets
 
 # ---------------------- DATABASE ----------------------
 conn = sqlite3.connect('users.db', check_same_thread=False)
@@ -442,3 +434,4 @@ elif st.session_state.page == "🤖 Chatbot":
             # Append bot response
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()
+
