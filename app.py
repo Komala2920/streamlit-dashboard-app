@@ -60,72 +60,113 @@ def st_lottie_url(url: str, height: int = 300, key: str = None):
 # ---------------------- GLOBAL CSS ----------------------
 st.markdown("""
 <style>
-.stApp { 
-    background: linear-gradient(to bottom right, #0f172a, #1e293b) !important;
-    font-family: 'Segoe UI', sans-serif;
-    color: #f1f5f9;
+.stApp {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+    height: 100vh;
+    margin: 0;
 }
-
-/* Login/Signup container */
 .auth-container {
     display: flex;
     justify-content: center;
     align-items: stretch;
-    width: 100%;
-    max-width: 950px;
-    margin: 40px auto;
+    width: 90%;
+    max-width: 1000px;
+    height: 85vh;
+    margin: auto;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
 }
-
-/* Left (Sign Up) */
-.auth-left {
+.left-panel, .right-panel {
     flex: 1;
-    background: #1e293b;
-    padding: 50px 30px;
+    padding: 40px;
+}
+.left-panel {
+    background: #334155;
+    color: white;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
-.auth-left h2 {
-    font-size: 24px;
-    color: #38bdf8;
+.left-panel h1 {
+    font-size: 26px;
     margin-bottom: 10px;
-}
-.auth-left button {
-    margin-top: 20px;
-    background: #0ea5e9 !important;
-    color: #fff !important;
-    font-weight: 600;
-    border-radius: 12px;
-    padding: 10px 20px;
-}
-
-/* Right (Login) */
-.auth-right {
-    flex: 1;
-    background: #0f172a;
-    padding: 50px 40px;
-}
-.auth-right h2 {
-    font-size: 24px;
     color: #38bdf8;
+}
+.right-panel {
+    background: #1e293b;
+    color: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.right-panel h2, .left-panel h2 {
+    color: #38bdf8;
+    font-size: 22px;
     margin-bottom: 20px;
 }
+.stTextInput>div>div>input {
+    width: 100% !important;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #475569;
+    background: #0f172a;
+    color: #f8fafc;
+}
 .stButton>button {
-    background: #0ea5e9;
-    color: #fff;
-    border-radius: 12px;
-    padding: 0.7em 1.5em;
+    background: #3b82f6;
+    color: white;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: bold;
     border: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
+    cursor: pointer;
 }
 .stButton>button:hover {
-    background: #0284c7;
-    transform: translateY(-2px);
+    background: #2563eb;
 }
 </style>
 """, unsafe_allow_html=True)
+
+# ---------------------- UI ----------------------
+st.markdown('<div class="auth-container">', unsafe_allow_html=True)
+
+# --- LEFT PANEL (Sign Up) ---
+st.markdown('<div class="left-panel">', unsafe_allow_html=True)
+st.markdown("<h1>👋 Hello! Welcome to Global Balance</h1>", unsafe_allow_html=True)
+st.markdown("<p>Don’t have an account yet? Sign up below 👇</p>", unsafe_allow_html=True)
+
+signup_user = st.text_input("Choose Username", key="signup_user")
+signup_email = st.text_input("Email", key="signup_email")
+signup_pass = st.text_input("Choose Password", type="password", key="signup_pass")
+
+if st.button("Sign Up"):
+    if signup_user and signup_pass and signup_email:
+        add_user(signup_user, signup_pass, signup_email)
+        st.success("✅ Account created. Please login.")
+    else:
+        st.error("⚠ Fill all fields")
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+# --- RIGHT PANEL (Sign In) ---
+st.markdown('<div class="right-panel">', unsafe_allow_html=True)
+st.markdown("<h2>Sign In</h2>", unsafe_allow_html=True)
+
+login_user = st.text_input("Login or Email", key="login_user")
+login_pass = st.text_input("Password", type="password", key="login_pass")
+
+if st.button("Sign In"):
+    user = check_user(login_user, login_pass)
+    if user:
+        st.success("✅ Logged in successfully!")
+    else:
+        st.error("❌ Invalid username or password")
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------------------- SESSION ----------------------
 if "user" not in st.session_state:
@@ -446,3 +487,4 @@ elif st.session_state.user is not None:
 
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()                           
+
