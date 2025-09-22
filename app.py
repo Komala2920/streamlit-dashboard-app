@@ -270,7 +270,7 @@ elif st.session_state.user is not None:
         """)
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # --- Dashboard Page ---
+    # -------------- Dashboard Page ---------------
     elif st.session_state.page == "📊 Dashboard":
         st.title("📊 Dashboard")
         st.write("This is your dashboard with analytics and reports.")
@@ -312,7 +312,7 @@ elif st.session_state.user is not None:
         """)
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # --- Profile Page ---
+    # --------------- Profile Page ------------------
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Edit Profile")
         st_lottie_url("https://assets1.lottiefiles.com/packages/lf20_jtbfg2nb.json", height=200)
@@ -351,7 +351,7 @@ elif st.session_state.user is not None:
                     conn.commit()
                     st.success("✅ Password updated successfully!")
 
-    # --- Feedback Page ---
+    # ------------------- Feedback Page -----------------------
     elif st.session_state.page == "💬 Feedback":
         st.header("💬 Feedback")
         # --- Robot Lottie 1 ---
@@ -375,21 +375,29 @@ elif st.session_state.user is not None:
                         suggestions TEXT
                     )
                 """)
-                c.execute(
-                    "INSERT INTO feedback(username, rating, usability, comment, suggestions) VALUES (?, ?, ?, ?, ?)",
-                    (st.session_state.user, rating, usability, comment, suggestions)
-                )
-                conn.commit()
-                st.success("✅ Thank you! Your feedback has been submitted.")
+               # Insert new feedback
+            c.execute(
+                "INSERT INTO feedback(username, rating, usability, comment, suggestions) VALUES (?, ?, ?, ?, ?)",
+                (st.session_state.user, rating, usability, comment, suggestions)
+            )
+            conn.commit()
+            st.success("✅ Thank you! Your feedback has been submitted.")
 
-        st.subheader("📋 Your Previous Feedback")
-        c.execute("SELECT rating, usability, comment, suggestions FROM feedback WHERE username=?", (st.session_state.user,))
+    st.subheader("📋 Your Previous Feedback")
+
+    # Safely fetch feedback, ensure table exists
+    try:
+        c.execute("SELECT rating, usability, comment, suggestions FROM feedback WHERE username=?", 
+                  (st.session_state.user,))
         rows = c.fetchall()
-        if rows:
-            feedback_df = pd.DataFrame(rows, columns=["Rating", "Usability", "Comment", "Suggestions"])
-            st.dataframe(feedback_df)
-        else:
-            st.info("You haven't submitted any feedback yet.")        
+    except sqlite3.OperationalError:
+        rows = []
+
+    if rows:
+        feedback_df = pd.DataFrame(rows, columns=["Rating", "Usability", "Comment", "Suggestions"])
+        st.dataframe(feedback_df)
+    else:
+        st.info("You haven't submitted any feedback yet.")     
 
    # ---------------------- Chatbot Page ----------------------
     elif st.session_state.page == "🤖 Chatbot":
@@ -442,6 +450,7 @@ elif st.session_state.user is not None:
 
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()                           
+
 
 
 
