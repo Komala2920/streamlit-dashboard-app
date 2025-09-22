@@ -144,7 +144,8 @@ if "chat_history" not in st.session_state:
 # ---------------------- LOGIN / SIGNUP ----------------------
 if st.session_state.user is None and st.session_state.page not in ["forgot_password"]:
     st.markdown("<div style='text-align:center; font-size:32px; font-weight:bold; color:#38bdf8; margin-bottom:20px'>Global Balance</div>", unsafe_allow_html=True)
-    st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_yMTxezyE5W.json", height=250)
+    st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_0BOX9ErHY2.json", height=250)
+
     tab1, tab2 = st.tabs(["🔐 Login", "📝 Sign Up"])
    
     with tab1:
@@ -442,6 +443,7 @@ elif st.session_state.user is not None:
 
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()                           
+
 
 
 
