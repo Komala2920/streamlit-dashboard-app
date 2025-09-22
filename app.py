@@ -231,7 +231,7 @@ elif st.session_state.user is not None:
     # ---------- Home Page ------------
     if st.session_state.page == "🏠 Home":
         st.header("🏠 Welcome Home")
-        st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_touohxv0.json", height=250)
+        st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_touohxv0.json", height=200)
 
         st.write(f"Hello, {st.session_state.user} 👋")
 
@@ -442,3 +442,4 @@ elif st.session_state.user is not None:
 
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()                           
+
