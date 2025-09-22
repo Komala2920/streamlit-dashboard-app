@@ -133,21 +133,39 @@ if "chat_history" not in st.session_state:
 
 # ---------------------- LOGIN / SIGNUP ----------------------
 if st.session_state.user is None and st.session_state.page not in ["forgot_password"]:
-    # Add background image only for login/signup
+    
+    # Apply background only on login/signup page
+    bg_path = os.path.abspath("background.jpeg")
     st.markdown(f"""
     <style>
-    .login-signup-bg {{
-        background: url("file://{os.path.abspath('background.jpeg')}") no-repeat center center fixed;
+    .stApp {{
+        background: url("file://{bg_path}") no-repeat center center fixed;
         background-size: cover;
+        font-family: 'Segoe UI', sans-serif;
+    }}
+    .login-card {{
+        background: rgba(0, 0, 0, 0.6);
         padding: 40px;
-        border-radius: 20px;
+        border-radius: 15px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    }}
+    label, h1, h2, h3, p {{
+        color: #f8fafc !important;
     }}
     </style>
     """, unsafe_allow_html=True)
-    st.markdown("<div style='text-align:center; font-size:32px; font-weight:bold; color:#38bdf8; margin-bottom:20px'>Global Balance</div>", unsafe_allow_html=True)
+
+    # Title
+    st.markdown(
+        "<div style='text-align:center; font-size:36px; font-weight:bold; color:#38bdf8; margin-bottom:20px'>Global Balance</div>",
+        unsafe_allow_html=True
+    )
+
+    # Wrap forms inside styled card
+    st.markdown("<div class='login-card'>", unsafe_allow_html=True)
 
     tab1, tab2 = st.tabs(["🔐 Login", "📝 Sign Up"])
-   
+
     with tab1:
         username = st.text_input("Username", key="login_user")
         password = st.text_input("Password", type="password", key="login_pass")
@@ -174,6 +192,8 @@ if st.session_state.user is None and st.session_state.page not in ["forgot_passw
                 st.success("✅ Account created. Now login.")
             else:
                 st.error("⚠ Please enter valid details.")
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------------------- FORGOT PASSWORD ----------------------
 elif st.session_state.page == "forgot_password":
@@ -391,6 +411,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
