@@ -3,10 +3,8 @@ import sqlite3
 import hashlib
 import streamlit.components.v1 as components
 import pandas as pd
+import smtplib
 import random
-import streamlit.components.v1 as components
-import requests
-import os
 
 # ---------------------- DATABASE ----------------------
 conn = sqlite3.connect('users.db', check_same_thread=False)
@@ -39,26 +37,26 @@ def send_otp(email, otp):
     st.info(f"(Demo) OTP sent to {email}: *{otp}*")
     return True
 
-# ---------------------- LOTTIE HELPER ----------------------
-def st_lottie_url(url: str, height: int = 300, key: str = None):
-    lottie_html = f"""
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-    <lottie-player src="{url}"  background="transparent"  speed="1"
-                   style="width:100%; height:{height}px;" loop autoplay></lottie-player>
-    """
-    components.html(lottie_html, height=height + 50)
-
-# ---------------------- GLOBAL CSS ----------------------
+# ---------------------- PROFESSIONAL CSS ----------------------
 st.markdown("""
 <style>
-/* Apply background everywhere */
-.stApp { 
-    background: #001f3f !important; 
+body {
+    background: linear-gradient(to bottom right, #0f172a, #1e293b);
     font-family: 'Segoe UI', sans-serif;
     color: #f1f5f9;
 }
 
-/* Button styling */
+/* Background for login/signup */
+.login-signup-bg {
+    background-image: url("background.jpeg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
 .stButton>button {
     background: #0ea5e9;
     color: #fff;
@@ -73,48 +71,12 @@ st.markdown("""
     background: #0284c7;
     transform: translateY(-2px);
 }
-
-/* Card design */
 .card {
     background: #1e293b;
     padding: 20px;
     border-radius: 16px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.3);
     margin-bottom: 20px;
-}
-
-/* Headings and text */
-h1, h2, h3, h4, label {
-    color: #f1f5f9 !important;
-}
-p, .stText, .stMarkdown {
-    color: #e2e8f0 !important;
-}
-
-/* Input fields */
-input, textarea, select {
-    border-radius: 10px !important;
-    padding: 8px !important;
-}
-
-/* Tabs */
-.css-1emrehy.edgvbvh3 button {
-    width: 100% !important;
-    height: 55px !important;
-    margin-bottom: 12px;
-    font-size: 16px;
-    border-radius: 12px;
-    background-color: #0ea5e9;
-    color: #fff;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
-.css-1emrehy.edgvbvh3 button:hover {
-    background-color: #0284c7;
-}
-
-/* Iframes */
-iframe {
-    border-radius: 12px;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -128,44 +90,13 @@ if "otp" not in st.session_state:
     st.session_state.otp = None
 if "reset_email" not in st.session_state:
     st.session_state.reset_email = None
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
 
 # ---------------------- LOGIN / SIGNUP ----------------------
 if st.session_state.user is None and st.session_state.page not in ["forgot_password"]:
+    st.markdown("<div style='text-align:center; font-size:32px; font-weight:bold; color:#38bdf8; margin-bottom:20px'>Global Balance</div>", unsafe_allow_html=True)
     
-    # Apply background only on login/signup page
-    bg_path = os.path.abspath("background.jpeg")
-    st.markdown(f"""
-    <style>
-    .stApp {{
-        background: url("file://{bg_path}") no-repeat center center fixed;
-        background-size: cover;
-        font-family: 'Segoe UI', sans-serif;
-    }}
-    .login-card {{
-        background: rgba(0, 0, 0, 0.6);
-        padding: 40px;
-        border-radius: 15px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-    }}
-    label, h1, h2, h3, p {{
-        color: #f8fafc !important;
-    }}
-    </style>
-    """, unsafe_allow_html=True)
-
-    # Title
-    st.markdown(
-        "<div style='text-align:center; font-size:36px; font-weight:bold; color:#38bdf8; margin-bottom:20px'>Global Balance</div>",
-        unsafe_allow_html=True
-    )
-
-    # Wrap forms inside styled card
-    st.markdown("<div class='login-card'>", unsafe_allow_html=True)
-
+    st.markdown('<div class="login-signup-bg">', unsafe_allow_html=True)
     tab1, tab2 = st.tabs(["🔐 Login", "📝 Sign Up"])
-
     with tab1:
         username = st.text_input("Username", key="login_user")
         password = st.text_input("Password", type="password", key="login_pass")
@@ -180,7 +111,7 @@ if st.session_state.user is None and st.session_state.page not in ["forgot_passw
 
         if st.button("Forgot Password?"):
             st.session_state.page = "forgot_password"
-            st.rerun()
+            st.experimental_rerun()
 
     with tab2:
         new_user = st.text_input("Choose Username", key="signup_user")
@@ -192,8 +123,7 @@ if st.session_state.user is None and st.session_state.page not in ["forgot_passw
                 st.success("✅ Account created. Now login.")
             else:
                 st.error("⚠ Please enter valid details.")
-
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------------------- FORGOT PASSWORD ----------------------
 elif st.session_state.page == "forgot_password":
@@ -234,26 +164,21 @@ elif st.session_state.page == "forgot_password":
 elif st.session_state.user is not None:
     st.markdown("<div style='text-align:center; font-size:32px; font-weight:bold; color:#38bdf8; margin-bottom:20px'>Global Balance</div>", unsafe_allow_html=True)
 
-   # --------Sidebar Navigation ---------
+    # --- Sidebar Navigation ---
     st.sidebar.title("Navigation")
-    top_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback" ]
-    for item in top_items:
+    nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🚪 Logout"]
+    for item in nav_items:
         if st.sidebar.button(item, key=item):
-            st.session_state.page = item
-    # Add a spacer to push Logout to the bottom
-    st.sidebar.markdown("<br><br><br><br><br><br>", unsafe_allow_html=True)
+            if item == "🚪 Logout":
+                st.session_state.user = None
+                st.session_state.page = "🏠 Home"
+                st.success("🚪 You have been logged out.")
+            else:
+                st.session_state.page = item
 
-    # Bottom section (Logout)
-    if st.sidebar.button("🚪 Logout", key="logout_sidebar"):
-        st.session_state.user = None
-        st.session_state.page = "🏠 Home"
-        st.success("🚪 You have been logged out.")
-
-    # ---------- Home Page ------------
+    # --- Home Page ---
     if st.session_state.page == "🏠 Home":
         st.header("🏠 Welcome Home")
-        st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_touohxv0.json", height=250)
-
         st.write(f"Hello, {st.session_state.user} 👋")
 
         # Overview Card
@@ -293,9 +218,8 @@ elif st.session_state.user is not None:
 
     # --- Dashboard Page ---
     elif st.session_state.page == "📊 Dashboard":
-        st.title("📊 Dashboard")
-        st.write("This is your dashboard with analytics and reports.")
-        st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_49rdyysj.json", height=200)
+        st.header("📊 Global Economic Dashboard")
+
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("🌍 Real-Time Insights")
         st.markdown("""
@@ -336,25 +260,24 @@ elif st.session_state.user is not None:
     # --- Profile Page ---
     elif st.session_state.page == "👤 Profile":
         st.header("👤 Edit Profile")
-        st_lottie_url("https://assets1.lottiefiles.com/packages/lf20_jtbfg2nb.json", height=200)
-        # Profile Card
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        with st.form("profile_form"):
-            col_left, col_right = st.columns(2)
-            with col_left:
-                first_name = st.text_input("First Name", placeholder="Enter first name")
-                username = st.text_input("Username", placeholder="Enter user name")
-                gender = st.selectbox("Gender", ["Select a Option","Male", "Female", "Other"], index=0)
-            with col_right:
-                last_name = st.text_input("Last Name", placeholder="Enter last name")
-                email = st.text_input("Email", placeholder="Enter email")
-                linkedin = st.text_input("LinkedIn", placeholder="Enter LinkedIn URL")
-            submitted = st.form_submit_button("💾 Save")
-            if submitted:
-                st.success("✅ Profile updated successfully!")
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        # Password Management Card
+        with st.container():
+            col1, col2 = st.columns([1, 2])
+            with col1:
+                pass  
+            with col2:
+                with st.form("profile_form"):
+                    col_left, col_right = st.columns(2)
+                    with col_left:
+                        first_name = st.text_input("First Name")
+                        gender = st.selectbox("Gender", ["Select a Option","Male", "Female", "Other"], index=0)
+                    with col_right:
+                        last_name = st.text_input("Last Name")
+                        email = st.text_input("Email")
+                        linkedin = st.text_input("LinkedIn")
+                    submitted = st.form_submit_button("💾 Save")
+                    if submitted:
+                        st.success("✅ Profile updated successfully!")
+
         st.subheader("🔑 Password Management")
         with st.form("password_form", clear_on_submit=True):
             new_password = st.text_input("New Password", type="password")
@@ -375,9 +298,6 @@ elif st.session_state.user is not None:
     # --- Feedback Page ---
     elif st.session_state.page == "💬 Feedback":
         st.header("💬 Feedback")
-        # --- Robot Lottie 1 ---
-        st_lottie_url("https://assets9.lottiefiles.com/packages/lf20_9wpyhdzo.json", height=200)
-
         with st.form("feedback_form"):
             rating = st.slider("Rate your experience", 1, 5, 5)
             usability = st.selectbox("How easy was it to use the platform?", 
@@ -410,9 +330,4 @@ elif st.session_state.user is not None:
             feedback_df = pd.DataFrame(rows, columns=["Rating", "Usability", "Comment", "Suggestions"])
             st.dataframe(feedback_df)
         else:
-            st.info("You haven't submitted any feedback yet.")        
-
-
-
-
-
+            st.info("You haven't submitted any feedback yet.")
