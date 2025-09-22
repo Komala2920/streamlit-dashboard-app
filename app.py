@@ -5,7 +5,6 @@ import streamlit.components.v1 as components
 import pandas as pd
 import smtplib
 import random
-import base64
 
 # ---------------------- DATABASE ----------------------
 conn = sqlite3.connect('users.db', check_same_thread=False)
@@ -38,64 +37,59 @@ def send_otp(email, otp):
     st.info(f"(Demo) OTP sent to {email}: *{otp}*")
     return True
 
-# ---------------------- BACKGROUND HELPERS ----------------------
-def add_bg_from_local(image_file):
-    with open(image_file, "rb") as f:
-        encoded = base64.b64encode(f.read()).decode()
-    st.markdown(
-        f"""
-        <style>
-        .stApp {{
-            background-image: url("background.jpeg");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }}
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-def add_default_bg():
-    st.markdown("""
-    <style>
-    body {
-        background: linear-gradient(to bottom right, #0f172a, #1e293b);
-        font-family: 'Segoe UI', sans-serif;
-        color: #f1f5f9;
-    }
-    .stButton>button {
-        background: #0ea5e9;
-        color: #fff;
-        border-radius: 12px;
-        padding: 0.7em 1.5em;
-        border: none;
-        font-weight: 600;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-        transition: all 0.3s ease;
-    }
-    .stButton>button:hover {
-        background: #0284c7;
-        transform: translateY(-2px);
-    }
-    .card {
-        background: #1e293b;
-        padding: 20px;
-        border-radius: 16px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-        margin-bottom: 20px;
-    }
-    h1, h2, h3, h4 {
-        color: #f1f5f9;
-    }
-    .stText, p {
-        color: #e2e8f0;
-    }
-    iframe {
-        border-radius: 12px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+# ---------------------- PROFESSIONAL CSS ----------------------
+st.markdown("""
+<style>
+body {
+    background: linear-gradient(to bottom right, #0f172a, #1e293b);
+    font-family: 'Segoe UI', sans-serif;
+    color: #f1f5f9;
+}
+.stButton>button {
+    background: #0ea5e9;
+    color: #fff;
+    border-radius: 12px;
+    padding: 0.7em 1.5em;
+    border: none;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+.stButton>button:hover {
+    background: #0284c7;
+    transform: translateY(-2px);
+}
+.card {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    margin-bottom: 20px;
+}
+h1, h2, h3, h4 {
+    color: #f1f5f9;
+}
+.stText, p {
+    color: #e2e8f0;
+}
+.css-1emrehy.edgvbvh3 button {
+    width: 100% !important;
+    height: 55px !important;
+    margin-bottom: 12px;
+    font-size: 16px;
+    border-radius: 12px;
+    background-color: #0ea5e9;
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+.css-1emrehy.edgvbvh3 button:hover {
+    background-color: #0284c7;
+}
+iframe {
+    border-radius: 12px;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # ---------------------- SESSION ----------------------
 if "user" not in st.session_state:
@@ -109,9 +103,6 @@ if "reset_email" not in st.session_state:
 
 # ---------------------- LOGIN / SIGNUP ----------------------
 if st.session_state.user is None and st.session_state.page not in ["forgot_password"]:
-    # Use custom background only for login/signup
-    add_bg_from_local("background.jpeg")
-
     st.markdown("<div style='text-align:center; font-size:32px; font-weight:bold; color:#38bdf8; margin-bottom:20px'>Global Balance</div>", unsafe_allow_html=True)
     tab1, tab2 = st.tabs(["🔐 Login", "📝 Sign Up"])
 
@@ -181,7 +172,7 @@ elif st.session_state.page == "forgot_password":
 elif st.session_state.user is not None:
     st.markdown("<div style='text-align:center; font-size:32px; font-weight:bold; color:#38bdf8; margin-bottom:20px'>Global Balance</div>", unsafe_allow_html=True)
 
-    # -------------- Sidebar Navigation ------------------------
+    # --- Sidebar Navigation ---
     st.sidebar.title("Navigation")
     nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🚪 Logout"]
     for item in nav_items:
@@ -193,7 +184,7 @@ elif st.session_state.user is not None:
             else:
                 st.session_state.page = item
 
-    # ---------------------- Home Page --------------------------
+    # --- Home Page ---
     if st.session_state.page == "🏠 Home":
         st.header("🏠 Welcome Home")
         st.write(f"Hello, {st.session_state.user} 👋")
@@ -347,6 +338,4 @@ elif st.session_state.user is not None:
             feedback_df = pd.DataFrame(rows, columns=["Rating", "Usability", "Comment", "Suggestions"])
             st.dataframe(feedback_df)
         else:
-            st.info("You haven't submitted any feedback yet.")
-
-
+            st.info("You haven't submitted any feedback yet.")             
