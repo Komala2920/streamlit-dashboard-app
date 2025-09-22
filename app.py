@@ -400,8 +400,8 @@ elif st.session_state.user is not None:
         st.info("You haven't submitted any feedback yet.")     
 
    # ---------------------- Chatbot Page ----------------------
-   elif st.session_state.page == "🤖 Chatbot":
-       st.header("🤖 Chatbot")
+    elif st.session_state.page == "🤖 Chatbot":
+        st.header("🤖 Chatbot")
 
        # --- Lottie Animation ---
        st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_1pxqjqps.json", height=200)
@@ -450,4 +450,5 @@ elif st.session_state.user is not None:
 
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()                           
+
 
