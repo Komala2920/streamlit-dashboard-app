@@ -461,20 +461,20 @@ elif st.session_state.user is not None:
         Here, we share insights, tips, and tutorials on understanding global economics, financial trends, and how to make the most of our platform.
         """)
 
-       # Key points / highlights
-       st.markdown("""
-       ### In this episode:
-       - 📊 Understanding the latest global economic trends  
-       - 🌐 How to navigate and use the **Global Balance dashboard**  
-       - 💡 Tips for analyzing financial data effectively  
-       - 🎯 Upcoming features and sneak peeks  
-       """)
+        # Key points / highlights
+        st.markdown("""
+        ### In this episode:
+        - 📊 Understanding the latest global economic trends  
+        - 🌐 How to navigate and use the **Global Balance dashboard**  
+        - 💡 Tips for analyzing financial data effectively  
+        - 🎯 Upcoming features and sneak peeks  
+        """)
 
-       # Vlog video
-       st.video("https://www.youtube.com/watch?v=dQw4w9WgXcQ")  # Replace with your own VLOG URL or MP4 file
+        # Vlog video
+        st.video("https://www.youtube.com/watch?v=dQw4w9WgXcQ")  # Replace with your own VLOG URL or MP4 file
 
-       # Additional info / CTA
-       st.markdown("""
-       💬 **Enjoyed the vlog?** Share your thoughts and feedback on the Feedback page!  
-       🔗 Stay updated by subscribing to our channel or visiting our website for more tutorials.
-       """)
+        # Additional info / CTA
+        st.markdown("""
+        💬 **Enjoyed the vlog?** Share your thoughts and feedback on the Feedback page!  
+        🔗 Stay updated by subscribing to our channel or visiting our website for more tutorials.
+        """)
