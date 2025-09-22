@@ -101,20 +101,6 @@ st.sidebar.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Render sidebar navigation as forms (to capture clicks)
-for label in nav_items.keys():
-    if st.sidebar.button(label, key=label):
-        st.session_state.page = label
-
-# Spacer
-st.sidebar.markdown("<br><br><br>", unsafe_allow_html=True)
-
-# Logout button styled separately
-if st.sidebar.button("🚪 Logout", key="logout_sidebar"):
-    st.session_state.user = None
-    st.session_state.page = "🏠 Home"
-    st.success("🚪 You have been logged out.")
-
 # ---------------------- SESSION ----------------------
 if "user" not in st.session_state:
     st.session_state.user = None
@@ -419,4 +405,5 @@ elif st.session_state.user is not None:
 
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()                           
+
 
