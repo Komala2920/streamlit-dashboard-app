@@ -4,7 +4,6 @@ import hashlib
 import streamlit.components.v1 as components
 import pandas as pd
 import random
-import streamlit.components.v1 as components
 import requests
 import os
 
@@ -61,14 +60,57 @@ def st_lottie_url(url: str, height: int = 300, key: str = None):
 # ---------------------- GLOBAL CSS ----------------------
 st.markdown("""
 <style>
-/* Apply background everywhere */
 .stApp { 
     background: linear-gradient(to bottom right, #0f172a, #1e293b) !important;
     font-family: 'Segoe UI', sans-serif;
     color: #f1f5f9;
 }
 
-/* Button styling */
+/* Login/Signup container */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    width: 100%;
+    max-width: 950px;
+    margin: 40px auto;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+/* Left (Sign Up) */
+.auth-left {
+    flex: 1;
+    background: #1e293b;
+    padding: 50px 30px;
+    text-align: center;
+}
+.auth-left h2 {
+    font-size: 24px;
+    color: #38bdf8;
+    margin-bottom: 10px;
+}
+.auth-left button {
+    margin-top: 20px;
+    background: #0ea5e9 !important;
+    color: #fff !important;
+    font-weight: 600;
+    border-radius: 12px;
+    padding: 10px 20px;
+}
+
+/* Right (Login) */
+.auth-right {
+    flex: 1;
+    background: #0f172a;
+    padding: 50px 40px;
+}
+.auth-right h2 {
+    font-size: 24px;
+    color: #38bdf8;
+    margin-bottom: 20px;
+}
 .stButton>button {
     background: #0ea5e9;
     color: #fff;
@@ -76,55 +118,11 @@ st.markdown("""
     padding: 0.7em 1.5em;
     border: none;
     font-weight: 600;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     transition: all 0.3s ease;
 }
 .stButton>button:hover {
     background: #0284c7;
     transform: translateY(-2px);
-}
-
-/* Card design */
-.card {
-    background: #1e293b;
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-    margin-bottom: 20px;
-}
-
-/* Headings and text */
-h1, h2, h3, h4, label {
-    color: #f1f5f9 !important;
-}
-p, .stText, .stMarkdown {
-    color: #e2e8f0 !important;
-}
-
-/* Input fields */
-input, textarea, select {
-    border-radius: 10px !important;
-    padding: 8px !important;
-}
-
-/* Tabs */
-.css-1emrehy.edgvbvh3 button {
-    width: 100% !important;
-    height: 55px !important;
-    margin-bottom: 12px;
-    font-size: 16px;
-    border-radius: 12px;
-    background-color: #0ea5e9;
-    color: #fff;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
-.css-1emrehy.edgvbvh3 button:hover {
-    background-color: #0284c7;
-}
-
-/* Iframes */
-iframe {
-    border-radius: 12px;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -143,35 +141,44 @@ if "chat_history" not in st.session_state:
 
 # ---------------------- LOGIN / SIGNUP ----------------------
 if st.session_state.user is None and st.session_state.page not in ["forgot_password"]:
-    st.markdown("<div style='text-align:center; font-size:32px; font-weight:bold; color:#38bdf8; margin-bottom:20px'>Global Balance</div>", unsafe_allow_html=True)
-    tab1, tab2 = st.tabs(["🔐 Login", "📝 Sign Up"])
-   
-    with tab1:
-        username = st.text_input("Username", key="login_user")
-        password = st.text_input("Password", type="password", key="login_pass")
-        if st.button("Sign In"):
-            user = check_user(username, password)
-            if user:
-                st.session_state.user = username
-                st.session_state.page = "🏠 Home"
-                st.success("✅ Login successful")
-            else:
-                st.error("❌ Invalid username or password")
+    st.markdown("<div style='text-align:center; font-size:32px; font-weight:bold; color:#38bdf8;'>Global Balance</div>", unsafe_allow_html=True)
 
-        if st.button("Forgot Password?"):
-            st.session_state.page = "forgot_password"
-            st.rerun()
+    st.markdown('<div class="auth-container">', unsafe_allow_html=True)
 
-    with tab2:
-        new_user = st.text_input("Choose Username", key="signup_user")
-        new_pass = st.text_input("Choose Password", type="password", key="signup_pass")
-        email = st.text_input("Email", key="signup_email")
-        if st.button("Register"):
-            if new_user and new_pass and email:
-                add_user(new_user, new_pass, email)
-                st.success("✅ Account created. Now login.")
-            else:
-                st.error("⚠ Please enter valid details.")
+    # Left side - Sign Up
+    st.markdown('<div class="auth-left">', unsafe_allow_html=True)
+    st.markdown("<h2>Hello! Welcome to Global Balance</h2>", unsafe_allow_html=True)
+    st.write("Don’t have an account yet?")
+    new_user = st.text_input("Choose Username", key="signup_user")
+    new_pass = st.text_input("Choose Password", type="password", key="signup_pass")
+    email = st.text_input("Email", key="signup_email")
+    if st.button("Sign Up"):
+        if new_user and new_pass and email:
+            add_user(new_user, new_pass, email)
+            st.success("✅ Account created. Now login.")
+        else:
+            st.error("⚠ Please enter valid details.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # Right side - Login
+    st.markdown('<div class="auth-right">', unsafe_allow_html=True)
+    st.markdown("<h2>Sign In</h2>", unsafe_allow_html=True)
+    username = st.text_input("Login or Email", key="login_user")
+    password = st.text_input("Password", type="password", key="login_pass")
+    if st.button("Sign In"):
+        user = check_user(username, password)
+        if user:
+            st.session_state.user = username
+            st.session_state.page = "🏠 Home"
+            st.success("✅ Login successful")
+        else:
+            st.error("❌ Invalid username or password")
+    if st.button("Forgot Password?"):
+        st.session_state.page = "forgot_password"
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------------------- FORGOT PASSWORD ----------------------
 elif st.session_state.page == "forgot_password":
