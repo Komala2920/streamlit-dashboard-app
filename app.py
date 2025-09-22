@@ -60,42 +60,20 @@ def st_lottie_url(url: str, height: int = 300, key: str = None):
 
 st.sidebar.markdown("""
     <style>
-    .nav-button {
-        display: block;
+    div[data-testid="stSidebar"] button {
         width: 100% !important;
-        background-color: #0ea5e9;
-        color: white;
-        text-align: center;
-        padding: 12px;
-        margin: 6px 0;
-        border-radius: 10px;
-        font-weight: bold;
-        font-size: 16px;
-        border: none;
-        cursor: pointer;
-        transition: 0.3s;
+        height: 55px !important;
+        font-size: 16px !important;
+        font-weight: 600 !important;
+        border-radius: 10px !important;
+        background-color: #0ea5e9 !important;
+        color: white !important;
+        margin-bottom: 8px !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
     }
-    .nav-button:hover {
-        background-color: #0284c7;
-        transform: translateY(-2px);
-    }
-    .logout-button {
-        display: block;
-        width: 100% !important;
-        background-color: #ef4444;
-        color: white;
-        text-align: center;
-        padding: 12px;
-        margin: 6px 0;
-        border-radius: 10px;
-        font-weight: bold;
-        font-size: 16px;
-        border: none;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-    .logout-button:hover {
-        background-color: #b91c1c;
+    div[data-testid="stSidebar"] button:hover {
+        background-color: #0284c7 !important;
         transform: translateY(-2px);
     }
     </style>
@@ -405,5 +383,6 @@ elif st.session_state.user is not None:
 
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()                           
+
 
 
