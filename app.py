@@ -273,39 +273,39 @@ def switch_tab(tab):
                 st.error("❌ Invalid OTP")
 
 # ---------------------- FORGOT PASSWORD ----------------------
-elif st.session_state.page == "forgot_password":
-    st.title("🔑 Forgot Password")
+ elif st.session_state.page == "forgot_password":
+     st.title("🔑 Forgot Password")
 
-    email = st.text_input("Enter your registered Email")
-    if st.button("Send OTP"):
-        result = get_user_by_email(email)
-        if result:
-            otp = str(random.randint(100000, 999999))
-            st.session_state.otp = otp
-            st.session_state.reset_email = email
-            if send_otp(email, otp):
-                st.success("✅ OTP sent to your email (demo shows OTP on screen).")
-        else:
-            st.error("❌ Email not found in system")
+     email = st.text_input("Enter your registered Email")
+     if st.button("Send OTP"):
+         result = get_user_by_email(email)
+         if result:
+             otp = str(random.randint(100000, 999999))
+             st.session_state.otp = otp
+             st.session_state.reset_email = email
+             if send_otp(email, otp):
+                 st.success("✅ OTP sent to your email (demo shows OTP on screen).")
+         else:
+             st.error("❌ Email not found in system")
 
-    if st.session_state.otp:
-        entered_otp = st.text_input("Enter OTP")
-        new_password = st.text_input("New Password", type="password")
-        confirm_password = st.text_input("Confirm New Password", type="password")
+     if st.session_state.otp:
+         entered_otp = st.text_input("Enter OTP")
+         new_password = st.text_input("New Password", type="password")
+         confirm_password = st.text_input("Confirm New Password", type="password")
 
-        if st.button("Reset Password"):
-            if entered_otp == st.session_state.otp:
-                if new_password == confirm_password:
-                    update_password(st.session_state.reset_email, new_password)
-                    st.success("✅ Password reset successfully! Please login.")
-                    st.session_state.page = "login"
-                    st.session_state.otp = None
-                    st.session_state.reset_email = None
-                    st.experimental_rerun()
-                else:
-                    st.error("❌ Passwords do not match")
-            else:
-                st.error("❌ Invalid OTP")
+         if st.button("Reset Password"):
+             if entered_otp == st.session_state.otp:
+                 if new_password == confirm_password:
+                     update_password(st.session_state.reset_email, new_password)
+                     st.success("✅ Password reset successfully! Please login.")
+                     st.session_state.page = "login"
+                     st.session_state.otp = None
+                     st.session_state.reset_email = None
+                     st.rerun()
+                 else:
+                     st.error("❌ Passwords do not match")
+             else:
+                 st.error("❌ Invalid OTP")
 
 # ---------------------- MAIN APP ----------------------
 elif st.session_state.user is not None:
@@ -538,6 +538,7 @@ elif st.session_state.user is not None:
 
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()                           
+
 
 
 
