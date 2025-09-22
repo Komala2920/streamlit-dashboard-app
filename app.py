@@ -205,7 +205,7 @@ elif st.session_state.user is not None:
 
    # --------Sidebar Navigation ---------
     st.sidebar.title("Navigation")
-    top_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🤖 Chatbot" ]
+    top_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback" ]
     for item in top_items:
         if st.sidebar.button(item, key=item):
             st.session_state.page = item
@@ -380,4 +380,5 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
