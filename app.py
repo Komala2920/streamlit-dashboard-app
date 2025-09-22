@@ -239,20 +239,20 @@ def switch_tab(tab):
     st.session_state.auth_mode = tab
 
 # ---------------------- FORGOT PASSWORD ----------------------
- elif st.session_state.page == "forgot_password":
-     st.title("🔑 Forgot Password")
+elif st.session_state.page == "forgot_password":
+    st.title("🔑 Forgot Password")
 
-     email = st.text_input("Enter your registered Email")
-     if st.button("Send OTP"):
-         result = get_user_by_email(email)
-         if result:
-             otp = str(random.randint(100000, 999999))
-             st.session_state.otp = otp
-             st.session_state.reset_email = email
-             if send_otp(email, otp):
-                 st.success("✅ OTP sent to your email (demo shows OTP on screen).")
-         else:
-             st.error("❌ Email not found in system")
+    email = st.text_input("Enter your registered Email")
+    if st.button("Send OTP"):
+        result = get_user_by_email(email)
+        if result:
+            otp = str(random.randint(100000, 999999))
+            st.session_state.otp = otp
+            st.session_state.reset_email = email
+            if send_otp(email, otp):
+                st.success("✅ OTP sent to your email (demo shows OTP on screen).")
+        else:
+            st.error("❌ Email not found in system")
 
      if st.session_state.otp:
          entered_otp = st.text_input("Enter OTP")
@@ -504,6 +504,7 @@ elif st.session_state.user is not None:
 
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()                           
+
 
 
 
