@@ -63,7 +63,7 @@ st.markdown("""
 <style>
 /* Apply background everywhere */
 .stApp { 
-    background: linear-gradient(to bottom right, #0f172a, #1e293b) !important;
+    background: #001f3f !important; 
     font-family: 'Segoe UI', sans-serif;
     color: #f1f5f9;
 }
@@ -438,4 +438,4 @@ elif st.session_state.user is not None:
                     bot_reply = "I'm not sure about that, but I'm learning every day! 🤖"
 
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
-            st.rerun()                           i want my login page in this format can you modify this code and give me with full code
+            st.rerun()                           
