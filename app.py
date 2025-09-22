@@ -61,70 +61,63 @@ def st_lottie_url(url: str, height: int = 300, key: str = None):
 # ---------------------- GLOBAL CSS ----------------------
 st.markdown("""
 <style>
-/* Apply background everywhere */
 .stApp { 
     background: linear-gradient(to bottom right, #0f172a, #1e293b) !important;
     font-family: 'Segoe UI', sans-serif;
     color: #f1f5f9;
 }
 
-/* Button styling */
-.stButton>button {
-    background: #0ea5e9;
-    color: #fff;
-    border-radius: 12px;
-    padding: 0.7em 1.5em;
-    border: none;
-    font-weight: 600;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    transition: all 0.3s ease;
-}
-.stButton>button:hover {
-    background: #0284c7;
-    transform: translateY(-2px);
-}
-
-/* Card design */
-.card {
-    background: #1e293b;
-    padding: 20px;
+/* Container for login/signup */
+.auth-container {
+    width: 900px;
+    margin: auto;
+    margin-top: 60px;
+    background: white;
     border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    box-shadow: 0px 8px 30px rgba(0,0,0,0.15);
+    display: flex;
+    overflow: hidden;
+}
+.left-panel, .right-panel {
+    flex: 1;
+    padding: 50px;
+}
+.left-panel {
+    background: white;
+}
+.right-panel {
+    background: linear-gradient(135deg, #3bb2b8, #1f8ca4);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.tab-buttons {
+    display: flex;
+    gap: 30px;
     margin-bottom: 20px;
 }
-
-/* Headings and text */
-h1, h2, h3, h4, label {
-    color: #f1f5f9 !important;
+.tab-btn {
+    font-weight: 600;
+    cursor: pointer;
+    padding-bottom: 4px;
 }
-p, .stText, .stMarkdown {
-    color: #e2e8f0 !important;
+.active-tab {
+    color: #1f8ca4;
+    border-bottom: 3px solid #1f8ca4;
 }
-
-/* Input fields */
-input, textarea, select {
-    border-radius: 10px !important;
-    padding: 8px !important;
+.inactive-tab {
+    color: #888;
 }
-
-/* Tabs */
-.css-1emrehy.edgvbvh3 button {
-    width: 100% !important;
-    height: 55px !important;
-    margin-bottom: 12px;
-    font-size: 16px;
-    border-radius: 12px;
-    background-color: #0ea5e9;
-    color: #fff;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+.stButton>button {
+    border-radius: 20px;
+    background: #3bb2b8;
+    color: white;
+    border: none;
+    padding: 8px 30px;
 }
-.css-1emrehy.edgvbvh3 button:hover {
-    background-color: #0284c7;
-}
-
-/* Iframes */
-iframe {
-    border-radius: 12px;
+.stButton>button:hover {
+    background: #1f8ca4;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -140,13 +133,37 @@ if "reset_email" not in st.session_state:
     st.session_state.reset_email = None
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
+if "auth_mode" not in st.session_state:
+    st.session_state.auth_mode = "Login"
+
+def switch_tab(tab):
+    st.session_state.auth_mode = tab
 
 # ---------------------- LOGIN / SIGNUP ----------------------
 if st.session_state.user is None and st.session_state.page not in ["forgot_password"]:
-    st.markdown("<div style='text-align:center; font-size:32px; font-weight:bold; color:#38bdf8; margin-bottom:20px'>Global Balance</div>", unsafe_allow_html=True)
-    tab1, tab2 = st.tabs(["🔐 Login", "📝 Sign Up"])
-   
-    with tab1:
+    st.markdown('<div class="auth-container">', unsafe_allow_html=True)
+
+    # -------- LEFT PANEL --------
+    st.markdown('<div class="left-panel">', unsafe_allow_html=True)
+
+    # Toggle tabs
+    col1, col2 = st.columns([1,1])
+    with col1:
+        if st.session_state.auth_mode == "Login":
+            st.markdown('<div class="tab-btn active-tab">Login</div>', unsafe_allow_html=True)
+        else:
+            if st.button("Login", key="login_tab"):
+                switch_tab("Login")
+    with col2:
+        if st.session_state.auth_mode == "Sign Up":
+            st.markdown('<div class="tab-btn active-tab">Sign Up</div>', unsafe_allow_html=True)
+        else:
+            if st.button("Sign Up", key="signup_tab"):
+                switch_tab("Sign Up")
+
+    st.write("---")
+
+    if st.session_state.auth_mode == "Login":
         username = st.text_input("Username", key="login_user")
         password = st.text_input("Password", type="password", key="login_pass")
         if st.button("Sign In"):
@@ -162,7 +179,7 @@ if st.session_state.user is None and st.session_state.page not in ["forgot_passw
             st.session_state.page = "forgot_password"
             st.rerun()
 
-    with tab2:
+    else:
         new_user = st.text_input("Choose Username", key="signup_user")
         new_pass = st.text_input("Choose Password", type="password", key="signup_pass")
         email = st.text_input("Email", key="signup_email")
@@ -172,6 +189,49 @@ if st.session_state.user is None and st.session_state.page not in ["forgot_passw
                 st.success("✅ Account created. Now login.")
             else:
                 st.error("⚠ Please enter valid details.")
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # -------- RIGHT PANEL --------
+    st.markdown('<div class="right-panel">', unsafe_allow_html=True)
+    st_lottie_url("https://assets10.lottiefiles.com/packages/lf20_ydo1amjm.json", height=300)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ---------------------- FORGOT PASSWORD ----------------------
+elif st.session_state.page == "forgot_password":
+    st.title("🔑 Forgot Password")
+    email = st.text_input("Enter your registered Email")
+    if st.button("Send OTP"):
+        result = get_user_by_email(email)
+        if result:
+            otp = str(random.randint(100000, 999999))
+            st.session_state.otp = otp
+            st.session_state.reset_email = email
+            if send_otp(email, otp):
+                st.success("✅ OTP sent to your email (demo shows OTP on screen).")
+        else:
+            st.error("❌ Email not found in system")
+
+    if st.session_state.otp:
+        entered_otp = st.text_input("Enter OTP")
+        new_password = st.text_input("New Password", type="password")
+        confirm_password = st.text_input("Confirm New Password", type="password")
+
+        if st.button("Reset Password"):
+            if entered_otp == st.session_state.otp:
+                if new_password == confirm_password:
+                    update_password(st.session_state.reset_email, new_password)
+                    st.success("✅ Password reset successfully! Please login.")
+                    st.session_state.page = "login"
+                    st.session_state.otp = None
+                    st.session_state.reset_email = None
+                    st.experimental_rerun()
+                else:
+                    st.error("❌ Passwords do not match")
+            else:
+                st.error("❌ Invalid OTP")
 
 # ---------------------- FORGOT PASSWORD ----------------------
 elif st.session_state.page == "forgot_password":
@@ -439,3 +499,4 @@ elif st.session_state.user is not None:
 
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()                           
+
