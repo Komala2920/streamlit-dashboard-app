@@ -414,7 +414,7 @@ elif st.session_state.user is not None:
                 st.markdown(f"**Bot:** {chat['content']}")
 
     # User input only on Chatbot page
-    user_input = st.text_input("Type your message here:", key="chat_input")
+    user_input = st.text_input(" ", key="chat_input")
     if st.button("Send"):
         if user_input:
             st.session_state.chat_history.append({"role": "user", "content": user_input})
