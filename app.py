@@ -133,6 +133,17 @@ if "chat_history" not in st.session_state:
 
 # ---------------------- LOGIN / SIGNUP ----------------------
 if st.session_state.user is None and st.session_state.page not in ["forgot_password"]:
+    # Add background image only for login/signup
+    st.markdown(f"""
+    <style>
+    .login-signup-bg {{
+        background: url("file://{os.path.abspath('Content Creation Video.jpe')}") no-repeat center center fixed;
+        background-size: cover;
+        padding: 40px;
+        border-radius: 20px;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
     st.markdown("<div style='text-align:center; font-size:32px; font-weight:bold; color:#38bdf8; margin-bottom:20px'>Global Balance</div>", unsafe_allow_html=True)
 
     tab1, tab2 = st.tabs(["🔐 Login", "📝 Sign Up"])
@@ -380,5 +391,6 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
