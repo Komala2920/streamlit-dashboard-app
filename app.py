@@ -4,6 +4,7 @@ import hashlib
 import streamlit.components.v1 as components
 import pandas as pd
 import random
+import streamlit.components.v1 as components
 import requests
 import os
 
@@ -57,118 +58,76 @@ def st_lottie_url(url: str, height: int = 300, key: str = None):
     """
     components.html(lottie_html, height=height + 50)
 
-# ---------------------- LOGIN / SIGNUP ----------------------
-if "auth_mode" not in st.session_state:
-    st.session_state.auth_mode = "signin"   # default mode
-
-def switch_to_signup():
-    st.session_state.auth_mode = "signup"
-    st.rerun()
-
-def switch_to_signin():
-    st.session_state.auth_mode = "signin"
-    st.rerun()
-
+# ---------------------- GLOBAL CSS ----------------------
 st.markdown("""
 <style>
-.auth-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 90vh;
+/* Apply background everywhere */
+.stApp { 
+    background: linear-gradient(to bottom right, #0f172a, #1e293b) !important;
+    font-family: 'Segoe UI', sans-serif;
+    color: #f1f5f9;
 }
-.auth-card {
-    width: 900px;
-    height: 500px;
-    display: flex;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-}
-.left-side, .right-side {
-    flex: 1;
-    padding: 40px;
-    transition: all 0.8s ease-in-out;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-.left-side {
-    background: linear-gradient(135deg, #2563eb, #1e3a8a);
-    color: white;
-    text-align: center;
-}
-.right-side {
-    background: #1e293b;
-    color: #f8fafc;
-}
+
+/* Button styling */
 .stButton>button {
+    background: #0ea5e9;
+    color: #fff;
+    border-radius: 12px;
+    padding: 0.7em 1.5em;
     border: none;
-    border-radius: 8px;
-    padding: 10px 20px;
-    cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
 }
-.primary-btn {
-    background: #3b82f6;
-    color: white;
+.stButton>button:hover {
+    background: #0284c7;
+    transform: translateY(-2px);
 }
-.primary-btn:hover {
-    background: #2563eb;
+
+/* Card design */
+.card {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    margin-bottom: 20px;
+}
+
+/* Headings and text */
+h1, h2, h3, h4, label {
+    color: #f1f5f9 !important;
+}
+p, .stText, .stMarkdown {
+    color: #e2e8f0 !important;
+}
+
+/* Input fields */
+input, textarea, select {
+    border-radius: 10px !important;
+    padding: 8px !important;
+}
+
+/* Tabs */
+.css-1emrehy.edgvbvh3 button {
+    width: 100% !important;
+    height: 55px !important;
+    margin-bottom: 12px;
+    font-size: 16px;
+    border-radius: 12px;
+    background-color: #0ea5e9;
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+.css-1emrehy.edgvbvh3 button:hover {
+    background-color: #0284c7;
+}
+
+/* Iframes */
+iframe {
+    border-radius: 12px;
 }
 </style>
 """, unsafe_allow_html=True)
-
-st.markdown('<div class="auth-wrapper"><div class="auth-card">', unsafe_allow_html=True)
-
-# ---------------- SIGN UP ----------------
-if st.session_state.auth_mode == "signup":
-    st.markdown('<div class="left-side">', unsafe_allow_html=True)
-    st.markdown("## 👋 Welcome to Global Balance")
-    st.write("Already have an account?")
-    st.button("Sign In", on_click=switch_to_signin)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    st.markdown('<div class="right-side">', unsafe_allow_html=True)
-    st.subheader("Create Account")
-    su_name = st.text_input("Username", key="su_name")
-    su_email = st.text_input("Email", key="su_email")
-    su_pass = st.text_input("Password", type="password", key="su_pass")
-    if st.button("Sign Up", key="do_signup", help="Create your account"):
-        if su_name and su_email and su_pass:
-            add_user(su_name, su_pass, su_email)
-            st.success("✅ Account created successfully! Please sign in.")
-            switch_to_signin()
-        else:
-            st.error("⚠ Please fill all fields")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# ---------------- SIGN IN ----------------
-elif st.session_state.auth_mode == "signin":
-    st.markdown('<div class="left-side">', unsafe_allow_html=True)
-    st.markdown("## 👋 Welcome Back")
-    st.write("Don’t have an account?")
-    st.button("Sign Up", on_click=switch_to_signup)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    st.markdown('<div class="right-side">', unsafe_allow_html=True)
-    st.subheader("Sign In")
-    li_user = st.text_input("Login or Email", key="li_user")
-    li_pass = st.text_input("Password", type="password", key="li_pass")
-    if st.button("Sign In", key="do_login"):
-        user = check_user(li_user, li_pass)
-        if user:
-            st.session_state.user = li_user
-            st.session_state.page = "🏠 Home"
-            st.success("✅ Logged in successfully!")
-            st.rerun()
-        else:
-            st.error("❌ Invalid username or password")
-    if st.button("Forgot Password?"):
-        st.session_state.page = "forgot_password"
-        st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
-
-st.markdown('</div></div>', unsafe_allow_html=True)
 
 # ---------------------- SESSION ----------------------
 if "user" not in st.session_state:
@@ -181,6 +140,38 @@ if "reset_email" not in st.session_state:
     st.session_state.reset_email = None
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
+
+# ---------------------- LOGIN / SIGNUP ----------------------
+if st.session_state.user is None and st.session_state.page not in ["forgot_password"]:
+    st.markdown("<div style='text-align:center; font-size:32px; font-weight:bold; color:#38bdf8; margin-bottom:20px'>Global Balance</div>", unsafe_allow_html=True)
+    tab1, tab2 = st.tabs(["🔐 Login", "📝 Sign Up"])
+   
+    with tab1:
+        username = st.text_input("Username", key="login_user")
+        password = st.text_input("Password", type="password", key="login_pass")
+        if st.button("Sign In"):
+            user = check_user(username, password)
+            if user:
+                st.session_state.user = username
+                st.session_state.page = "🏠 Home"
+                st.success("✅ Login successful")
+            else:
+                st.error("❌ Invalid username or password")
+
+        if st.button("Forgot Password?"):
+            st.session_state.page = "forgot_password"
+            st.rerun()
+
+    with tab2:
+        new_user = st.text_input("Choose Username", key="signup_user")
+        new_pass = st.text_input("Choose Password", type="password", key="signup_pass")
+        email = st.text_input("Email", key="signup_email")
+        if st.button("Register"):
+            if new_user and new_pass and email:
+                add_user(new_user, new_pass, email)
+                st.success("✅ Account created. Now login.")
+            else:
+                st.error("⚠ Please enter valid details.")
 
 # ---------------------- FORGOT PASSWORD ----------------------
 elif st.session_state.page == "forgot_password":
@@ -448,5 +439,3 @@ elif st.session_state.user is not None:
 
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()                           
-
-
