@@ -181,7 +181,7 @@ elif st.session_state.page == "forgot_password":
 elif st.session_state.user is not None:
     st.markdown("<div style='text-align:center; font-size:32px; font-weight:bold; color:#38bdf8; margin-bottom:20px'>Global Balance</div>", unsafe_allow_html=True)
 
-    # --- Sidebar Navigation ---
+    # -------------- Sidebar Navigation ------------------------
     st.sidebar.title("Navigation")
     nav_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🚪 Logout"]
     for item in nav_items:
@@ -193,7 +193,7 @@ elif st.session_state.user is not None:
             else:
                 st.session_state.page = item
 
-    # --- Home Page ---
+    # ---------------------- Home Page --------------------------
     if st.session_state.page == "🏠 Home":
         st.header("🏠 Welcome Home")
         st.write(f"Hello, {st.session_state.user} 👋")
@@ -348,4 +348,5 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")
+
 
