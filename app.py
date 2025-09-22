@@ -221,7 +221,7 @@ elif st.session_state.user is not None:
 
    # --------Sidebar Navigation ---------
     st.sidebar.title("Navigation")
-    top_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🤖 Chatbot" ]
+    top_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🤖 Chatbot", "📹 Vlog" ]
     for item in top_items:
         if st.sidebar.button(item, key=item):
             st.session_state.page = item
@@ -478,4 +478,5 @@ elif st.session_state.user is not None:
      💬 **Enjoyed the vlog?** Share your thoughts and feedback on the Feedback page!  
      🔗 Stay updated by subscribing to our channel or visiting our website for more tutorials.
      """)
+
 
