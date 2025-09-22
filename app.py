@@ -8,7 +8,15 @@ import streamlit.components.v1 as components
 import requests
 import os
 
-openai.api_key = os.getenv("OPENAI_API_KEY")  # Ensure this is set in environment or Streamlit Secrets
+# ---------------------- OPTIONAL CHATBOT ----------------------
+try:
+    import openai
+    OPENAI_AVAILABLE = True
+    # For real deployment, set your API key here or via environment variable
+    # openai.api_key = "YOUR_OPENAI_API_KEY"
+except ModuleNotFoundError:
+    OPENAI_AVAILABLE = False
+
 
 # ---------------------- DATABASE ----------------------
 conn = sqlite3.connect('users.db', check_same_thread=False)
@@ -390,48 +398,53 @@ elif st.session_state.user is not None:
             st.info("You haven't submitted any feedback yet.")        
 
    # ---------------------- Chatbot Page ----------------------
-elif st.session_state.page == "🤖 Chatbot":
-    st.header("🤖 Chatbot")
+    elif st.session_state.page == "🤖 Chatbot":
+        st.header("🤖 Chatbot")
 
-    # --- Lottie Animation ---
-    st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_1pxqjqps.json", height=200)
+        # --- Lottie Animation ---
+        st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_1pxqjqps.json", height=200)
+       
+        # Initialize chat history if not exists
+        if "chat_history" not in st.session_state:
+            st.session_state.chat_history = []
 
-    # Initialize chat history if not exists
-    if "chat_history" not in st.session_state:
-        st.session_state.chat_history = []
-
-    # Clear chat button
-    col1, col2 = st.columns([0.8, 0.2])
-    with col2:
+        # Clear chat button
         if st.button("🗑️ Clear Chat"):
             st.session_state.chat_history = []
-            st.experimental_rerun()
-
-    # Display chat history
-    for chat in st.session_state.chat_history:
-        if chat["role"] == "user":
-            st.markdown(f"<div style='background:#0ea5e9;color:white;padding:10px;border-radius:10px;margin-bottom:5px;'>You: {chat['content']}</div>", unsafe_allow_html=True)
-        else:
-            st.markdown(f"<div style='background:#1e293b;color:#38bdf8;padding:10px;border-radius:10px;margin-bottom:5px;'>Bot: {chat['content']}</div>", unsafe_allow_html=True)
-
-    # Input box and send button
-    user_input = st.text_input("Type your message here...", key="chat_input")
-    if st.button("Send"):
-        if user_input.strip() != "":
-            # Append user message
-            st.session_state.chat_history.append({"role": "user", "content": user_input})
-
-            # --- Call OpenAI API ---
-            try:
-                response = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo",
-                    messages=st.session_state.chat_history
-                )
-                bot_reply = response.choices[0].message["content"]
-            except Exception as e:
-                bot_reply = f"(Error calling OpenAI API: {str(e)})"
-
-            # Append bot response
-            st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()
 
+        # Display chat history
+        for chat in st.session_state.chat_history:
+            if chat["role"] == "user":
+                st.markdown(f"**You:** {chat['content']}")
+            else:
+                st.markdown(f"**Bot:** {chat['content']}")
+
+    # User input only on Chatbot page
+    user_input = st.text_input(" ", key="chat_input")
+    if st.button("Send"):
+        if user_input:
+            st.session_state.chat_history.append({"role": "user", "content": user_input})
+
+            # Demo or OpenAI bot reply
+            if OPENAI_AVAILABLE:
+                try:
+                    response = openai.ChatCompletion.create(
+                        model="gpt-3.5-turbo",
+                        messages=st.session_state.chat_history
+                    )
+                    bot_reply = response.choices[0].message["content"]
+                except Exception as e:
+                    bot_reply = f"(Error calling OpenAI API: {str(e)})"
+            else:
+                # Demo chatbot responses
+                msg = user_input.lower()
+                if "hello" in msg or "hi" in msg:
+                    bot_reply = "Hello! How can I help you today?"
+                elif "how are you" in msg:
+                    bot_reply = "I'm just a bot, but I'm doing great! 😄"
+                else:
+                    bot_reply = "I'm not sure about that, but I'm learning every day! 🤖"
+
+            st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
+            st.rerun()                          
