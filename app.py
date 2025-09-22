@@ -58,25 +58,75 @@ def st_lottie_url(url: str, height: int = 300, key: str = None):
     """
     components.html(lottie_html, height=height + 50)
 
-st.sidebar.markdown("""
-    <style>
-    div[data-testid="stSidebar"] button {
-        width: 100% !important;
-        height: 55px !important;
-        font-size: 16px !important;
-        font-weight: 600 !important;
-        border-radius: 10px !important;
-        background-color: #0ea5e9 !important;
-        color: white !important;
-        margin-bottom: 8px !important;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        transition: all 0.3s ease;
-    }
-    div[data-testid="stSidebar"] button:hover {
-        background-color: #0284c7 !important;
-        transform: translateY(-2px);
-    }
-    </style>
+# ---------------------- GLOBAL CSS ----------------------
+st.markdown("""
+<style>
+/* Apply background everywhere */
+.stApp { 
+    background: #001f3f !important; 
+    font-family: 'Segoe UI', sans-serif;
+    color: #f1f5f9;
+}
+
+/* Button styling */
+.stButton>button {
+    background: #0ea5e9;
+    color: #fff;
+    border-radius: 12px;
+    padding: 0.7em 1.5em;
+    border: none;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+.stButton>button:hover {
+    background: #0284c7;
+    transform: translateY(-2px);
+}
+
+/* Card design */
+.card {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    margin-bottom: 20px;
+}
+
+/* Headings and text */
+h1, h2, h3, h4, label {
+    color: #f1f5f9 !important;
+}
+p, .stText, .stMarkdown {
+    color: #e2e8f0 !important;
+}
+
+/* Input fields */
+input, textarea, select {
+    border-radius: 10px !important;
+    padding: 8px !important;
+}
+
+/* Tabs */
+.css-1emrehy.edgvbvh3 button {
+    width: 100% !important;
+    height: 55px !important;
+    margin-bottom: 12px;
+    font-size: 16px;
+    border-radius: 12px;
+    background-color: #0ea5e9;
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+.css-1emrehy.edgvbvh3 button:hover {
+    background-color: #0284c7;
+}
+
+/* Iframes */
+iframe {
+    border-radius: 12px;
+}
+</style>
 """, unsafe_allow_html=True)
 
 # ---------------------- SESSION ----------------------
@@ -330,7 +380,16 @@ elif st.session_state.user is not None:
                     (st.session_state.user, rating, usability, comment, suggestions)
                 )
                 conn.commit()
-                st.success("✅ Thank you! Your feedback has been submitted.")       
+                st.success("✅ Thank you! Your feedback has been submitted.")
+
+        st.subheader("📋 Your Previous Feedback")
+        c.execute("SELECT rating, usability, comment, suggestions FROM feedback WHERE username=?", (st.session_state.user,))
+        rows = c.fetchall()
+        if rows:
+            feedback_df = pd.DataFrame(rows, columns=["Rating", "Usability", "Comment", "Suggestions"])
+            st.dataframe(feedback_df)
+        else:
+            st.info("You haven't submitted any feedback yet.")        
 
    # ---------------------- Chatbot Page ----------------------
     elif st.session_state.page == "🤖 Chatbot":
@@ -384,5 +443,4 @@ elif st.session_state.user is not None:
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()                           
 
-
-
+i want the navigation buttons in same size can you modify the code and give m
