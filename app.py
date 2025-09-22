@@ -137,7 +137,7 @@ if st.session_state.user is None and st.session_state.page not in ["forgot_passw
     st.markdown(f"""
     <style>
     .login-signup-bg {{
-        background: url("file://{os.path.abspath('Content Creation Video.jpe')}") no-repeat center center fixed;
+        background: url("file://{os.path.abspath('background.jpeg')}") no-repeat center center fixed;
         background-size: cover;
         padding: 40px;
         border-radius: 20px;
@@ -391,6 +391,7 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")        
+
 
 
 
