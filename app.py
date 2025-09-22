@@ -58,69 +58,168 @@ def st_lottie_url(url: str, height: int = 300, key: str = None):
     """
     components.html(lottie_html, height=height + 50)
 
-# ---------------------- GLOBAL CSS ----------------------
-st.markdown("""
+st.set_page_config(page_title="Login Page", layout="centered")
+
+# ---------------- CSS ----------------
+page_bg = """
 <style>
-.stApp { 
-    background: linear-gradient(to bottom right, #0f172a, #1e293b) !important;
-    font-family: 'Segoe UI', sans-serif;
-    color: #f1f5f9;
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #1f2235;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-/* Container for login/signup */
-.auth-container {
-    width: 900px;
-    margin: auto;
-    margin-top: 60px;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0px 8px 30px rgba(0,0,0,0.15);
-    display: flex;
-    overflow: hidden;
+.container {
+  display: flex;
+  width: 900px;
+  height: 550px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  border-radius: 12px;
+  overflow: hidden;
 }
-.left-panel, .right-panel {
-    flex: 1;
-    padding: 50px;
+
+.left {
+  flex: 1;
+  background: linear-gradient(135deg, #2c3e91, #3a60d2);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  text-align: center;
 }
-.left-panel {
-    background: white;
+
+.left h1 {
+  font-size: 26px;
+  margin-bottom: 10px;
 }
-.right-panel {
-    background: linear-gradient(135deg, #3bb2b8, #1f8ca4);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+
+.left p {
+  margin-bottom: 20px;
 }
-.tab-buttons {
-    display: flex;
-    gap: 30px;
-    margin-bottom: 20px;
+
+.left button {
+  padding: 12px 30px;
+  background: #00d1ff;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
 }
-.tab-btn {
-    font-weight: 600;
-    cursor: pointer;
-    padding-bottom: 4px;
+
+.left button:hover {
+  background: #00a8cc;
 }
-.active-tab {
-    color: #1f8ca4;
-    border-bottom: 3px solid #1f8ca4;
+
+.right {
+  flex: 1;
+  background: #2a2c3a;
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #fff;
 }
-.inactive-tab {
-    color: #888;
+
+.right h2 {
+  margin-bottom: 30px;
 }
-.stButton>button {
-    border-radius: 20px;
-    background: #3bb2b8;
-    color: white;
-    border: none;
-    padding: 8px 30px;
+
+.form-group {
+  margin-bottom: 20px;
 }
-.stButton>button:hover {
-    background: #1f8ca4;
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #ccc;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background: #1c1e2a;
+  color: #fff;
+  font-size: 14px;
+}
+
+.form-group input:focus {
+  outline: 2px solid #00d1ff;
+}
+
+.btn {
+  padding: 12px;
+  width: 100%;
+  border: none;
+  border-radius: 6px;
+  background: #00d1ff;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn:hover {
+  background: #00a8cc;
+}
+
+.small-text {
+  margin-top: 15px;
+  font-size: 12px;
+  color: #aaa;
+}
+
+.small-text a {
+  color: #00d1ff;
+  text-decoration: none;
 }
 </style>
-""", unsafe_allow_html=True)
+"""
+
+st.markdown(page_bg, unsafe_allow_html=True)
+
+# ---------------- HTML ----------------
+html_code = """
+<div class="container">
+  <!-- Left side (Sign Up) -->
+  <div class="left">
+    <h1>Hello! Welcome to the ArBitrage trading platform</h1>
+    <p>Don’t have an account yet?</p>
+    <button onclick="alert('Redirecting to signup page...')">Sign Up</button>
+  </div>
+
+  <!-- Right side (Sign In) -->
+  <div class="right">
+    <h2>Sign In</h2>
+    <form>
+      <div class="form-group">
+        <label for="login">Login or Email</label>
+        <input type="text" id="login" placeholder="Enter your login or email" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter your password" required>
+      </div>
+      <button type="submit" class="btn">Sign In</button>
+    </form>
+    <p class="small-text">
+      By clicking "Sign Up" button, you agree to our <a href="#">Terms & Conditions</a>.
+    </p>
+  </div>
+</div>
+"""
+
+st.markdown(html_code, unsafe_allow_html=True)
 
 # ---------------------- SESSION ----------------------
 if "user" not in st.session_state:
@@ -138,66 +237,6 @@ if "auth_mode" not in st.session_state:
 
 def switch_tab(tab):
     st.session_state.auth_mode = tab
-
-# ---------------------- LOGIN / SIGNUP ----------------------
-if st.session_state.user is None and st.session_state.page not in ["forgot_password"]:
-    st.markdown('<div class="auth-container">', unsafe_allow_html=True)
-
-    # -------- LEFT PANEL --------
-    st.markdown('<div class="left-panel">', unsafe_allow_html=True)
-
-    # Toggle tabs
-    col1, col2 = st.columns([1,1])
-    with col1:
-        if st.session_state.auth_mode == "Login":
-            st.markdown('<div class="tab-btn active-tab">Login</div>', unsafe_allow_html=True)
-        else:
-            if st.button("Login", key="login_tab"):
-                switch_tab("Login")
-    with col2:
-        if st.session_state.auth_mode == "Sign Up":
-            st.markdown('<div class="tab-btn active-tab">Sign Up</div>', unsafe_allow_html=True)
-        else:
-            if st.button("Sign Up", key="signup_tab"):
-                switch_tab("Sign Up")
-
-    st.write("---")
-
-    if st.session_state.auth_mode == "Login":
-        username = st.text_input("Username", key="login_user")
-        password = st.text_input("Password", type="password", key="login_pass")
-        if st.button("Sign In"):
-            user = check_user(username, password)
-            if user:
-                st.session_state.user = username
-                st.session_state.page = "🏠 Home"
-                st.success("✅ Login successful")
-            else:
-                st.error("❌ Invalid username or password")
-
-        if st.button("Forgot Password?"):
-            st.session_state.page = "forgot_password"
-            st.rerun()
-
-    else:
-        new_user = st.text_input("Choose Username", key="signup_user")
-        new_pass = st.text_input("Choose Password", type="password", key="signup_pass")
-        email = st.text_input("Email", key="signup_email")
-        if st.button("Register"):
-            if new_user and new_pass and email:
-                add_user(new_user, new_pass, email)
-                st.success("✅ Account created. Now login.")
-            else:
-                st.error("⚠ Please enter valid details.")
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    # -------- RIGHT PANEL --------
-    st.markdown('<div class="right-panel">', unsafe_allow_html=True)
-    st_lottie_url("https://assets10.lottiefiles.com/packages/lf20_ydo1amjm.json", height=300)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------------------- FORGOT PASSWORD ----------------------
 elif st.session_state.page == "forgot_password":
@@ -499,4 +538,5 @@ elif st.session_state.user is not None:
 
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()                           
+
 
