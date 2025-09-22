@@ -46,7 +46,7 @@ def add_bg_from_local(image_file):
         f"""
         <style>
         .stApp {{
-            background-image: url("background.jpeg;base64,{encoded}");
+            background-image: url("background.jpeg");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -348,3 +348,4 @@ elif st.session_state.user is not None:
             st.dataframe(feedback_df)
         else:
             st.info("You haven't submitted any feedback yet.")
+
