@@ -58,76 +58,62 @@ def st_lottie_url(url: str, height: int = 300, key: str = None):
     """
     components.html(lottie_html, height=height + 50)
 
-# ---------------------- GLOBAL CSS ----------------------
-st.markdown("""
-<style>
-/* Apply background everywhere */
-.stApp { 
-    background: #001f3f !important; 
-    font-family: 'Segoe UI', sans-serif;
-    color: #f1f5f9;
-}
-
-/* Button styling */
-.stButton>button {
-    background: #0ea5e9;
-    color: #fff;
-    border-radius: 12px;
-    padding: 0.7em 1.5em;
-    border: none;
-    font-weight: 600;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    transition: all 0.3s ease;
-}
-.stButton>button:hover {
-    background: #0284c7;
-    transform: translateY(-2px);
-}
-
-/* Card design */
-.card {
-    background: #1e293b;
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-    margin-bottom: 20px;
-}
-
-/* Headings and text */
-h1, h2, h3, h4, label {
-    color: #f1f5f9 !important;
-}
-p, .stText, .stMarkdown {
-    color: #e2e8f0 !important;
-}
-
-/* Input fields */
-input, textarea, select {
-    border-radius: 10px !important;
-    padding: 8px !important;
-}
-
-/* Tabs */
-.css-1emrehy.edgvbvh3 button {
-    width: 100% !important;
-    height: 55px !important;
-    margin-bottom: 12px;
-    font-size: 16px;
-    border-radius: 12px;
-    background-color: #0ea5e9;
-    color: #fff;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
-.css-1emrehy.edgvbvh3 button:hover {
-    background-color: #0284c7;
-}
-
-/* Iframes */
-iframe {
-    border-radius: 12px;
-}
-</style>
+st.sidebar.markdown("""
+    <style>
+    .nav-button {
+        display: block;
+        width: 100% !important;
+        background-color: #0ea5e9;
+        color: white;
+        text-align: center;
+        padding: 12px;
+        margin: 6px 0;
+        border-radius: 10px;
+        font-weight: bold;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .nav-button:hover {
+        background-color: #0284c7;
+        transform: translateY(-2px);
+    }
+    .logout-button {
+        display: block;
+        width: 100% !important;
+        background-color: #ef4444;
+        color: white;
+        text-align: center;
+        padding: 12px;
+        margin: 6px 0;
+        border-radius: 10px;
+        font-weight: bold;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .logout-button:hover {
+        background-color: #b91c1c;
+        transform: translateY(-2px);
+    }
+    </style>
 """, unsafe_allow_html=True)
+
+# Render sidebar navigation as forms (to capture clicks)
+for label in nav_items.keys():
+    if st.sidebar.button(label, key=label):
+        st.session_state.page = label
+
+# Spacer
+st.sidebar.markdown("<br><br><br>", unsafe_allow_html=True)
+
+# Logout button styled separately
+if st.sidebar.button("🚪 Logout", key="logout_sidebar"):
+    st.session_state.user = None
+    st.session_state.page = "🏠 Home"
+    st.success("🚪 You have been logged out.")
 
 # ---------------------- SESSION ----------------------
 if "user" not in st.session_state:
@@ -433,3 +419,4 @@ elif st.session_state.user is not None:
 
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun()                           
+
