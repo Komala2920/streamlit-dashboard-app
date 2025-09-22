@@ -448,9 +448,9 @@ elif st.session_state.user is not None:
 
             st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
             st.rerun() 
-   # --------------- Vlog Page -----------------------
-   elif st.session_state.page == "📹 Vlog":
-       st.header("📹 Watch Our Vlog")
+    # --------------- Vlog Page -----------------------
+    elif st.session_state.page == "📹Vlog":
+        st.header("📹 Watch Our Vlog")
     
       # Optional Lottie animation
       st_lottie_url("https://assets10.lottiefiles.com/packages/lf20_4kx2q32n.json", height=200)
@@ -478,5 +478,3 @@ elif st.session_state.user is not None:
      💬 **Enjoyed the vlog?** Share your thoughts and feedback on the Feedback page!  
      🔗 Stay updated by subscribing to our channel or visiting our website for more tutorials.
      """)
-
-
