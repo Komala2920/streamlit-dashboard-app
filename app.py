@@ -388,14 +388,7 @@ elif st.session_state.user is not None:
                 conn.commit()
                 st.success("✅ Thank you! Your feedback has been submitted.")
 
-        st.subheader("📋 Your Previous Feedback")
-        c.execute("SELECT rating, usability, comment, suggestions FROM feedback WHERE username=?", (st.session_state.user,))
-        rows = c.fetchall()
-        if rows:
-            feedback_df = pd.DataFrame(rows, columns=["Rating", "Usability", "Comment", "Suggestions"])
-            st.dataframe(feedback_df)
-        else:
-            st.info("You haven't submitted any feedback yet.")        
+  
 
    # ---------------------- Chatbot Page ----------------------
     elif st.session_state.page == "🤖 Chatbot":
@@ -478,3 +471,4 @@ elif st.session_state.user is not None:
         💬 **Enjoyed the vlog?** Share your thoughts and feedback on the Feedback page!  
         🔗 Stay updated by subscribing to our channel or visiting our website for more tutorials.
         """)
+
