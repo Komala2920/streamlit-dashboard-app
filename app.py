@@ -221,7 +221,7 @@ elif st.session_state.user is not None:
 
    # --------Sidebar Navigation ---------
     st.sidebar.title("Navigation")
-    top_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback", "🤖 Chatbot", "📹 Vlog" ]
+    top_items = ["🏠 Home", "📊 Dashboard", "👤 Profile", "💬 Feedback" ]
     for item in top_items:
         if st.sidebar.button(item, key=item):
             st.session_state.page = item
@@ -387,88 +387,3 @@ elif st.session_state.user is not None:
                 )
                 conn.commit()
                 st.success("✅ Thank you! Your feedback has been submitted.")
-
-  
-
-   # ---------------------- Chatbot Page ----------------------
-    elif st.session_state.page == "🤖 Chatbot":
-        st.header("🤖 Chatbot")
-
-        # --- Lottie Animation ---
-        st_lottie_url("https://assets2.lottiefiles.com/packages/lf20_1pxqjqps.json", height=200)
-       
-        # Initialize chat history if not exists
-        if "chat_history" not in st.session_state:
-            st.session_state.chat_history = []
-
-        # Clear chat button
-        if st.button("🗑️ Clear Chat"):
-            st.session_state.chat_history = []
-            st.rerun()
-
-        # Display chat history
-        for chat in st.session_state.chat_history:
-            if chat["role"] == "user":
-                st.markdown(f"**You:** {chat['content']}")
-            else:
-                st.markdown(f"**Bot:** {chat['content']}")
-
-    # User input only on Chatbot page
-    user_input = st.text_input(" ", key="chat_input")
-    if st.button("Send"):
-        if user_input:
-            st.session_state.chat_history.append({"role": "user", "content": user_input})
-
-            # Demo or OpenAI bot reply
-            if OPENAI_AVAILABLE:
-                try:
-                    response = openai.ChatCompletion.create(
-                        model="gpt-3.5-turbo",
-                        messages=st.session_state.chat_history
-                    )
-                    bot_reply = response.choices[0].message["content"]
-                except Exception as e:
-                    bot_reply = f"(Error calling OpenAI API: {str(e)})"
-            else:
-                # Demo chatbot responses
-                msg = user_input.lower()
-                if "hello" in msg or "hi" in msg:
-                    bot_reply = "Hello! How can I help you today?"
-                elif "how are you" in msg:
-                    bot_reply = "I'm just a bot, but I'm doing great! 😄"
-                else:
-                    bot_reply = "I'm not sure about that, but I'm learning every day! 🤖"
-
-            st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
-            st.rerun() 
-    # --------------- Vlog Page -----------------------
-    elif st.session_state.page == "📹Vlog":
-        st.header("📹 Watch Our Vlog")
-    
-        # Optional Lottie animation
-        st_lottie_url("https://assets10.lottiefiles.com/packages/lf20_4kx2q32n.json", height=200)
-    
-        # Intro text
-        st.markdown("""
-        Welcome to our **Global Balance Vlog**! 🌍  
-        Here, we share insights, tips, and tutorials on understanding global economics, financial trends, and how to make the most of our platform.
-        """)
-
-        # Key points / highlights
-        st.markdown("""
-        ### In this episode:
-        - 📊 Understanding the latest global economic trends  
-        - 🌐 How to navigate and use the **Global Balance dashboard**  
-        - 💡 Tips for analyzing financial data effectively  
-        - 🎯 Upcoming features and sneak peeks  
-        """)
-
-        # Vlog video
-        st.video("https://www.youtube.com/watch?v=dQw4w9WgXcQ")  # Replace with your own VLOG URL or MP4 file
-
-        # Additional info / CTA
-        st.markdown("""
-        💬 **Enjoyed the vlog?** Share your thoughts and feedback on the Feedback page!  
-        🔗 Stay updated by subscribing to our channel or visiting our website for more tutorials.
-        """)
-
